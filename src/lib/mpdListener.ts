@@ -1,5 +1,9 @@
 import type { EventEmitter } from 'events';
 import mpdApi from 'mpd-api';
+import { exec } from 'child_process';
+import { promisify } from 'node:util';
+
+const execAsync = promisify(exec);
 
 
 type SSEController = ReadableStreamDefaultController<Uint8Array>;
@@ -24,12 +28,30 @@ function sseFormat(event: string, data: unknown): string {
     return `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
   }
 
-export async function broadcast(event: string) {
-  const client = await mpdApi.connect({ host: 'localhost', port: 6600 });
-  const status = {...client.api.status.get(), currentSong: client.api.status.currentsong }
-  client.disconnect()
+async function currentSong(){
+  try {
+    const { stdout } = await execAsync('mpc current');
+    const [artist, ...songParts] = stdout.trim().split(' - ');
+    const song = songParts.join(' - ');
 
-  const message = sseFormat(event, /* data */ status);
+    return { artist: artist || '', song: song || '' };
+  } catch {
+    return null;
+  }
+}
+
+export async function broadcast(event: string) {
+  let status, client;
+
+  try{
+    client = await mpdApi.connect({ host: 'localhost', port: 6600 });
+    status = {...await client.api.status.get(), currentSong: await currentSong() }
+  }finally{
+    if(client) client.disconnect()
+  }
+  
+
+  const message = sseFormat(event, status);
   const encoded = new TextEncoder().encode(message);
 
   for (const client of clients) {

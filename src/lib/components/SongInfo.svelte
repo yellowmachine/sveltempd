@@ -1,6 +1,6 @@
 <script lang="ts">
     // Usamos $props para recibir las propiedades
-    let { title, artist } = $props<{ title: string; artist: string }>();
+    let { currentSong } = $props<{ currentSong?: {title: string; artist: string}  }>();
   
     // Estado local reactivo para release, coverUrl y error
     let release = $state<{
@@ -50,7 +50,7 @@
 
         (async () => {
             try {
-            const rel = await fetchRelease(artist, title);
+            const rel = await fetchRelease(currentSong.artist, currentSong.title);
             if (!rel) {
                 error = 'No se encontró información del álbum';
                 return;
@@ -77,7 +77,7 @@
     {#if release}
       <div>
         <h3>{release.title} {#if release.date}({release.date}){/if}</h3>
-        <p>Artista: {artist}</p>
+        <p>Artista: {currentSong.artist}</p>
         {#if coverUrl}
           <img src="{coverUrl}" alt="Carátula de {release.title}" />
         {:else}

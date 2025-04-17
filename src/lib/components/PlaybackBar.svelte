@@ -1,13 +1,14 @@
 <script lang="ts">
-	let loading = $state(false);
+    import { mpdState } from "$lib/stores";
+	
+    let loading = $state(false);
 	let error = $state<string | null>(null);
 
-	// Función genérica para enviar el comando al backend
 	async function sendCommand(command: string) {
 		loading = true;
 		error = null;
 		try {
-			const res = await fetch('/api/mpd', {
+			const res = await fetch('/api/command', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ command })
@@ -55,12 +56,13 @@
 </style>
 
 <div class="playback-bar">
-	<button on:click={previous} aria-label="Anterior" disabled={loading}>⏮️</button>
-	<button on:click={play} aria-label="Play" disabled={loading}>▶️</button>
-	<button on:click={pause} aria-label="Pause" disabled={loading}>⏸️</button>
-	<button on:click={next} aria-label="Siguiente" disabled={loading}>⏭️</button>
-	<button on:click={volumeDown} aria-label="Bajar volumen" disabled={loading}>🔉</button>
-	<button on:click={volumeUp} aria-label="Subir volumen" disabled={loading}>🔊</button>
+	<button onclick={previous} aria-label="Anterior" disabled={loading}>⏮️</button>
+	<button onclick={play} aria-label="Play" disabled={loading}>▶️</button>
+	<button onclick={pause} aria-label="Pause" disabled={loading}>⏸️</button>
+	<button onclick={next} aria-label="Siguiente" disabled={loading}>⏭️</button>
+	<button onclick={volumeDown} aria-label="Bajar volumen" disabled={loading}>🔉</button>
+	<span>Volumen: {mpdState.value?.volume}</span>
+    <button onclick={volumeUp} aria-label="Subir volumen" disabled={loading}>🔊</button>
 </div>
 
 {#if loading}

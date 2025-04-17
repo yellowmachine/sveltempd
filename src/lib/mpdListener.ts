@@ -15,7 +15,7 @@ export async function startListening() {
 
     client.on('system', (name: string) => {
         console.log('MPD system event:', name);
-        broadcast('system', name)
+        broadcast('system')
     });
 
 }
@@ -24,9 +24,12 @@ function sseFormat(event: string, data: unknown): string {
     return `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
   }
 
-// Función para emitir eventos a todos los clientes conectados
-export function broadcast(event: string, data: unknown) {
-  const message = sseFormat(event, data);
+export async function broadcast(event: string) {
+  const client = await mpdApi.connect({ host: 'localhost', port: 6600 });
+  const status = {...client.api.status.get(), currentSong: client.api.status.currentsong }
+  client.disconnect()
+
+  const message = sseFormat(event, /* data */ status);
   const encoded = new TextEncoder().encode(message);
 
   for (const client of clients) {

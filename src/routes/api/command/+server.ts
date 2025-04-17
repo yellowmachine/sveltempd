@@ -104,8 +104,6 @@ async function changeActiveCard(options: ChangeCardOptions): Promise<void> {
   });
 }
 
-let previousVolume: number | null = null;
-
 type VolumeObj = { volume: number };
 
 async function getCurrentVolume(client: MPDApi.ClientAPI){
@@ -142,13 +140,12 @@ export async function commandHandler(options: CommandOptions): Promise<{success?
         })
     } else if (options.command === 'mute') {
         return await executeCommand(async (client) => {
-            previousVolume = await getCurrentVolume(client);
             await client.api.playback.setvol('0');
         })
   
     } else if (options.command === 'unmute') {
         return await executeCommand(async (client) => {
-            await client.api.playback.setvol(''+previousVolume);
+            await client.api.playback.setvol('30');
         })
   
     } else {

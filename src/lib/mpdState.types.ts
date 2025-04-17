@@ -1,4 +1,8 @@
 export type MPDState = {
+    currentSong: {
+      title: string,
+      artist: string
+    },
     volume: number;
     repeat: boolean;
     random: boolean;

@@ -1,29 +1,14 @@
 import type { MPDState } from './mpdState.types';
 
 export function createMPDState() {
-  let state: Partial<MPDState> = $state({});
-
-  const isPlaying = $derived(state.state === 'play');
-  const stateLabel = $derived(
-    state.state === 'play'
-      ? 'Reproduciendo'
-      : state.state === 'pause'
-        ? 'Pausado'
-        : 'Detenido'
-  );
+  let state: MPDState | null = $state(null);
 
   return {
-    update(newState: Partial<MPDState>) {
-      state = { ...state, ...newState };
+    update(newState: MPDState) {
+      state = { ...newState };
     },
     get value() {
       return state;
-    },
-    get isPlaying() {
-      return isPlaying;
-    },
-    get stateLabel() {
-      return stateLabel;
     }
   };
 }

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { mpdState } from '$lib/stores';
+	import type { MPDState } from '$lib/mpdState.types';
+	import PlaybackBar from '$lib/components/PlaybackBar.svelte';
 
 	let { children } = $props();
 
@@ -15,11 +17,10 @@
 		evtSource = new EventSource('/api/events');
 
 		evtSource.addEventListener('mpd-event', (e) => {
-			const data = JSON.parse((e as MessageEvent).data);
+			const data: MPDState = JSON.parse((e as MessageEvent).data);
 
-			// ACTUALIZA EL STORE GLOBAL CON EL NUEVO ESTADO
 			if (data.state) {
-				mpdState.update(data.state); // <-- Aquí actualizas el store
+				mpdState.update(data); 
 			}
 		});
 
@@ -48,4 +49,5 @@
 	});
 </script>
 
+<PlaybackBar />
 {@render children()}

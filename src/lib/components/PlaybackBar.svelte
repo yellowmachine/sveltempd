@@ -1,0 +1,71 @@
+<script lang="ts">
+	let loading = $state(false);
+	let error = $state<string | null>(null);
+
+	// Función genérica para enviar el comando al backend
+	async function sendCommand(command: string) {
+		loading = true;
+		error = null;
+		try {
+			const res = await fetch('/api/mpd', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ command })
+			});
+			if (!res.ok) {
+				const { error: msg } = await res.json();
+				throw new Error(msg || 'Error en el servidor');
+			}
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Error desconocido';
+		} finally {
+			loading = false;
+		}
+	}
+
+	function play() { sendCommand('play'); }
+	function pause() { sendCommand('pause'); }
+	function next() { sendCommand('next'); }
+	function previous() { sendCommand('previous'); }
+	function volumeUp() { sendCommand('volume_up'); }
+	function volumeDown() { sendCommand('volume_down'); }
+</script>
+
+<style>
+	.playback-bar {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		justify-content: center;
+		margin: 1rem 0;
+	}
+	button {
+		font-size: 1.5rem;
+		padding: 0.5rem 1rem;
+		cursor: pointer;
+	}
+	button:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+	.error {
+		color: red;
+		margin-top: 0.5rem;
+	}
+</style>
+
+<div class="playback-bar">
+	<button on:click={previous} aria-label="Anterior" disabled={loading}>⏮️</button>
+	<button on:click={play} aria-label="Play" disabled={loading}>▶️</button>
+	<button on:click={pause} aria-label="Pause" disabled={loading}>⏸️</button>
+	<button on:click={next} aria-label="Siguiente" disabled={loading}>⏭️</button>
+	<button on:click={volumeDown} aria-label="Bajar volumen" disabled={loading}>🔉</button>
+	<button on:click={volumeUp} aria-label="Subir volumen" disabled={loading}>🔊</button>
+</div>
+
+{#if loading}
+	<div>Cargando…</div>
+{/if}
+{#if error}
+	<div class="error">{error}</div>
+{/if}

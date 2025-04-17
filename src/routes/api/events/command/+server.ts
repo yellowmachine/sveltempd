@@ -5,14 +5,18 @@ import mpd from 'mpd-api';
 import type { MPDApi } from 'mpd-api';
 
 
-
-// Opciones específicas para cada comando
-interface ChangeDeviceOptions {
-    command: 'changeDevice';
+interface ChangeCardOptions {
+    command: 'changeCard';
     host: string;
     deviceIndex: string | number;
   }
-  
+
+interface ListCardsOptions {
+    command: 'listCards';
+    host: string;
+    deviceIndex: string | number;
+  }  
+
 interface VolumeUpOptions {
     command: 'volumeUp';
     // Puedes agregar más campos si lo necesitas, por ejemplo, cantidad
@@ -42,7 +46,8 @@ interface PauseOptions {
 
   // Unión de todas las opciones posibles
 type CommandOptions =
-    | ChangeDeviceOptions
+    | ChangeCardOptions
+    | ListCardsOptions
     | VolumeUpOptions
     | VolumeDownOptions
     | PlayOptions
@@ -51,7 +56,7 @@ type CommandOptions =
     | UnmuteOptions;
   
 
-async function obtenerListaDeDispositivos(): Promise<string[]> {
+async function getSoundCards(): Promise<string[]> {
   return new Promise((resolve, reject) => {
     exec('snapclient -l', (error, stdout) => {
       if (error) {
@@ -67,7 +72,7 @@ async function obtenerListaDeDispositivos(): Promise<string[]> {
   });
 }
 
-async function changeActiveCard(options: ChangeDeviceOptions): Promise<void> {
+async function changeActiveCard(options: ChangeCardOptions): Promise<void> {
   const { host, deviceIndex } = options;
 
   if (!host || deviceIndex === undefined) {
@@ -112,13 +117,13 @@ async function getCurrentVolume(client: MPDApi.ClientAPI){
       throw new Error('No hay mezclador disponible');
 }
 
-export async function commandHandler(options: CommandOptions): Promise<any> {
-    if (options.command === 'changeDevice') {
-      // Lógica para cambiar de dispositivo
-      // Por ejemplo:
+export async function commandHandler(options: CommandOptions): Promise<{success?: boolean, error?: string, payload?: unknown}> {
+    if (options.command === 'changeCard') {
       await changeActiveCard(options);
-      return { success: true, changedTo: options };
-  
+      return { success: true };
+    } else if(options.command === 'listCards'){
+        const cards = await getSoundCards()
+        return {success: true, payload: cards}
     } else if (options.command === 'play') {
         return await executeCommand((client) => client.api.playback.play())
     } else if (options.command === 'pause') {
@@ -162,9 +167,15 @@ async function executeCommand(command: Command, options?: CommandOptions) {
     try {
         client = await mpd.connect({ host: 'localhost', port: 6600 });
         await command(client, options);
-        return {result: client.api.status};
-    } catch(error: any){
-        return { error: error?.message || 'Error ejecutando comando MPD' };
+        return {success: true}
+        //return {result: client.api.status.get()};
+    } catch(error: unknown){
+        //return { error: error?.message || 'Error ejecutando comando MPD' };
+        const message = error instanceof Error
+            ? error.message
+            : 'Error interno';
+
+        return { error: message || 'Error ejecutando comando MPD' };
     } finally {
         if (client) {
             try {
@@ -188,8 +199,12 @@ export const POST: RequestHandler = async ({ request }) => {
       const result = await commandHandler(options);
   
       return json({ success: true, result });
-    } catch (error: any) {
-      return json({ error: error.message || 'Error interno' }, { status: 500 });
+    } catch (error: unknown) {
+        const message = error instanceof Error
+            ? error.message
+            : 'Error interno';
+
+        return json({ error: message }, { status: 500 });
     } 
   };
 

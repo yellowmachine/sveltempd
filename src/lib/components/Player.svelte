@@ -1,8 +1,7 @@
 <script lang="ts">
-	import type { CommandOptions } from '$lib/mpd/command';
     import Icon from '@iconify/svelte';
 	import { Jumper } from 'svelte-loading-spinners';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
   	import { trpc } from '$lib/trpc/client';
 
 	let { playing, volume }: {playing: boolean, volume: number | undefined} = $props();
@@ -10,33 +9,13 @@
     let loading = $state(false);
 	let error = $state<string | null>(null);
 
-	async function sendCommand(options: CommandOptions) {
-		loading = true;
-		error = null;
-		try {
-			//const res = 
-			await fetch('/api/command', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ ...options })
-			});
-			//if (!res.ok) {
-			//	const { error: msg } = await res.json();
-			//	throw new Error(msg || 'Error en el servidor');
-			//}
-		} catch (e) {
-			error = e instanceof Error ? e.message : 'Error desconocido';
-		} finally {
-			loading = false;
-		}
-	}
-
-	function play() { trpc($page).play.mutate(); }
-	function pause() { sendCommand({command: "pause"}); }
-	function next() { sendCommand({command: "next"}); }
-	function previous() { sendCommand({command: "prev"}); }
-	function volumeUp() { sendCommand({command: "volumeUp", amount: 10}); }
-	function volumeDown() { sendCommand({command: "volumeDown", amount: 10}); }
+	function play() { trpc(page).play.mutate(); }
+	function pause() { trpc(page).pause.mutate(); }
+	function next() { trpc(page).next.mutate(); }
+	function previous() { trpc(page).prev.mutate(); }
+	function volumeUp() { trpc(page).volume.mutate({ amount: 10 }); }
+	function volumeDown() { trpc(page).volume.mutate({ amount: -10 }); }
+	
 </script>
 
 <div class="flex items-center gap-4 border-2 rounded-md p-4 w-max">

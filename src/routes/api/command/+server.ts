@@ -53,30 +53,6 @@ async function changeActiveCard(options: ChangeCardOptions): Promise<void> {
   });
 }
 
-async function commandHandler(options: CommandOptions){
-    const player = await getPlayer();
-
-    if (options.command === 'changeCard') {
-        await changeActiveCard(options);
-    } else if(options.command === 'listCards'){
-        const cards = await getSoundCards()
-        return {success: true, payload: cards}
-    } else if (options.command === 'play') {
-        await player.play();
-    } else if (options.command === 'pause') {
-        await player.pause();
-    } else if (options.command === 'volumeUp') {
-        await player.volumeUp(options);
-    } else if (options.command === 'volumeDown') {
-        await player.volumeDown(options);
-    } else if (options.command === 'mute') {
-        await player.mute();
-    } else if (options.command === 'unmute') {
-        await player.unmute();
-    } else {
-      throw new Error('Comando no soportado');
-    }
-}
     
 export const POST: RequestHandler = async ({ request }) => {
     try {
@@ -87,9 +63,9 @@ export const POST: RequestHandler = async ({ request }) => {
         return json({ error: 'Comando no soportado', details: options.error.errors }, { status: 400 });
       }
   
-      const result = await commandHandler(options.data);
+      //const result = await commandHandler(options.data);
   
-      return json({ success: true, result });
+      return json({ success: true /*, result */ });
     } catch (error: unknown) {
         const message = error instanceof Error
             ? error.message

@@ -3,7 +3,11 @@ import { paraglideMiddleware } from '$lib/paraglide/server';
 import { sequence } from '@sveltejs/kit/hooks';
 import { startListening } from '$lib/mpdListener';
 import { initializeDB } from '$lib/db';
+import { createTRPCHandle } from 'trpc-sveltekit';
+import { createContext } from '$lib/trpc/context';
+import { router } from '$lib/trpc/router';
 
+const trpcHandle: Handle = createTRPCHandle({ router, createContext });
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
@@ -34,5 +38,5 @@ const defaultHandle: Handle = async ({ event, resolve }) => {
   return await resolve(event);
 }
 
-export const handle: Handle = sequence(handleParaglide, defaultHandle);
+export const handle: Handle = sequence(handleParaglide, defaultHandle, trpcHandle);
 

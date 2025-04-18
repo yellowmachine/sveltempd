@@ -2,6 +2,8 @@
 	import type { CommandOptions } from '$lib/mpd/command';
     import Icon from '@iconify/svelte';
 	import { Jumper } from 'svelte-loading-spinners';
+	import { page } from '$app/stores';
+  	import { trpc } from '$lib/trpc/client';
 
 	let { playing, volume }: {playing: boolean, volume: number | undefined} = $props();
 	
@@ -29,7 +31,7 @@
 		}
 	}
 
-	function play() { sendCommand({command: "play"}); }
+	function play() { trpc($page).play.mutate(); }
 	function pause() { sendCommand({command: "pause"}); }
 	function next() { sendCommand({command: "next"}); }
 	function previous() { sendCommand({command: "prev"}); }

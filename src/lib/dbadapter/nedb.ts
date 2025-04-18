@@ -1,4 +1,4 @@
-// db-nedb.js
+/*
 import Datastore from '@seald-io/nedb';
 
 class NeDBAdapter {
@@ -38,3 +38,4 @@ class NeDBAdapter {
   
 }
 export default NeDBAdapter;
+*/

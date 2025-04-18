@@ -113,7 +113,7 @@ export async function previous() {
 
 export async function mute() {
     await withClient(async (client) => {
-      db.data.volume = await getCurrentVolume(client);
+      await db.setVolume(await getCurrentVolume(client));
       client.api.playback.setvol('0')
     }
   );
@@ -121,8 +121,7 @@ export async function mute() {
 
 export async function unmute() {
     await withClient(async (client) => {
-      await db.read(); 
-      client.api.playback.setvol(''+db.data.volume)
+      client.api.playback.setvol('' + await db.getVolume())
     });
 }
 

@@ -2,12 +2,8 @@ import type { Handle } from '@sveltejs/kit';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { sequence } from '@sveltejs/kit/hooks';
 import { startListening } from '$lib/mpdListener';
-import path from 'node:path';
 import { initializeDB } from '$lib/db';
 
-const dbFile = path.resolve('db.json');
-type Data = { volume: number };
-const defaultData: Data = { volume: 50 };
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {

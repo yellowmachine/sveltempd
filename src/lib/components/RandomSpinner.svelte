@@ -26,15 +26,14 @@
   
     let Spinner = BarLoader;
   
-    //onMount(() => {
-      if (!spinnerName) {
+    if (!spinnerName) {
         const spinnerList = Object.values(spinnerMap);
         Spinner = spinnerList[Math.floor(Math.random() * spinnerList.length)];
-      } else if (spinnerMap[spinnerName]) {
-        Spinner = spinnerMap[spinnerName];
-      }
-      color = color || colors[Math.floor(Math.random() * colors.length)];
-    //});
+    } else if (spinnerMap[spinnerName]) {
+        Spinner = spinnerMap[spinnerName] || BarLoader;
+    }
+    color = color || colors[Math.floor(Math.random() * colors.length)];
+    
   </script>
   
   <svelte:component

@@ -5,7 +5,7 @@ import { JSONFile } from 'lowdb/node';
 type Data = { volume: number };
 
 const defaultData: Data = { volume: 50 }; 
-const dbFile = 'settings.json';
+const dbFile = 'db.json';
 
 class LowdbAdapter {
   db: Low<{ volume: number }>;

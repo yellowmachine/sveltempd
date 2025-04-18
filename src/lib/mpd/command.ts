@@ -1,6 +1,7 @@
 import { getMPDClient } from '$lib/mpdClient';
 import type { MPDApi } from 'mpd-api';
 import { z } from 'zod';
+import { db } from '$lib/db';
 
 
 export const ChangeCardOptionsSchema = z.object({
@@ -103,19 +104,26 @@ export async function stop() {
 }
 
 export async function next() {
-    //await client.sendCommand('next');
+  await withClient((client) => client.api.playback.next());
 }
 
 export async function previous() {
-  //await client.sendCommand('previous');
+  await withClient((client) => client.api.playback.prev());
 }
 
 export async function mute() {
-    await withClient((client) => client.api.playback.setvol('0'));
+    await withClient(async (client) => {
+      db.data.volume = await getCurrentVolume(client);
+      client.api.playback.setvol('0')
+    }
+  );
 }
 
 export async function unmute() {
-    await withClient((client) => client.api.playback.setvol('30'));
+    await withClient(async (client) => {
+      await db.read(); 
+      client.api.playback.setvol(''+db.data.volume)
+    });
 }
 
 async function _volumeUp(client: Client, options?: VolumeUpOptions) {

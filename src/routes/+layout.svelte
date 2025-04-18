@@ -16,12 +16,25 @@
 		}
 		evtSource = new EventSource('/api/events');
 
-		evtSource.addEventListener('mpd-event', (e) => {
-			const data: MPDState = JSON.parse((e as MessageEvent).data);
+		// Escuchar eventos de tipo 'player'
+		evtSource.addEventListener("player", (event) => {
+			const data: MPDState = JSON.parse((event as MessageEvent).data);
 
 			if (data.state) {
 				mpdState.update(data); 
 			}
+		});
+
+		// Escuchar eventos de tipo 'playlist'
+		evtSource.addEventListener("playlist", (event) => {
+		const playlistData = JSON.parse(event.data);
+		console.log("Playlist recibida:", playlistData);
+		// ...actualiza la UI o el estado de la app
+		});
+
+		// (Opcional) Escuchar errores de conexión
+		evtSource.addEventListener("error", (event) => {
+		console.error("Error SSE:", event);
 		});
 
 		evtSource.onerror = (err) => {

@@ -10,19 +10,27 @@ type SSEController = ReadableStreamDefaultController<Uint8Array>;
 export const clients = new Set<SSEController>();
 
 export async function startListening() {
-    const client: EventEmitter = await mpdApi.connect({
-      host: 'localhost',
-      port: 6600,
-    });
+  const client = await mpdApi.connect({
+    host: 'localhost',
+    port: 6600,
+  });
 
-    console.log('Conectado al servidor MPD para eventos.');
+  console.log('Conectado al servidor MPD para eventos.');
 
-    client.on('system', (name: string) => {
-        console.log('MPD system event:', name);
-        broadcast('system')
-    });
-
+  client.on('system', (name) => {
+      if (name === 'player') {
+          // Evento relacionado con el estado de reproducción (play, pause, stop, cambio de canción)
+          console.log('MPD player event');
+          broadcast(name); // Aquí puedes enviar el nuevo estado a los clientes
+      }
+      if (name === 'playlist') {
+          // Evento relacionado con cambios en la playlist
+          console.log('MPD playlist event');
+          broadcast(name); // Aquí puedes enviar la nueva playlist a los clientes
+      }
+  });
 }
+
 
 function sseFormat(event: string, data: unknown): string {
     return `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
@@ -41,24 +49,44 @@ async function currentSong(){
 }
 
 export async function broadcast(event: string) {
-  let status, client;
+  let msg;
 
-  try{
-    client = await mpdApi.connect({ host: 'localhost', port: 6600 });
-    status = {...await client.api.status.get(), currentSong: await currentSong() }
-  }finally{
-    if(client) client.disconnect()
+  if(event === 'playlist') {
+    try {
+      const { stdout } = await execAsync('mpc playlist');
+      const playlist = stdout.trim().split('\n').map((line) => {
+        const [artist, ...songParts] = line.trim().split(' - ');
+        const song = songParts.join(' - ');
+        return { artist: artist || '', song: song || '' };
+      });
+      msg = { playlist };
+    } catch {
+      msg = { playlist: [] };
+    }
+  } else {
+    let status, client;
+    try{
+      client = await mpdApi.connect({ host: 'localhost', port: 6600 });
+      msg = status = {...await client.api.status.get(), currentSong: await currentSong() }
+    }finally{
+      try{
+        if(client) client.disconnect()
+      }catch(e){
+        console.error('Error al desconectar del cliente MPD:', e);
+      }
+    }
+    
   }
   
-
-  const message = sseFormat(event, status);
-  const encoded = new TextEncoder().encode(message);
-
-  for (const client of clients) {
-    try {
-      client.enqueue(encoded);
-    } catch {
-      clients.delete(client);
+  if (msg) {
+    const message = sseFormat(event, msg);
+    const encoded = new TextEncoder().encode(message);
+    for (const client of clients) {
+      try {
+        client.enqueue(encoded);
+      } catch {
+        clients.delete(client);
+      }
     }
   }
 }

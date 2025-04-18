@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { mpdState } from "$lib/stores";
+    import { mpdStatus } from "$lib/stores";
 	
     let loading = $state(false);
 	let error = $state<string | null>(null);
@@ -61,7 +61,7 @@
 	<button onclick={pause} aria-label="Pause" disabled={loading}>⏸️</button>
 	<button onclick={next} aria-label="Siguiente" disabled={loading}>⏭️</button>
 	<button onclick={volumeDown} aria-label="Bajar volumen" disabled={loading}>🔉</button>
-	<span>Volumen: {mpdState.value?.volume}</span>
+	<span>Volumen: {mpdStatus.value?.volume}</span>
     <button onclick={volumeUp} aria-label="Subir volumen" disabled={loading}>🔊</button>
 </div>
 

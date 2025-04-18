@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { mpdState } from '$lib/stores';
-	import type { MPDState } from '$lib/mpdState.types';
-	import PlaybackBar from '$lib/components/PlaybackBar.svelte';
+	import { mpdStatus } from '$lib/stores';
+	import type { MPDStatus } from '$lib/types/index';
+	import Player from '$lib/components/Player.svelte';
 
 	let { children } = $props();
 
@@ -18,23 +18,23 @@
 
 		// Escuchar eventos de tipo 'player'
 		evtSource.addEventListener("player", (event) => {
-			const data: MPDState = JSON.parse((event as MessageEvent).data);
+			const data: MPDStatus = JSON.parse((event as MessageEvent).data);
 
 			if (data.state) {
-				mpdState.update(data); 
+				mpdStatus.update(data); 
 			}
 		});
 
 		// Escuchar eventos de tipo 'playlist'
 		evtSource.addEventListener("playlist", (event) => {
-		const playlistData = JSON.parse(event.data);
-		console.log("Playlist recibida:", playlistData);
-		// ...actualiza la UI o el estado de la app
+			const playlistData = JSON.parse(event.data);
+			console.log("Playlist recibida:", playlistData);
+			// ...actualiza la UI o el estado de la app
 		});
 
 		// (Opcional) Escuchar errores de conexión
 		evtSource.addEventListener("error", (event) => {
-		console.error("Error SSE:", event);
+			console.error("Error SSE:", event);
 		});
 
 		evtSource.onerror = (err) => {
@@ -62,5 +62,5 @@
 	});
 </script>
 
-<PlaybackBar />
+<Player />
 {@render children()}

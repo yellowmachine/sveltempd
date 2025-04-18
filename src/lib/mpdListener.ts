@@ -1,4 +1,4 @@
-import type { EventEmitter } from 'events';
+//import type { EventEmitter } from 'events';
 import mpdApi from 'mpd-api';
 import { exec } from 'child_process';
 import { promisify } from 'node:util';
@@ -48,39 +48,53 @@ async function currentSong(){
   }
 }
 
+async function playlistMsg(){
+  let msg;
+
+  try {
+    const { stdout } = await execAsync('mpc playlist');
+    const playlist = stdout.trim().split('\n').map((line) => {
+      const [artist, ...songParts] = line.trim().split(' - ');
+      const song = songParts.join(' - ');
+      return { artist: artist || '', song: song || '' };
+    });
+    msg = { playlist };
+  } catch {
+    msg = { playlist: [] };
+  }
+
+  return msg;
+}
+
+async function playerMsg(){
+  let msg, status, client;
+  try{
+    client = await mpdApi.connect({ host: 'localhost', port: 6600 });
+    msg = status = {...await client.api.status.get(), currentSong: await currentSong() }
+  }finally{
+    try{
+      if(client) client.disconnect()
+    }catch(e){
+      console.error('Error al desconectar del cliente MPD:', e);
+    }
+  }
+  return msg;
+}
+
 export async function broadcast(event: string) {
   let msg;
 
   if(event === 'playlist') {
-    try {
-      const { stdout } = await execAsync('mpc playlist');
-      const playlist = stdout.trim().split('\n').map((line) => {
-        const [artist, ...songParts] = line.trim().split(' - ');
-        const song = songParts.join(' - ');
-        return { artist: artist || '', song: song || '' };
-      });
-      msg = { playlist };
-    } catch {
-      msg = { playlist: [] };
-    }
+    msg = await playlistMsg();
+  } else if(event === 'player') {
+    msg = await playerMsg();
   } else {
-    let status, client;
-    try{
-      client = await mpdApi.connect({ host: 'localhost', port: 6600 });
-      msg = status = {...await client.api.status.get(), currentSong: await currentSong() }
-    }finally{
-      try{
-        if(client) client.disconnect()
-      }catch(e){
-        console.error('Error al desconectar del cliente MPD:', e);
-      }
-    }
-    
+    msg = null;
   }
   
   if (msg) {
-    const message = sseFormat(event, msg);
-    const encoded = new TextEncoder().encode(message);
+    const sseFormatMsg = sseFormat(event, msg);
+    const encoded = new TextEncoder().encode(sseFormatMsg);
     for (const client of clients) {
       try {
         client.enqueue(encoded);

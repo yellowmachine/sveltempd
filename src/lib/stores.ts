@@ -1,10 +1,10 @@
-import type { MPDState } from './mpdState.types';
+import type { MPDStatus } from '$lib/types/index';
 
-export function createMPDState() {
-  let state: MPDState | null = $state(null);
+function createMPDStore() {
+  let state: MPDStatus | null = $state(null);
 
   return {
-    update(newState: MPDState) {
+    update(newState: MPDStatus) {
       state = { ...newState };
     },
     get value() {
@@ -13,4 +13,19 @@ export function createMPDState() {
   };
 }
 
-export const mpdState = createMPDState();
+export const mpdStatus = createMPDStore();
+
+function createPlaylistStore() {
+  let playlist: Array<{ artist: string; song: string }> = $state([]);
+
+  return {
+    update(newPlaylist: Array<{ artist: string; song: string }>) {
+      playlist = [...newPlaylist];
+    },
+    get value() {
+      return playlist;
+    }
+  };
+}
+
+export const playlistStore = createPlaylistStore();

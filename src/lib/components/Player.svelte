@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { CommandOptions } from '$lib/mpd/command';
     import Icon from '@iconify/svelte';
 	import { Jumper } from 'svelte-loading-spinners';
 
@@ -7,7 +8,7 @@
     let loading = $state(false);
 	let error = $state<string | null>(null);
 
-	async function sendCommand(command: string) {
+	async function sendCommand(options: CommandOptions) {
 		loading = true;
 		error = null;
 		try {
@@ -15,7 +16,7 @@
 			await fetch('/api/command', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ command })
+				body: JSON.stringify({ ...options })
 			});
 			//if (!res.ok) {
 			//	const { error: msg } = await res.json();
@@ -28,12 +29,12 @@
 		}
 	}
 
-	function play() { sendCommand('play'); }
-	function pause() { sendCommand('pause'); }
-	function next() { sendCommand('next'); }
-	function previous() { sendCommand('previous'); }
-	function volumeUp() { sendCommand('volume_up'); }
-	function volumeDown() { sendCommand('volume_down'); }
+	function play() { sendCommand({command: "play"}); }
+	function pause() { sendCommand({command: "pause"}); }
+	function next() { sendCommand({command: "next"}); }
+	function previous() { sendCommand({command: "prev"}); }
+	function volumeUp() { sendCommand({command: "volumeUp", amount: 10}); }
+	function volumeDown() { sendCommand({command: "volumeDown", amount: 10}); }
 </script>
 
 <div class="flex items-center gap-4 border-2 rounded-md p-4 w-max">

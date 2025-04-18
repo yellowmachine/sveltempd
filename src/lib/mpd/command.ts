@@ -42,6 +42,14 @@ export const PauseOptionsSchema = z.object({
   command: z.literal('pause')
 });
 
+export const NextOptionsSchema = z.object({
+  command: z.literal('next')
+});
+
+export const PrevOptionsSchema = z.object({
+  command: z.literal('prev')
+});
+
 export const CommandOptionsSchema = z.union([
   ChangeCardOptionsSchema,
   ListCardsOptionsSchema,
@@ -50,7 +58,9 @@ export const CommandOptionsSchema = z.union([
   PlayOptionsSchema,
   PauseOptionsSchema,
   MuteOptionsSchema,
-  UnmuteOptionsSchema
+  UnmuteOptionsSchema,
+  NextOptionsSchema,
+  PrevOptionsSchema
 ]);
 
 export type ChangeCardOptions = z.infer<typeof ChangeCardOptionsSchema>;
@@ -61,34 +71,14 @@ export type MuteOptions = z.infer<typeof MuteOptionsSchema>;
 export type UnmuteOptions = z.infer<typeof UnmuteOptionsSchema>;
 export type PlayOptions = z.infer<typeof PlayOptionsSchema>;
 export type PauseOptions = z.infer<typeof PauseOptionsSchema>;
+export type NextOptions = z.infer<typeof NextOptionsSchema>;
+export type PrevOptions = z.infer<typeof PrevOptionsSchema>;
 
 export type CommandOptions = z.infer<typeof CommandOptionsSchema>;
 
 type Client = MPDApi.ClientAPI;
 type VolumeObj = {
     volume: number;
-}
-
-async function getCurrentVolume(client: MPDApi.ClientAPI){
-    const obj = await client.api.playback.getvol() as VolumeObj
-    if (typeof obj.volume === 'number') { 
-        return obj.volume;
-      }
-      // Maneja el caso en que no haya mezclador
-      throw new Error('No hay mezclador disponible');
-}
-
-async function withClient<T>(fn: (client: Client) => Promise<T>): Promise<T> {
-  const client = await getMPDClient();
-  try {
-    return await fn(client);
-  } finally {
-    try{
-        await client.disconnect();
-    }catch(e){
-        console.error('Error al desconectar el cliente MPD:', e);
-    }    
-  }
 }
 
 class Player {
@@ -122,42 +112,32 @@ class Player {
     throw new Error('No hay mezclador disponible');
   }
 
+  private async setVol(vol: number) {
+    await this.client.api.playback.setvol('' + vol);
+  }
+
   async mute() {
     await db.setVolume(await this.getCurrentVolume());
-    await this.client.api.playback.setvol('0');
+    await this.setVol(0);
   }
 
   async unmute() {
-    await this.client.api.playback.setvol('' + await db.getVolume());
+    await this.setVol(await db.getVolume());
   }
 
   async volumeUp(options?: VolumeUpOptions) {
     const currentVolume = await this.getCurrentVolume();
     const newVolume = Math.min(currentVolume + (options?.amount ?? 5), 100);
-    await this.client.api.playback.setvol('' + newVolume);
+    await this.setVol(newVolume);
   }
   async volumeDown(options?: VolumeDownOptions) {
     const currentVolume = await this.getCurrentVolume();
     const newVolume = Math.max(currentVolume - (options?.amount ?? 5), 0);
-    await this.client.api.playback.setvol('' + newVolume);
+    await this.setVol(newVolume);
   }
   async stop() {
     await this.client.api.playback.stop();
   }
-  /*
-  async getStatus() {
-    const status = await this.client.api.playback.status();
-    return status;
-  }
-  async getCurrentSong() {
-    const currentSong = await this.client.api.playback.currentsong();
-    return currentSong;
-  }
-  async getPlaylist() {
-    const playlist = await this.client.api.playback.playlistinfo();
-    return playlist;
-  }
-    */
 }
 
 let playerSingleton: Player | null = null;

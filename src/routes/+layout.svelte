@@ -1,19 +1,26 @@
 <script lang="ts">
 	import '../app.css';
 	import { onDestroy, onMount } from 'svelte';
-	import { mpdStatus, currentSong } from '$lib/stores.svelte';
+	import { mpdStatus, getCurrentSong } from '$lib/stores.svelte';
 	import type { MPDStatus } from '$lib/types/index';
 	import Player from '$lib/components/Player.svelte';
 	import SongInfo from '$lib/components/SongInfo.svelte';
+	import { page } from '$app/state';
 
 
-	let { children } = $props();
+	let { children } = $props();	
 	let evtSource: EventSource | null = null;
 	let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 	let reconnectDelay = 2000; 
 
+	const currentSong = getCurrentSong();
+
 	onMount(() => {
 		connectEventSource();
+	});
+
+	$effect(() => {
+    	mpdStatus.update(page.data.status);
 	});
 
 	function connectEventSource() {
@@ -64,6 +71,6 @@
 	});
 </script>
 
-<Player volume={mpdStatus.value?.volume} playing={mpdStatus.value?.currentSong ? true: false }/>
+<Player volume={mpdStatus.value?.volume} playing={false }/>
 <SongInfo song={currentSong} />
 {@render children()}

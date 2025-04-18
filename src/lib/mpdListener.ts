@@ -1,7 +1,6 @@
-//import type { EventEmitter } from 'events';
-import mpdApi from 'mpd-api';
 import { exec } from 'child_process';
 import { promisify } from 'node:util';
+import { getMPDClient } from './mpdClient';
 
 const execAsync = promisify(exec);
 type SSEController = ReadableStreamDefaultController<Uint8Array>;
@@ -9,10 +8,7 @@ type SSEController = ReadableStreamDefaultController<Uint8Array>;
 export const clients = new Set<SSEController>();
 
 export async function startListening() {
-  const client = await mpdApi.connect({
-    host: 'localhost',
-    port: 6600,
-  });
+  const client = await getMPDClient();
 
   console.log('Conectado al servidor MPD para eventos.');
 
@@ -33,18 +29,6 @@ export async function startListening() {
 
 function sseFormat(event: string, data: unknown): string {
     return `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
-  }
-
-async function currentSong(){
-  try {
-    const { stdout } = await execAsync('mpc current');
-    const [artist, ...songParts] = stdout.trim().split(' - ');
-    const song = songParts.join(' - ');
-
-    return { artist: artist || '', song: song || '' };
-  } catch {
-    return null;
-  }
 }
 
 async function playlistMsg(){
@@ -66,10 +50,10 @@ async function playlistMsg(){
 }
 
 async function playerMsg(){
-  let msg, status, client;
+  let msg, client;
   try{
-    client = await mpdApi.connect({ host: 'localhost', port: 6600 });
-    msg = status = {...await client.api.status.get(), currentSong: await currentSong() }
+    client = await getMPDClient();
+    msg = {...await client.api.status.get() }
   }finally{
     try{
       if(client) client.disconnect()

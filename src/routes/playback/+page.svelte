@@ -1,6 +1,8 @@
 <script lang="ts">
     import SongInfo from "$lib/components/SongInfo.svelte";
-    import { currentSong } from "$lib/stores.svelte";
+    import { getCurrentSong } from "$lib/stores.svelte";
+
+    const currentSong = getCurrentSong();
 
 </script>
 

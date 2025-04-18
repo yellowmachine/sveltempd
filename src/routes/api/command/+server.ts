@@ -1,7 +1,6 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { exec } from 'child_process';
 import fs from 'fs/promises';
-import type { MPDApi } from 'mpd-api';
 import { play, pause, volumeDown, volumeUp, mute, unmute } from '$lib/mpd/command';
 import type { ChangeCardOptions, CommandOptions } from '$lib/mpd/command';
   

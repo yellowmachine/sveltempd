@@ -81,7 +81,7 @@
         {/if}
       </div>
     {:else}
-      <p>Cargando información...</p>
+      <p>no release...</p>
     {/if}
   {/if}
   

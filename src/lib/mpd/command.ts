@@ -1,4 +1,4 @@
-import mpdApi from 'mpd-api';
+import { getMPDClient } from '$lib/mpdClient';
 import type { MPDApi } from 'mpd-api';
 
 type Client = MPDApi.ClientAPI;
@@ -66,7 +66,7 @@ async function getCurrentVolume(client: MPDApi.ClientAPI){
 }
 
 async function withClient<T>(fn: (client: Client) => Promise<T>): Promise<T> {
-  const client = await mpdApi.connect({ host: 'localhost', port: 6600 });
+  const client = await getMPDClient();
   try {
     return await fn(client);
   } finally {

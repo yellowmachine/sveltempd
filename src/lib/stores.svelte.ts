@@ -30,8 +30,9 @@ function createPlaylistStore() {
 
 export const playlist = createPlaylistStore();
 
-export const currentSong = $derived.by( () => {
+const currentSong = $derived.by( () => {
   const current = mpdStatus.value?.songid;
+
   if (!current) return null;
   if (!playlist.value) return null;
   if (!playlist.value[current]) return null;
@@ -41,3 +42,7 @@ export const currentSong = $derived.by( () => {
     artist: song.artist
   };
 });
+
+export function getCurrentSong() {
+  return currentSong;
+}

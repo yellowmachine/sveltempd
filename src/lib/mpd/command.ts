@@ -91,38 +91,38 @@ async function withClient<T>(fn: (client: Client) => Promise<T>): Promise<T> {
   }
 }
 
-function client(
-  target: any,
-  propertyKey: string,
-  descriptor: PropertyDescriptor
-) {
-  const original = descriptor.value;
-  descriptor.value = async function (...args: any[]) {
-    return await withClient((client: Client) => original.apply(this, [client, ...args]));
-  };
-  return descriptor;
-}
-
 class Player {
-  @client
-  async play() {
-    const client = arguments[0];
-    return client.api.playback.play();
+  private client: Client;
+
+  constructor(client: any) {
+    this.client = client;
   }
 
-  @client
-  async pause(client: Client) {
-    return client.api.playback.pause();
+  async play() {
+    return this.client.api.playback.play();
+  }
+
+  async pause() {
+    return this.client.api.playback.pause();
   }
 
   // ...otros métodos
 }
 
-// Exporta el singleton
-export const player = new Player();
+let playerSingleton: Player | null = null;
+
+export async function getPlayer(): Promise<Player> {
+  if (!playerSingleton) {
+    const client = await getMPDClient();
+    playerSingleton = new Player(client);
+  }
+  return playerSingleton;
+}
 
 export async function play() {
-    await withClient((client) => client.api.playback.play());
+    const player = await getPlayer();
+    return await player.play();
+    //await withClient((client) => client.api.playback.play());
 }
 
 export async function pause() {

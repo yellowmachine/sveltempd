@@ -1,7 +1,7 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { exec } from 'child_process';
 import fs from 'fs/promises';
-import { player, play, pause, volumeDown, volumeUp, mute, unmute, CommandOptionsSchema } from '$lib/mpd/command';
+import { getPlayer, pause, volumeDown, volumeUp, mute, unmute, CommandOptionsSchema } from '$lib/mpd/command';
 import type { ChangeCardOptions, CommandOptions } from '$lib/mpd/command';
   
 
@@ -60,6 +60,7 @@ async function commandHandler(options: CommandOptions){
         const cards = await getSoundCards()
         return {success: true, payload: cards}
     } else if (options.command === 'play') {
+        const player = await getPlayer();
         await player.play();
     } else if (options.command === 'pause') {
         await pause();

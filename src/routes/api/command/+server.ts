@@ -1,59 +1,9 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { exec } from 'child_process';
 import fs from 'fs/promises';
-import mpd from 'mpd-api';
 import type { MPDApi } from 'mpd-api';
-
-
-interface ChangeCardOptions {
-    command: 'changeCard';
-    host: string;
-    deviceIndex: string | number;
-  }
-
-interface ListCardsOptions {
-    command: 'listCards';
-    host: string;
-    deviceIndex: string | number;
-  }  
-
-interface VolumeUpOptions {
-    command: 'volumeUp';
-    // Puedes agregar más campos si lo necesitas, por ejemplo, cantidad
-    amount?: number;
-  }
-  
-interface VolumeDownOptions {
-    command: 'volumeDown';
-    amount?: number;
-  }
-  
-interface MuteOptions {
-    command: 'mute';
-  }
-  
-interface UnmuteOptions {
-    command: 'unmute';
-  }
-  
-interface PlayOptions {
-    command: 'play';
-}
-
-interface PauseOptions {
-    command: 'pause';
-}
-
-  // Unión de todas las opciones posibles
-type CommandOptions =
-    | ChangeCardOptions
-    | ListCardsOptions
-    | VolumeUpOptions
-    | VolumeDownOptions
-    | PlayOptions
-    | PauseOptions
-    | MuteOptions
-    | UnmuteOptions;
+import { play, pause, volumeDown, volumeUp, mute, unmute } from '$lib/mps/command';
+import type { ChangeCardOptions, CommandOptions } from '$lib/mps/command';
   
 
 async function getSoundCards(): Promise<string[]> {
@@ -82,7 +32,7 @@ async function changeActiveCard(options: ChangeCardOptions): Promise<void> {
   const filePath = '/etc/default/snapclient';
 
   let content = await fs.readFile(filePath, 'utf-8');
-  const newLine = `SNAPCLIENT_OPTS="-h ${host} -s ${deviceIndex}"`;
+  const newLine = `SNAPCLIENT_OPTS="-h ${host} -s ${deviceIndex}" --latency 100`;
   const regex = /^SNAPCLIENT_OPTS=.*$/m;
 
   if (regex.test(content)) {
@@ -104,18 +54,7 @@ async function changeActiveCard(options: ChangeCardOptions): Promise<void> {
   });
 }
 
-type VolumeObj = { volume: number };
-
-async function getCurrentVolume(client: MPDApi.ClientAPI){
-    const obj = await client.api.playback.getvol() as VolumeObj
-    if (typeof obj.volume === 'number') { 
-        return obj.volume;
-      }
-      // Maneja el caso en que no haya mezclador
-      throw new Error('No hay mezclador disponible');
-}
-
-export async function commandHandler(options: CommandOptions): Promise<{success?: boolean, error?: string, payload?: unknown}> {
+async function commandHandler(options: CommandOptions){
     if (options.command === 'changeCard') {
       await changeActiveCard(options);
       return { success: true };
@@ -123,31 +62,17 @@ export async function commandHandler(options: CommandOptions): Promise<{success?
         const cards = await getSoundCards()
         return {success: true, payload: cards}
     } else if (options.command === 'play') {
-        return await executeCommand((client) => client.api.playback.play())
+        await play();
     } else if (options.command === 'pause') {
-        return await executeCommand((client) => client.api.playback.pause())
+        await pause();
     } else if (options.command === 'volumeUp') {
-        return await executeCommand(async (client) => {
-            const currentVolume = await getCurrentVolume(client); 
-            const newVolume = Math.min(currentVolume + (options.amount ?? 5), 100);
-            await client.api.playback.setvol(''+newVolume);
-        })
+        await volumeUp(options);
     } else if (options.command === 'volumeDown') {
-        return await executeCommand(async (client) => {
-            const currentVolume = await getCurrentVolume(client); 
-            const newVolume = Math.max(currentVolume - (options.amount ?? 5), 0);
-            await client.api.playback.setvol(''+newVolume);
-        })
+        await volumeDown(options);
     } else if (options.command === 'mute') {
-        return await executeCommand(async (client) => {
-            await client.api.playback.setvol('0');
-        })
-  
+        await mute();
     } else if (options.command === 'unmute') {
-        return await executeCommand(async (client) => {
-            await client.api.playback.setvol('30');
-        })
-  
+        await unmute();
     } else {
       throw new Error('Comando no soportado');
     }
@@ -159,30 +84,6 @@ export type Command = (
     options?: CommandOptions
   ) => Promise<void>;
 
-async function executeCommand(command: Command, options?: CommandOptions) {
-    let client: MPDApi.ClientAPI | null = null;
-    try {
-        client = await mpd.connect({ host: 'localhost', port: 6600 });
-        await command(client, options);
-        return {success: true}
-        //return {result: client.api.status.get()};
-    } catch(error: unknown){
-        //return { error: error?.message || 'Error ejecutando comando MPD' };
-        const message = error instanceof Error
-            ? error.message
-            : 'Error interno';
-
-        return { error: message || 'Error ejecutando comando MPD' };
-    } finally {
-        if (client) {
-            try {
-              await client.disconnect();
-            } catch {
-              // Ignora errores de desconexión
-            }
-        }
-    }
-  }
   
 export const POST: RequestHandler = async ({ request }) => {
     try {

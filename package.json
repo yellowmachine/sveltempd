@@ -15,7 +15,7 @@
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
-		"storybook": "storybook dev -p 6006",
+		"storybook": "storybook dev -p 6006 --no-open",
 		"build-storybook": "storybook build"
 	},
 	"devDependencies": {
@@ -63,7 +63,8 @@
 	},
 	"dependencies": {
 		"@inlang/paraglide-js": "^2.0.0",
-		"mpd-api": "^1.1.2"
+		"mpd-api": "^1.1.2",
+		"zod": "^3.24.3"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [

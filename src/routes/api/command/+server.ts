@@ -1,7 +1,7 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { exec } from 'child_process';
 import fs from 'fs/promises';
-import { play, pause, volumeDown, volumeUp, mute, unmute } from '$lib/mpd/command';
+import { play, pause, volumeDown, volumeUp, mute, unmute, CommandOptionsSchema } from '$lib/mpd/command';
 import type { ChangeCardOptions, CommandOptions } from '$lib/mpd/command';
   
 
@@ -78,14 +78,14 @@ async function commandHandler(options: CommandOptions){
     
 export const POST: RequestHandler = async ({ request }) => {
     try {
-      const options = await request.json() as CommandOptions;
-  
-      // Opcional: puedes validar que options tenga 'command'
-      if (!options || typeof options.command !== 'string') {
-        return json({ error: 'Comando no soportado' }, { status: 400 });
+      const body = await request.json() as CommandOptions;
+      const options = CommandOptionsSchema.safeParse(body);
+
+      if (!options.success) {
+        return json({ error: 'Comando no soportado', details: options.error.errors }, { status: 400 });
       }
   
-      const result = await commandHandler(options);
+      const result = await commandHandler(options.data);
   
       return json({ success: true, result });
     } catch (error: unknown) {

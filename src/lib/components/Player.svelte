@@ -10,7 +10,8 @@
 		loading = true;
 		error = null;
 		try {
-			const res = await fetch('/api/command', {
+			//const res = 
+			await fetch('/api/command', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ command })

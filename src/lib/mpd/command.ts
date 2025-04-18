@@ -1,60 +1,72 @@
 import { getMPDClient } from '$lib/mpdClient';
 import type { MPDApi } from 'mpd-api';
+import { z } from 'zod';
+
+
+export const ChangeCardOptionsSchema = z.object({
+  command: z.literal('changeCard'),
+  host: z.string(),
+  deviceIndex: z.union([z.string(), z.number()])
+});
+
+export const ListCardsOptionsSchema = z.object({
+  command: z.literal('listCards'),
+  host: z.string(),
+  deviceIndex: z.union([z.string(), z.number()])
+});
+
+export const VolumeUpOptionsSchema = z.object({
+  command: z.literal('volumeUp'),
+  amount: z.number().optional()
+});
+
+export const VolumeDownOptionsSchema = z.object({
+  command: z.literal('volumeDown'),
+  amount: z.number().optional()
+});
+
+export const MuteOptionsSchema = z.object({
+  command: z.literal('mute')
+});
+
+export const UnmuteOptionsSchema = z.object({
+  command: z.literal('unmute')
+});
+
+export const PlayOptionsSchema = z.object({
+  command: z.literal('play')
+});
+
+export const PauseOptionsSchema = z.object({
+  command: z.literal('pause')
+});
+
+export const CommandOptionsSchema = z.union([
+  ChangeCardOptionsSchema,
+  ListCardsOptionsSchema,
+  VolumeUpOptionsSchema,
+  VolumeDownOptionsSchema,
+  PlayOptionsSchema,
+  PauseOptionsSchema,
+  MuteOptionsSchema,
+  UnmuteOptionsSchema
+]);
+
+export type ChangeCardOptions = z.infer<typeof ChangeCardOptionsSchema>;
+export type ListCardsOptions = z.infer<typeof ListCardsOptionsSchema>;
+export type VolumeUpOptions = z.infer<typeof VolumeUpOptionsSchema>;
+export type VolumeDownOptions = z.infer<typeof VolumeDownOptionsSchema>;
+export type MuteOptions = z.infer<typeof MuteOptionsSchema>;
+export type UnmuteOptions = z.infer<typeof UnmuteOptionsSchema>;
+export type PlayOptions = z.infer<typeof PlayOptionsSchema>;
+export type PauseOptions = z.infer<typeof PauseOptionsSchema>;
+
+export type CommandOptions = z.infer<typeof CommandOptionsSchema>;
 
 type Client = MPDApi.ClientAPI;
-type MpdCommandOptions = Record<string, any>;
-type VolumeObj = { volume: number };
-
-
-export interface ChangeCardOptions {
-    command: 'changeCard';
-    host: string;
-    deviceIndex: string | number;
-  }
-
-interface ListCardsOptions {
-    command: 'listCards';
-    host: string;
-    deviceIndex: string | number;
-  }  
-
-interface VolumeUpOptions {
-    command: 'volumeUp';
-    // Puedes agregar más campos si lo necesitas, por ejemplo, cantidad
-    amount?: number;
-  }
-  
-interface VolumeDownOptions {
-    command: 'volumeDown';
-    amount?: number;
-  }
-  
-interface MuteOptions {
-    command: 'mute';
-  }
-  
-interface UnmuteOptions {
-    command: 'unmute';
-  }
-  
-interface PlayOptions {
-    command: 'play';
+type VolumeObj = {
+    volume: number;
 }
-
-interface PauseOptions {
-    command: 'pause';
-}
-
-  // Unión de todas las opciones posibles
-export type CommandOptions =
-    | ChangeCardOptions
-    | ListCardsOptions
-    | VolumeUpOptions
-    | VolumeDownOptions
-    | PlayOptions
-    | PauseOptions
-    | MuteOptions
-    | UnmuteOptions;
 
 async function getCurrentVolume(client: MPDApi.ClientAPI){
     const obj = await client.api.playback.getvol() as VolumeObj
@@ -106,22 +118,22 @@ export async function unmute() {
     await withClient((client) => client.api.playback.setvol('30'));
 }
 
-async function _volumeUp(client: Client, options?: MpdCommandOptions) {
+async function _volumeUp(client: Client, options?: VolumeUpOptions) {
     const currentVolume = await getCurrentVolume(client);
     const newVolume = Math.min(currentVolume + (options?.amount ?? 5), 100);
     await client.api.playback.setvol('' + newVolume);
 }
 
-async function _volumeDown(client: Client, options?: MpdCommandOptions) {
+async function _volumeDown(client: Client, options?: VolumeDownOptions) {
     const currentVolume = await getCurrentVolume(client);
     const newVolume = Math.max(currentVolume - (options?.amount ?? 5), 0);
     await client.api.playback.setvol('' + newVolume);
 }
 
-export async function volumeUp(options?: MpdCommandOptions) {
+export async function volumeUp(options?: VolumeUpOptions) {
     await withClient((client) => _volumeUp(client, options));
 }
 
-export async function volumeDown(options?: MpdCommandOptions) {
+export async function volumeDown(options?: VolumeDownOptions) {
     await withClient((client) => _volumeDown(client, options));
 }

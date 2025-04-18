@@ -38,8 +38,8 @@ async function playlistMsg(){
     const { stdout } = await execAsync('mpc playlist');
     const playlist = stdout.trim().split('\n').map((line) => {
       const [artist, ...songParts] = line.trim().split(' - ');
-      const song = songParts.join(' - ');
-      return { artist: artist || '', song: song || '' };
+      const title = songParts.join(' - ');
+      return { artist: artist || '', title: title || '' };
     });
     msg = { playlist };
   } catch {

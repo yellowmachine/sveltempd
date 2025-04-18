@@ -2,18 +2,10 @@ import fs from 'node:fs';
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
 
-const defaultData = { volume: 50 }; 
-const dbFile = 'settings.json';
+type Data = { volume: number };
 
-function withLoad(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    const original = descriptor.value;
-    descriptor.value = async function (...args: any[]) {
-      // @ts-ignore
-      await this.load();
-      return original.apply(this, args);
-    };
-    return descriptor;
-}
+const defaultData: Data = { volume: 50 }; 
+const dbFile = 'settings.json';
 
 class LowdbAdapter {
   db: Low<{ volume: number }>;
@@ -26,15 +18,23 @@ class LowdbAdapter {
     await this.db.read();
   }
 
-  @withLoad
-  async getVolume() {
-    return this.db.data.volume;
+  async getData() {
+    await this.load();
+    return this.db.data;
   }
 
-  @withLoad
-  async setVolume(value: number) {
-    this.db.data.volume = value;
+  async setData(data: Partial<Data>) {
+    await this.load();
+    this.db.data = { ...this.db.data, ...data };
     await this.db.write();
+  }
+
+  async getVolume() {
+    return (await this.getData()).volume;
+  }
+
+  async setVolume(value: number) {
+    await this.setData({ volume: value });
   }
 
   async initialize() {

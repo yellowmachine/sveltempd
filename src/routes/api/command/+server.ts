@@ -1,7 +1,7 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { exec } from 'child_process';
 import fs from 'fs/promises';
-import { getPlayer, pause, volumeDown, volumeUp, mute, unmute, CommandOptionsSchema } from '$lib/mpd/command';
+import { getPlayer, CommandOptionsSchema } from '$lib/mpd/command';
 import type { ChangeCardOptions, CommandOptions } from '$lib/mpd/command';
   
 
@@ -54,24 +54,25 @@ async function changeActiveCard(options: ChangeCardOptions): Promise<void> {
 }
 
 async function commandHandler(options: CommandOptions){
+    const player = await getPlayer();
+
     if (options.command === 'changeCard') {
         await changeActiveCard(options);
     } else if(options.command === 'listCards'){
         const cards = await getSoundCards()
         return {success: true, payload: cards}
     } else if (options.command === 'play') {
-        const player = await getPlayer();
         await player.play();
     } else if (options.command === 'pause') {
-        await pause();
+        await player.pause();
     } else if (options.command === 'volumeUp') {
-        await volumeUp(options);
+        await player.volumeUp(options);
     } else if (options.command === 'volumeDown') {
-        await volumeDown(options);
+        await player.volumeDown(options);
     } else if (options.command === 'mute') {
-        await mute();
+        await player.mute();
     } else if (options.command === 'unmute') {
-        await unmute();
+        await player.unmute();
     } else {
       throw new Error('Comando no soportado');
     }

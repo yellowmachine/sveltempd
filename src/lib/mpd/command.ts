@@ -99,14 +99,65 @@ class Player {
   }
 
   async play() {
-    return this.client.api.playback.play();
+    await this.client.api.playback.play();
   }
 
   async pause() {
-    return this.client.api.playback.pause();
+    await this.client.api.playback.pause();
   }
 
-  // ...otros métodos
+  async next() {
+    await this.client.api.playback.next();
+  }
+
+  async prev() {
+    await this.client.api.playback.prev();
+  }
+
+  async getCurrentVolume() {
+    const obj = await this.client.api.playback.getvol() as VolumeObj
+    if (typeof obj.volume === 'number') { 
+        return obj.volume;
+    }
+    throw new Error('No hay mezclador disponible');
+  }
+
+  async mute() {
+    await db.setVolume(await this.getCurrentVolume());
+    await this.client.api.playback.setvol('0');
+  }
+
+  async unmute() {
+    await this.client.api.playback.setvol('' + await db.getVolume());
+  }
+
+  async volumeUp(options?: VolumeUpOptions) {
+    const currentVolume = await this.getCurrentVolume();
+    const newVolume = Math.min(currentVolume + (options?.amount ?? 5), 100);
+    await this.client.api.playback.setvol('' + newVolume);
+  }
+  async volumeDown(options?: VolumeDownOptions) {
+    const currentVolume = await this.getCurrentVolume();
+    const newVolume = Math.max(currentVolume - (options?.amount ?? 5), 0);
+    await this.client.api.playback.setvol('' + newVolume);
+  }
+  async stop() {
+    await this.client.api.playback.stop();
+  }
+  /*
+  async getStatus() {
+    const status = await this.client.api.playback.status();
+    return status;
+  }
+  async getCurrentSong() {
+    const currentSong = await this.client.api.playback.currentsong();
+    return currentSong;
+  }
+  async getPlaylist() {
+    const playlist = await this.client.api.playback.playlistinfo();
+    return playlist;
+  }
+    */
 }
 
 let playerSingleton: Player | null = null;
@@ -117,60 +168,4 @@ export async function getPlayer(): Promise<Player> {
     playerSingleton = new Player(client);
   }
   return playerSingleton;
-}
-
-export async function play() {
-    const player = await getPlayer();
-    return await player.play();
-    //await withClient((client) => client.api.playback.play());
-}
-
-export async function pause() {
-    await withClient((client) => client.api.playback.pause());
-}
-
-export async function stop() {
-    await withClient((client) => client.api.playback.stop());
-}
-
-export async function next() {
-  await withClient((client) => client.api.playback.next());
-}
-
-export async function previous() {
-  await withClient((client) => client.api.playback.prev());
-}
-
-export async function mute() {
-    await withClient(async (client) => {
-      await db.setVolume(await getCurrentVolume(client));
-      client.api.playback.setvol('0')
-    }
-  );
-}
-
-export async function unmute() {
-    await withClient(async (client) => {
-      client.api.playback.setvol('' + await db.getVolume())
-    });
-}
-
-async function _volumeUp(client: Client, options?: VolumeUpOptions) {
-    const currentVolume = await getCurrentVolume(client);
-    const newVolume = Math.min(currentVolume + (options?.amount ?? 5), 100);
-    await client.api.playback.setvol('' + newVolume);
-}
-
-async function _volumeDown(client: Client, options?: VolumeDownOptions) {
-    const currentVolume = await getCurrentVolume(client);
-    const newVolume = Math.max(currentVolume - (options?.amount ?? 5), 0);
-    await client.api.playback.setvol('' + newVolume);
-}
-
-export async function volumeUp(options?: VolumeUpOptions) {
-    await withClient((client) => _volumeUp(client, options));
-}
-
-export async function volumeDown(options?: VolumeDownOptions) {
-    await withClient((client) => _volumeDown(client, options));
 }

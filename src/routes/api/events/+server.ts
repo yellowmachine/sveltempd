@@ -1,4 +1,3 @@
-// src/routes/api/events/+server.ts
 import type { RequestHandler } from '@sveltejs/kit';
 import { clients } from '$lib/mpdListener';
 

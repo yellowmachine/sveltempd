@@ -2,8 +2,8 @@ import { json, type RequestHandler } from '@sveltejs/kit';
 import { exec } from 'child_process';
 import fs from 'fs/promises';
 import type { MPDApi } from 'mpd-api';
-import { play, pause, volumeDown, volumeUp, mute, unmute } from '$lib/mps/command';
-import type { ChangeCardOptions, CommandOptions } from '$lib/mps/command';
+import { play, pause, volumeDown, volumeUp, mute, unmute } from '$lib/mpd/command';
+import type { ChangeCardOptions, CommandOptions } from '$lib/mpd/command';
   
 
 async function getSoundCards(): Promise<string[]> {
@@ -44,7 +44,7 @@ async function changeActiveCard(options: ChangeCardOptions): Promise<void> {
   await fs.writeFile(filePath, content, 'utf-8');
 
   await new Promise<void>((resolve, reject) => {
-    exec('systemctl restart snapclient.service', (error) => {
+    exec('systemctl restart snapclient', (error) => {
       if (error) {
         reject(error);
       } else {
@@ -56,8 +56,7 @@ async function changeActiveCard(options: ChangeCardOptions): Promise<void> {
 
 async function commandHandler(options: CommandOptions){
     if (options.command === 'changeCard') {
-      await changeActiveCard(options);
-      return { success: true };
+        await changeActiveCard(options);
     } else if(options.command === 'listCards'){
         const cards = await getSoundCards()
         return {success: true, payload: cards}
@@ -76,15 +75,8 @@ async function commandHandler(options: CommandOptions){
     } else {
       throw new Error('Comando no soportado');
     }
-  }
-  
-
-export type Command = (
-    client: MPDApi.ClientAPI,
-    options?: CommandOptions
-  ) => Promise<void>;
-
-  
+}
+    
 export const POST: RequestHandler = async ({ request }) => {
     try {
       const options = await request.json() as CommandOptions;

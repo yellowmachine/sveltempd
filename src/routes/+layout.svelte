@@ -1,14 +1,15 @@
 <script lang="ts">
+	//import '../app.css';
 	import { onDestroy } from 'svelte';
-	import { mpdStatus } from '$lib/stores';
+	import { mpdStatus } from '$lib/stores.svelte';
 	import type { MPDStatus } from '$lib/types/index';
 	import Player from '$lib/components/Player.svelte';
 
-	let { children } = $props();
 
+	let { children } = $props();
 	let evtSource: EventSource | null = null;
 	let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
-	let reconnectDelay = 2000; // ms, puedes hacerla exponencial si quieres
+	let reconnectDelay = 2000; 
 
 	function connectEventSource() {
 		if (evtSource) {
@@ -16,7 +17,6 @@
 		}
 		evtSource = new EventSource('/api/events');
 
-		// Escuchar eventos de tipo 'player'
 		evtSource.addEventListener("player", (event) => {
 			const data: MPDStatus = JSON.parse((event as MessageEvent).data);
 
@@ -25,14 +25,13 @@
 			}
 		});
 
-		// Escuchar eventos de tipo 'playlist'
 		evtSource.addEventListener("playlist", (event) => {
 			const playlistData = JSON.parse(event.data);
 			console.log("Playlist recibida:", playlistData);
 			// ...actualiza la UI o el estado de la app
 		});
 
-		// (Opcional) Escuchar errores de conexión
+
 		evtSource.addEventListener("error", (event) => {
 			console.error("Error SSE:", event);
 		});
@@ -62,5 +61,5 @@
 	});
 </script>
 
-<Player />
+<Player volume={mpdStatus.value?.volume} playing={mpdStatus.value?.currentSong ? true: false }/>
 {@render children()}

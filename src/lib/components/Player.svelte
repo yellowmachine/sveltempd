@@ -1,5 +1,7 @@
 <script lang="ts">
-    import { mpdStatus } from "$lib/stores";
+    import Icon from '@iconify/svelte';
+
+	let { playing, volume }: {playing: boolean, volume: number | undefined} = $props();
 	
     let loading = $state(false);
 	let error = $state<string | null>(null);
@@ -13,10 +15,10 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ command })
 			});
-			if (!res.ok) {
-				const { error: msg } = await res.json();
-				throw new Error(msg || 'Error en el servidor');
-			}
+			//if (!res.ok) {
+			//	const { error: msg } = await res.json();
+			//	throw new Error(msg || 'Error en el servidor');
+			//}
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Error desconocido';
 		} finally {
@@ -32,38 +34,31 @@
 	function volumeDown() { sendCommand('volume_down'); }
 </script>
 
-<style>
-	.playback-bar {
-		display: flex;
-		gap: 1rem;
-		align-items: center;
-		justify-content: center;
-		margin: 1rem 0;
-	}
-	button {
-		font-size: 1.5rem;
-		padding: 0.5rem 1rem;
-		cursor: pointer;
-	}
-	button:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-	.error {
-		color: red;
-		margin-top: 0.5rem;
-	}
-</style>
-
-<div class="playback-bar">
-	<button onclick={previous} aria-label="Anterior" disabled={loading}>⏮️</button>
-	<button onclick={play} aria-label="Play" disabled={loading}>▶️</button>
-	<button onclick={pause} aria-label="Pause" disabled={loading}>⏸️</button>
-	<button onclick={next} aria-label="Siguiente" disabled={loading}>⏭️</button>
-	<button onclick={volumeDown} aria-label="Bajar volumen" disabled={loading}>🔉</button>
-	<span>Volumen: {mpdStatus.value?.volume}</span>
-    <button onclick={volumeUp} aria-label="Subir volumen" disabled={loading}>🔊</button>
-</div>
+<div class="flex items-center gap-4">
+	<button onclick={previous} aria-label="Anterior" disabled={loading} class="h-16 flex items-center justify-center">
+	  <Icon icon="mdi:skip-previous" width="32" height="32" />
+	</button>
+	{#if playing}
+	  <button onclick={pause} aria-label="Pausar" disabled={loading} class="h-16 flex items-center justify-center">
+		<Icon icon="mdi:pause" width="64" height="64" />
+	  </button>
+	{:else}
+	  <button onclick={play} aria-label="Reproducir" disabled={loading} class="h-16 flex items-center justify-center">
+		<Icon icon="mdi:play" width="64" height="64" />
+	  </button>
+	{/if}
+	<button onclick={next} aria-label="Siguiente" disabled={loading} class="h-16 flex items-center justify-center">
+	  <Icon icon="mdi:skip-next" width="32" height="32" />
+	</button>
+	<button onclick={volumeDown} aria-label="Bajar volumen" disabled={loading} class="h-16 flex items-center justify-center">
+	  <Icon icon="mdi:volume-minus" width="32" height="32" />
+	</button>
+	<span class="mx-2">{volume}</span>
+	<button onclick={volumeUp} aria-label="Subir volumen" disabled={loading} class="h-16 flex items-center justify-center">
+	  <Icon icon="mdi:volume-plus" width="32" height="32" />
+	</button>
+  </div>
+  
 
 {#if loading}
 	<div>Cargando…</div>

@@ -2,9 +2,7 @@ import mpdApi from 'mpd-api';
 import type { MPDApi } from 'mpd-api';
 
 type Client = MPDApi.ClientAPI;
-
 type MpdCommandOptions = Record<string, any>;
-
 type VolumeObj = { volume: number };
 
 

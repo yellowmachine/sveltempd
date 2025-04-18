@@ -4,9 +4,8 @@ import { exec } from 'child_process';
 import { promisify } from 'node:util';
 
 const execAsync = promisify(exec);
-
-
 type SSEController = ReadableStreamDefaultController<Uint8Array>;
+
 export const clients = new Set<SSEController>();
 
 export async function startListening() {
@@ -21,12 +20,12 @@ export async function startListening() {
       if (name === 'player') {
           // Evento relacionado con el estado de reproducción (play, pause, stop, cambio de canción)
           console.log('MPD player event');
-          broadcast(name); // Aquí puedes enviar el nuevo estado a los clientes
+          broadcast(name); 
       }
       if (name === 'playlist') {
           // Evento relacionado con cambios en la playlist
           console.log('MPD playlist event');
-          broadcast(name); // Aquí puedes enviar la nueva playlist a los clientes
+          broadcast(name); 
       }
   });
 }

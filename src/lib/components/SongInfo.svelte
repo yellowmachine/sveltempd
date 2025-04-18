@@ -1,5 +1,7 @@
 <script lang="ts">
   	import { m } from "$lib/paraglide/messages";
+	  import RandomSpinner from "./RandomSpinner.svelte";
+
 
     let { song }: { song: {title: string; artist: string} | null } = $props();
   
@@ -82,7 +84,7 @@
         {/if}
       </div>
     {:else}
-      <p>no release...</p>
+      <RandomSpinner />
     {/if}
   {/if}
   

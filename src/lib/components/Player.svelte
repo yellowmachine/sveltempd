@@ -2,7 +2,6 @@
     import Icon from '@iconify/svelte';
 	import { Jumper } from 'svelte-loading-spinners';
 
-
 	let { playing, volume }: {playing: boolean, volume: number | undefined} = $props();
 	
     let loading = $state(false);

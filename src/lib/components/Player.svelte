@@ -1,5 +1,7 @@
 <script lang="ts">
     import Icon from '@iconify/svelte';
+	import { Jumper } from 'svelte-loading-spinners';
+
 
 	let { playing, volume }: {playing: boolean, volume: number | undefined} = $props();
 	
@@ -62,8 +64,9 @@
   
 
 {#if loading}
-	<div>Cargando…</div>
+<Jumper size="60" color="#FF3E00" unit="px" duration="1s" />
 {/if}
+
 {#if error}
 	<div class="error">{error}</div>
 {/if}

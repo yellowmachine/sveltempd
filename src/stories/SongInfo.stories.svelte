@@ -24,5 +24,6 @@
     });
   </script>
   
-  <Story name="Primary" args={{ song: {artist: "Led Zeppelin", title: "Babe, I’m Gonna Leave You"} }} />
+  <Story name="Led Zeppelin" args={{ song: {artist: "Led Zeppelin", title: "Babe, I’m Gonna Leave You"} }} />
+  <Story name="Empty" args={{ song: {artist: "", title: ""} }} />
   

@@ -24,10 +24,10 @@ async function initializeServer() {
   console.log("Inicializando el servidor...");
 
   await initializeDB(); 
-
   // Inicializar la escucha de eventos MPD
   await startListening();
   console.log("Servidor inicializado.");
+  
   hasInitialized = true;
 }
 

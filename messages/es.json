@@ -1,4 +1,8 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hola, {name} desde es!"
+	"hello_world": "Hola, {name} desde es!",
+	"ssereconnecting": "SSE error, intentando reconectar...",
+	"no_cover": "Cover no available",
+	"song_info_not_available": "No se encontró información de la canción.",
+	"unknown_error": "Error desconocido"
 }

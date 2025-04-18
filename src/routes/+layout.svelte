@@ -6,6 +6,7 @@
 	import Player from '$lib/components/Player.svelte';
 	import SongInfo from '$lib/components/SongInfo.svelte';
 	import { page } from '$app/state';
+	import { m } from '$lib/paraglide/messages';
 
 
 	let { children } = $props();	
@@ -49,7 +50,7 @@
 		});
 
 		evtSource.onerror = (err) => {
-			console.warn('SSE error, intentando reconectar...', err);
+			console.warn(m.ssereconnecting(), err);
 			evtSource?.close();
 			evtSource = null;
 

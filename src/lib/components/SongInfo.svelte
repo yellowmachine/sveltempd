@@ -1,5 +1,6 @@
 <script lang="ts">
-    // Usamos $props para recibir las propiedades
+  	import { m } from "$lib/paraglide/messages";
+
     let { song }: { song: {title: string; artist: string} | null } = $props();
   
     // Estado local reactivo para release, coverUrl y error
@@ -41,10 +42,10 @@
         if (release) {
           coverUrl = await fetchCoverArt(release.id);
         } else {
-          error = 'No se encontró información de la canción.';
+          error = m.song_info_not_available();
         }
       } catch (err) {
-        error = err instanceof Error ? err.message : 'Error desconocido';
+        error = err instanceof Error ? err.message : m.unknown_error();
       }
     }
     
@@ -77,7 +78,7 @@
         {#if coverUrl}
           <img src="{coverUrl}" alt="Carátula de {release.title}" />
         {:else}
-          <p>Carátula no disponible</p>
+          <p>{m.no_cover()}</p>
         {/if}
       </div>
     {:else}

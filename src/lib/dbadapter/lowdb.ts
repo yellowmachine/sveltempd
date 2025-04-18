@@ -13,7 +13,7 @@ function withLoad(target: any, propertyKey: string, descriptor: PropertyDescript
       return original.apply(this, args);
     };
     return descriptor;
-  }
+}
 
 class LowdbAdapter {
   db: Low<{ volume: number }>;

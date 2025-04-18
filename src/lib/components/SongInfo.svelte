@@ -1,6 +1,6 @@
 <script lang="ts">
     // Usamos $props para recibir las propiedades
-    let { currentSong } = $props<{ currentSong?: {title: string; artist: string}  }>();
+    let { song }: { song: {title: string; artist: string} | null } = $props();
   
     // Estado local reactivo para release, coverUrl y error
     let release = $state<{
@@ -12,7 +12,7 @@
     let coverUrl = $state<string | null>(null);
     let error = $state<string | null>(null);
   
-    // Funciones auxiliares
+
     async function fetchRelease(artist: string, title: string) {
       const query = encodeURIComponent(`artist:"${artist}" AND recording:"${title}"`);
       const url = `https://musicbrainz.org/ws/2/recording/?query=${query}&fmt=json&limit=1`;
@@ -34,7 +34,20 @@
       }
       return null;
     }
-  
+    
+    async function fetchInfo(artist: string, title: string) {
+      try {
+        release = await fetchRelease(artist, title);
+        if (release) {
+          coverUrl = await fetchCoverArt(release.id);
+        } else {
+          error = 'No se encontró información de la canción.';
+        }
+      } catch (err) {
+        error = err instanceof Error ? err.message : 'Error desconocido';
+      }
+    }
+    
     async function fetchCoverArt(releaseId: string) {
       const url = `https://coverartarchive.org/release/${releaseId}/front-250`;
       const res = await fetch(url, { method: 'HEAD' });
@@ -42,32 +55,15 @@
       return null;
     }
   
-    // Efecto para actualizar cuando cambian los props
     $effect(() => {
         error = null;
         release = null;
         coverUrl = null;
 
-        (async () => {
-            try {
-            const rel = await fetchRelease(currentSong.artist, currentSong.title);
-            if (!rel) {
-                error = 'No se encontró información del álbum';
-                return;
-            }
-            release = rel;
-
-            const cover = await fetchCoverArt(rel.id);
-            if (!cover) {
-                error = 'No se encontró carátula';
-            } else {
-                coverUrl = cover;
-            }
-            } catch (e: any) {
-            error = e.message || 'Error al obtener datos';
-            }
-        })();
-        });
+      if (song) {
+        fetchInfo(song.artist, song.title); 
+      }
+    });
 
   </script>
   
@@ -77,7 +73,7 @@
     {#if release}
       <div>
         <h3>{release.title} {#if release.date}({release.date}){/if}</h3>
-        <p>Artista: {currentSong.artist}</p>
+        <p>Artista: {song?.artist}</p>
         {#if coverUrl}
           <img src="{coverUrl}" alt="Carátula de {release.title}" />
         {:else}

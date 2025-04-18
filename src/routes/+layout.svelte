@@ -1,15 +1,20 @@
 <script lang="ts">
-	//import '../app.css';
-	import { onDestroy } from 'svelte';
-	import { mpdStatus } from '$lib/stores.svelte';
+	import '../app.css';
+	import { onDestroy, onMount } from 'svelte';
+	import { mpdStatus, currentSong } from '$lib/stores.svelte';
 	import type { MPDStatus } from '$lib/types/index';
 	import Player from '$lib/components/Player.svelte';
+	import SongInfo from '$lib/components/SongInfo.svelte';
 
 
 	let { children } = $props();
 	let evtSource: EventSource | null = null;
 	let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 	let reconnectDelay = 2000; 
+
+	onMount(() => {
+		connectEventSource();
+	});
 
 	function connectEventSource() {
 		if (evtSource) {
@@ -53,8 +58,6 @@
 		};
 	}
 
-	connectEventSource();
-
 	onDestroy(() => {
 		if (evtSource) evtSource.close();
 		if (reconnectTimeout) clearTimeout(reconnectTimeout);
@@ -62,4 +65,5 @@
 </script>
 
 <Player volume={mpdStatus.value?.volume} playing={mpdStatus.value?.currentSong ? true: false }/>
+<SongInfo song={currentSong} />
 {@render children()}

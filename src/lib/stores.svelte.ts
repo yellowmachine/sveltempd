@@ -28,4 +28,16 @@ function createPlaylistStore() {
   };
 }
 
-export const playlistStore = createPlaylistStore();
+export const playlist = createPlaylistStore();
+
+export const currentSong = $derived.by( () => {
+  const current = mpdStatus.value?.songid;
+  if (!current) return null;
+  if (!playlist.value) return null;
+  if (!playlist.value[current]) return null;
+  const song = playlist.value[current];
+  return {
+    title: song.song,
+    artist: song.artist
+  };
+});

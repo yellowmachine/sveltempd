@@ -34,7 +34,7 @@
 	function volumeDown() { sendCommand('volume_down'); }
 </script>
 
-<div class="flex items-center gap-4">
+<div class="flex items-center gap-4 border-2 rounded-md p-4 w-max">
 	<button onclick={previous} aria-label="Anterior" disabled={loading} class="h-16 flex items-center justify-center">
 	  <Icon icon="mdi:skip-previous" width="32" height="32" />
 	</button>

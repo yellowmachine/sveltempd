@@ -20,6 +20,7 @@ export const player = t.router({
     volume: t.procedure.input(z.object({
         amount: z.number().int(),
       })).mutation(async ({ ctx, input }) => {
+        console.log('Volume', input.amount);
         await ctx.player.volume(input.amount)
     }),
     mute: t.procedure.mutation(async ({ ctx }) => {

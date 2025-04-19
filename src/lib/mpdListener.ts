@@ -12,8 +12,16 @@ export async function startListening() {
 
   console.log('Conectado al servidor MPD para eventos.');
 
+  client.on('ready', () => {
+      console.log('MPD listo para recibir eventos.');
+      // Enviar el estado inicial al cliente
+      broadcast('playlist');
+      broadcast('player');
+  });
+
   client.on('system', (name) => {
-      if (name === 'player') {
+    console.log('Evento del sistema MPD:', name);
+      if (name === 'player' || name === 'mixer') {
           // Evento relacionado con el estado de reproducción (play, pause, stop, cambio de canción)
           console.log('MPD player event');
           broadcast(name); 
@@ -69,8 +77,9 @@ export async function broadcast(event: string) {
 
   if(event === 'playlist') {
     msg = await playlistMsg();
-  } else if(event === 'player') {
+  } else if(event === 'player' || event === 'mixer') {
     msg = await playerMsg();
+    console.log('Estado del reproductor:', msg);
   } else {
     msg = null;
   }

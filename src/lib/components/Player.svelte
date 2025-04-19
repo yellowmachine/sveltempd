@@ -55,6 +55,7 @@
 		disabled={loading}>
 		<Icon icon="mdi:volume-minus" width="32" height="32" />
 	</PlayerButton>
+	<span class="text-2xl">{volume}</span>
 	<PlayerButton
 		onClick={volumeUp}
 		ariaLabel="Subir volumen"

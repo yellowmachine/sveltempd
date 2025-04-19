@@ -9,12 +9,14 @@
     let loading = $state(false);
 	let error = $state<string | null>(null);
 
-	function play() { trpc(page).play.mutate(); }
-	function pause() { trpc(page).pause.mutate(); }
-	function next() { trpc(page).next.mutate(); }
-	function previous() { trpc(page).prev.mutate(); }
-	function volumeUp() { trpc(page).volume.mutate({ amount: 10 }); }
-	function volumeDown() { trpc(page).volume.mutate({ amount: -10 }); }
+	function play() { trpc(page).player.play.mutate(); }
+	function pause() { trpc(page).player.pause.mutate(); }
+	function next() { trpc(page).player.next.mutate(); }
+	function previous() { trpc(page).player.prev.mutate(); }
+	function volumeUp() { trpc(page).player.volume.mutate({ amount: 10 }); }
+	function volumeDown() { trpc(page).player.volume.mutate({ amount: -10 }); }
+	function mute() { trpc(page).player.mute.mutate(); }
+	function unmute() { trpc(page).player.unmute.mutate(); }
 	
 </script>
 
@@ -41,6 +43,15 @@
 	<button onclick={volumeUp} aria-label="Subir volumen" disabled={loading} class="h-16 flex items-center justify-center">
 	  <Icon icon="mdi:volume-plus" width="32" height="32" />
 	</button>
+	{#if volume !== 0}
+	<button onclick={mute} aria-label="Mute" disabled={loading} class="h-16 flex items-center justify-center">
+		<Icon icon="mdi:volume-mute" width="64" height="64" />
+	</button>
+	{:else}
+	<button onclick={unmute} aria-label="Deshacer mute" disabled={loading} class="h-16 flex items-center justify-center">
+		<Icon icon="mdi:volume-high" width="64" height="64" />
+	</button>
+	{/if}
   </div>
   
 

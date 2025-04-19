@@ -3,6 +3,7 @@
 	import { Jumper } from 'svelte-loading-spinners';
 	import { page } from '$app/state';
   	import { trpc } from '$lib/trpc/client';
+	import PlayerButton from './PlayerButton.svelte';
 
 	let { playing, volume }: {playing: boolean, volume: number | undefined} = $props();
 	
@@ -21,36 +22,59 @@
 </script>
 
 <div class="flex items-center gap-4 border-2 rounded-md p-4 w-max">
-	<button onclick={previous} aria-label="Anterior" disabled={loading} class="h-16 flex items-center justify-center">
-	  <Icon icon="mdi:skip-previous" width="32" height="32" />
-	</button>
+	<PlayerButton
+		onClick={previous}
+		ariaLabel="Anterior"
+		disabled={loading}>
+		<Icon icon="mdi:skip-previous" width="32" height="32" />
+	</PlayerButton>
 	{#if playing}
-	  <button onclick={pause} aria-label="Pausar" disabled={loading} class="h-16 flex items-center justify-center">
-		<Icon icon="mdi:pause" width="64" height="64" />
-	  </button>
+	<PlayerButton
+		onClick={pause}
+		ariaLabel="Pausar"
+		disabled={loading}>
+		<Icon icon="mdi:pause" width="32" height="32" />
+	</PlayerButton>
 	{:else}
-	  <button onclick={play} aria-label="Reproducir" disabled={loading} class="h-16 flex items-center justify-center">
-		<Icon icon="mdi:play" width="64" height="64" />
-	  </button>
+	<PlayerButton
+		onClick={play}
+		ariaLabel="Reproducir"
+		disabled={loading}>
+		<Icon icon="mdi:play" width="32" height="32" />
+	</PlayerButton>
 	{/if}
-	<button onclick={next} aria-label="Siguiente" disabled={loading} class="h-16 flex items-center justify-center">
-	  <Icon icon="mdi:skip-next" width="32" height="32" />
-	</button>
-	<button onclick={volumeDown} aria-label="Bajar volumen" disabled={loading} class="h-16 flex items-center justify-center">
-	  <Icon icon="mdi:volume-minus" width="32" height="32" />
-	</button>
-	<span class="mx-2">{volume}</span>
-	<button onclick={volumeUp} aria-label="Subir volumen" disabled={loading} class="h-16 flex items-center justify-center">
-	  <Icon icon="mdi:volume-plus" width="32" height="32" />
-	</button>
+	<PlayerButton
+		onClick={next}
+		ariaLabel="Siguiente"
+		disabled={loading}>
+		<Icon icon="mdi:skip-next" width="32" height="32" />
+	</PlayerButton>
+	<PlayerButton
+		onClick={volumeDown}
+		ariaLabel="Bajar volumen"
+		disabled={loading}>
+		<Icon icon="mdi:volume-minus" width="32" height="32" />
+	</PlayerButton>
+	<PlayerButton
+		onClick={volumeUp}
+		ariaLabel="Subir volumen"
+		disabled={loading}>
+		<Icon icon="mdi:volume-plus" width="32" height="32" />
+	</PlayerButton>
 	{#if volume !== 0}
-	<button onclick={mute} aria-label="Mute" disabled={loading} class="h-16 flex items-center justify-center">
-		<Icon icon="mdi:volume-mute" width="64" height="64" />
-	</button>
+	<PlayerButton
+		onClick={mute}
+		ariaLabel="Mute"
+		disabled={loading}>
+		<Icon icon="mdi:volume-mute" width="32" height="32" />
+	</PlayerButton>
 	{:else}
-	<button onclick={unmute} aria-label="Deshacer mute" disabled={loading} class="h-16 flex items-center justify-center">
-		<Icon icon="mdi:volume-high" width="64" height="64" />
-	</button>
+	<PlayerButton
+		onClick={unmute}
+		ariaLabel="Deshacer mute"
+		disabled={loading}>
+		<Icon icon="mdi:volume-high" width="32" height="32" />
+	</PlayerButton>
 	{/if}
   </div>
   

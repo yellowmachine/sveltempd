@@ -21,7 +21,7 @@
 	
 </script>
 
-<div class="flex items-center gap-4 border-2 rounded-md p-4 w-max">
+<div class="flex items-center gap-4 border-2 rounded-md p-4 w-max bg-white text-black dark:bg-black dark:text-white">
 	<PlayerButton
 		onClick={previous}
 		ariaLabel="Anterior"

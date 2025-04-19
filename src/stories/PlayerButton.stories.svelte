@@ -2,6 +2,7 @@
     import { defineMeta } from '@storybook/addon-svelte-csf';
     import PlayerButton from '$lib/components/PlayerButton.svelte';
     import Icon from '@iconify/svelte';
+	import DarkDecorator from './DarkDecorator.svelte';
 
 
     const { Story } = defineMeta({
@@ -24,7 +25,9 @@
 </Story>
 
 <Story name="Con icono de play">
-    <PlayerButton ariaLabel="Play">
-        <Icon icon="mdi:play" width="32" height="32" />
-    </PlayerButton>
+    <DarkDecorator>
+        <PlayerButton ariaLabel="Play">
+            <Icon icon="mdi:play" width="32" height="32" />
+        </PlayerButton>
+    </DarkDecorator>
 </Story>

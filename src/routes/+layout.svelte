@@ -25,12 +25,21 @@
 	});
 
 	function connectEventSource() {
+		console.log("Conectando a EventSource...");
 		if (evtSource) {
 			evtSource.close();
 		}
 		evtSource = new EventSource('/api/events');
 
 		evtSource.addEventListener("player", (event) => {
+			const data: MPDStatus = JSON.parse((event as MessageEvent).data);
+
+			if (data.state) {
+				mpdStatus.update(data); 
+			}
+		});
+
+		evtSource.addEventListener("mixer", (event) => {
 			const data: MPDStatus = JSON.parse((event as MessageEvent).data);
 
 			if (data.state) {

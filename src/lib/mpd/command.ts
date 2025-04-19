@@ -16,13 +16,8 @@ export const ListCardsOptionsSchema = z.object({
   deviceIndex: z.union([z.string(), z.number()])
 });
 
-export const VolumeUpOptionsSchema = z.object({
-  command: z.literal('volumeUp'),
-  amount: z.number().optional()
-});
-
-export const VolumeDownOptionsSchema = z.object({
-  command: z.literal('volumeDown'),
+export const VolumeOptionsSchema = z.object({
+  command: z.literal('volume'),
   amount: z.number().optional()
 });
 
@@ -53,8 +48,7 @@ export const PrevOptionsSchema = z.object({
 export const CommandOptionsSchema = z.union([
   ChangeCardOptionsSchema,
   ListCardsOptionsSchema,
-  VolumeUpOptionsSchema,
-  VolumeDownOptionsSchema,
+  VolumeOptionsSchema,
   PlayOptionsSchema,
   PauseOptionsSchema,
   MuteOptionsSchema,
@@ -65,8 +59,7 @@ export const CommandOptionsSchema = z.union([
 
 export type ChangeCardOptions = z.infer<typeof ChangeCardOptionsSchema>;
 export type ListCardsOptions = z.infer<typeof ListCardsOptionsSchema>;
-export type VolumeUpOptions = z.infer<typeof VolumeUpOptionsSchema>;
-export type VolumeDownOptions = z.infer<typeof VolumeDownOptionsSchema>;
+export type VolumeOptions = z.infer<typeof VolumeOptionsSchema>;
 export type MuteOptions = z.infer<typeof MuteOptionsSchema>;
 export type UnmuteOptions = z.infer<typeof UnmuteOptionsSchema>;
 export type PlayOptions = z.infer<typeof PlayOptionsSchema>;
@@ -125,14 +118,14 @@ class Player {
     await this.setVol(await db.getVolume());
   }
 
-  async volumeUp(options?: VolumeUpOptions) {
+  async volume(amount: number) {
     const currentVolume = await this.getCurrentVolume();
-    const newVolume = Math.min(currentVolume + (options?.amount ?? 5), 100);
-    await this.setVol(newVolume);
-  }
-  async volumeDown(options?: VolumeDownOptions) {
-    const currentVolume = await this.getCurrentVolume();
-    const newVolume = Math.max(currentVolume - (options?.amount ?? 5), 0);
+    let newVolume = currentVolume + amount;
+    if(newVolume > 100) {
+        newVolume = 100;
+    } else if(newVolume < 0) {
+        newVolume = 0;
+    }
     await this.setVol(newVolume);
   }
   async stop() {

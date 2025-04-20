@@ -184,7 +184,6 @@ export async function getPlayer(): Promise<Player> {
   return playerSingleton;
 }
 
-
 let playlistSingleton: Playlist | null = null;
 export async function getPlaylist(): Promise<Playlist> {
   if (!playlistSingleton) {
@@ -204,7 +203,7 @@ class Playlist {
     await this.client.api.playlists.save(name);
   }
   async list(name: string) { 
-    await this.client.api.playlists.listinfo(name);
+    return await this.client.api.playlists.listinfo(name);
   }
   async load(name: string) {
     await this.client.api.queue.clear();
@@ -219,5 +218,31 @@ class Playlist {
   }
   async clear(name: string) {
     await this.client.api.playlists.clear();
+  }
+}
+
+let queueSingleton: Queue | null = null;
+export async function getQueue(): Promise<Queue> {
+  if (!queueSingleton) {
+    const client = await getMPDClient();
+    queueSingleton = new Queue(client);
+  }
+  return queueSingleton;
+}
+
+class Queue {
+  private client: Client;
+  constructor(client: any) {
+    this.client = client;
+  }
+  async info() {
+    const queue = await this.client.api.queue.info();
+    return queue;
+  }
+  async remove(uri: string) {
+    await this.client.api.queue.delete(uri);
+  }
+  async clear(name: string) {
+    await this.client.api.queue.clear();
   }
 }

@@ -1,10 +1,10 @@
 <script lang="ts">
     import Song from './Song.svelte';
     export let songs: any[] = [];
-    export let currentSongId: string;
+    export let currentSongId: number | undefined;
     export let elapsed: number | undefined; 
   
-    function getElapsed(songId: string) {
+    function getElapsed(songId: number) {
       return songId === currentSongId ? elapsed : undefined;
     }
   </script>

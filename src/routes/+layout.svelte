@@ -1,10 +1,11 @@
 <script lang="ts">
 	import '../app.css';
 	import { onDestroy, onMount } from 'svelte';
-	import { mpdStatus, getCurrentSong, playlist } from '$lib/stores.svelte';
+	import { mpdStatus, playlist } from '$lib/stores.svelte';
 	import type { MPDStatus } from '$lib/types/index';
 	import Player from '$lib/components/Player.svelte';
-	import SongInfo from '$lib/components/SongInfo.svelte';
+	//import SongInfo from '$lib/components/SongInfo.svelte';
+	import Menu from '$lib/components/Menu.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import type { LayoutProps } from './$types';
 	
@@ -17,7 +18,7 @@
 	let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 	let reconnectDelay = 2000; 
 
-	const currentSong = getCurrentSong();
+	//const currentSong = getCurrentSong();
 
 	onMount(() => {
 		connectEventSource();
@@ -80,6 +81,7 @@
 	});
 </script>
 
+,<Menu />
 <Player total={mpdStatus.value?.time.total} elapsed={mpdStatus.value?.time.elapsed} volume={mpdStatus.value?.volume} isPlaying={ mpdStatus.value?.state === 'play' }/>
 <!-- <SongInfo song={currentSong} /> -->
 {@render children()}

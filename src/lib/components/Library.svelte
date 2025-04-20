@@ -1,6 +1,7 @@
 <script lang="ts">
     import { trpc } from '$lib/trpc/client';
     import { page } from '$app/state';
+    import PlayHere from './PlayHere.svelte';
   
     export let initialContents: Array<any> = [];
     export let currentFolder = ''; // Raíz
@@ -8,6 +9,10 @@
     let history: string[] = [];
     let loading = false;
     let contents: Array<any> = initialContents;
+
+      function getSongFiles() {
+        return contents.filter(item => item.file).map(item => item.file);
+      }
 
     function formatDuration(seconds?: number) {
       if (!seconds) return '';
@@ -37,6 +42,17 @@
       }
     }
   
+    async function handlePlayHere() {
+      loading = true;
+      try {
+        const files = getSongFiles();
+        if (files.length > 0) {
+          await trpc(page).player.playHere.mutate({ files });
+        }
+      } finally {
+        loading = false;
+      }
+    }
 
   </script>
   
@@ -59,6 +75,7 @@
                    bg-gray-50 
                    dark:bg-gray-800
                    truncate">{currentFolder || 'Biblioteca'}</span>
+      <PlayHere onClick={handlePlayHere} disabled={loading || getSongFiles().length === 0} />
     </div>
   
     {#if loading}

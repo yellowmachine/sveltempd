@@ -100,6 +100,24 @@ class Player {
     this.client = client;
   }
 
+  async playHere({playlistName, files}: {playlistName?: string, files?: string[]}) {
+    await this.client.api.queue.clear();
+
+    if (playlistName) {
+      // Cargar la playlist por nombre
+      await this.client.api.playlists.load(playlistName);
+    } else if (files) {
+      // Añadir canciones una a una
+      for (const file of files) {
+        await this.client.api.queue.add(file);
+      }
+    }
+
+    await this.client.api.playback.play();
+    return { ok: true };
+  }
+
+
   async play() {
     await this.client.api.playback.play();
   }
@@ -164,4 +182,42 @@ export async function getPlayer(): Promise<Player> {
     playerSingleton = new Player(client);
   }
   return playerSingleton;
+}
+
+
+let playlistSingleton: Playlist | null = null;
+export async function getPlaylist(): Promise<Playlist> {
+  if (!playlistSingleton) {
+    const client = await getMPDClient();
+    playlistSingleton = new Playlist(client);
+  }
+  return playlistSingleton;
+}
+class Playlist {
+  private client: Client;
+
+  constructor(client: any) {
+    this.client = client;
+  }
+
+  async create(name: string) {
+    await this.client.api.playlists.save(name);
+  }
+  async list(name: string) { 
+    await this.client.api.playlists.listinfo(name);
+  }
+  async load(name: string) {
+    await this.client.api.queue.clear();
+    await this.client.api.playlists.load(name);
+  }
+  async add(uri: string) {
+    await this.client.api.playlists.add(uri);
+  }
+  async remove(uri: string) {
+    await this.client.api.playlists.remove(uri);
+
+  }
+  async clear(name: string) {
+    await this.client.api.playlists.clear();
+  }
 }

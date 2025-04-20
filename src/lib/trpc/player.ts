@@ -32,5 +32,14 @@ export const player = t.router({
     }),
     unmute: t.procedure.mutation(async ({ ctx }) => {
         await ctx.player.unmute()
+    }),
+    playHere: t.procedure
+    .input(z.object({
+        playlistName: z.string().optional(),
+        files: z.array(z.string()).optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+        await ctx.player.playHere(input);
     })
+
 });

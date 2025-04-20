@@ -82,6 +82,11 @@
 </script>
 
 ,<Menu />
+{#if mpdStatus.value?.state === 'play' }
+<h1 class="text-8xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+	Playing!
+  </h1>
+{/if}
 <Player total={mpdStatus.value?.time.total} elapsed={mpdStatus.value?.time.elapsed} volume={mpdStatus.value?.volume} isPlaying={ mpdStatus.value?.state === 'play' }/>
 <!-- <SongInfo song={currentSong} /> -->
 {@render children()}

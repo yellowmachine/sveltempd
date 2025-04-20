@@ -12,7 +12,7 @@
         volume: { 
             control: 'text' 
         },
-        playing: {
+        isPlaying: {
             control: 'boolean',
         },
       },
@@ -22,10 +22,10 @@
     });
 </script>
   
-<Story name="Primary" args={{ volume: 75, playing: false }} />
+<Story name="Primary" args={{ volume: 75, isPlaying: false }} />
 
-<Story name="Dark" args={{ volume: 75, playing: false }}>
+<Story name="Dark" args={{ volume: 75, isPlaying: false }}>
     <DarkDecorator>
-        <Player volume={10} playing={true} />
+        <Player volume={10} isPlaying={true} />
     </DarkDecorator>
 </Story>

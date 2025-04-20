@@ -4,8 +4,10 @@
 	import { page } from '$app/state';
   	import { trpc } from '$lib/trpc/client';
 	import PlayerButton from './PlayerButton.svelte';
+	import ProgressBar from './ProgressBar.svelte';
 
-	let { playing, volume }: {playing: boolean, volume: number | undefined} = $props();
+	let { isPlaying, volume, total, elapsed }: 
+		{isPlaying: boolean, volume: number | undefined, elapsed?: number, total?: number} = $props();
 	
     let loading = $state(false);
 	let error = $state<string | null>(null);
@@ -21,14 +23,14 @@
 	
 </script>
 
-<div class="flex items-center gap-4 border-2 rounded-md p-4 w-max bg-white text-black dark:bg-black dark:text-white">
+<div class="flex items-center gap-4 border-2 rounded-md p-4 w-full max-w-md bg-white text-black dark:bg-black dark:text-white">
 	<PlayerButton
 		onClick={previous}
 		ariaLabel="Anterior"
 		disabled={loading}>
 		<Icon icon="mdi:skip-previous" width="32" height="32" />
 	</PlayerButton>
-	{#if playing}
+	{#if isPlaying}
 	<PlayerButton
 		onClick={pause}
 		ariaLabel="Pausar"
@@ -77,8 +79,8 @@
 		<Icon icon="mdi:volume-high" width="32" height="32" />
 	</PlayerButton>
 	{/if}
-  </div>
-  
+</div>
+<ProgressBar {isPlaying} {total} {elapsed} />  
 
 {#if loading}
 <Jumper size="60" color="#FF3E00" unit="px" duration="1s" />

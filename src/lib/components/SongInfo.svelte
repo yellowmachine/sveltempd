@@ -75,8 +75,9 @@
   {:else}
     {#if release}
       <div>
-        <h3>{release.title} {#if release.date}({release.date}){/if}</h3>
+        <h3>Release: {release.title} {#if release.date}({release.date}){/if}</h3>
         <p>Artista: {song?.artist}</p>
+        <p>Título: {song?.title}</p>
         {#if coverUrl}
           <img src="{coverUrl}" alt="Carátula de {release.title}" />
         {:else}

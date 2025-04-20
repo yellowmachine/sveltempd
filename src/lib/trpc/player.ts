@@ -11,6 +11,11 @@ export const player = t.router({
     pause: t.procedure.mutation(async ({ ctx }) => {
         await ctx.player.pause()
     }),
+    seek: t.procedure.input(z.object({
+        time: z.number().int(),
+      })).mutation(async ({ ctx, input }) => {
+        await ctx.player.seek(input.time)
+    }),
     next: t.procedure.mutation(async ({ ctx }) => {
         await ctx.player.next()
     }),
@@ -20,7 +25,6 @@ export const player = t.router({
     volume: t.procedure.input(z.object({
         amount: z.number().int(),
       })).mutation(async ({ ctx, input }) => {
-        console.log('Volume', input.amount);
         await ctx.player.volume(input.amount)
     }),
     mute: t.procedure.mutation(async ({ ctx }) => {

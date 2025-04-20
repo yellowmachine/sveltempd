@@ -89,6 +89,10 @@ class Player {
     await this.client.api.playback.pause();
   }
 
+  async seek(time: number) {
+    await this.client.api.playback.seek(''+time);
+  }
+
   async next() {
     await this.client.api.playback.next();
   }

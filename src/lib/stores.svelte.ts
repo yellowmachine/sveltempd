@@ -33,7 +33,7 @@ export const playlist = createPlaylistStore();
 const currentSong = $derived.by( () => {
   const current = mpdStatus.value?.song;
 
-  if (!current) return null;
+  if(current === undefined) return null;
   if (!playlist.value) return null;
   if (!playlist.value[current]) return null;
   return playlist.value[current];

@@ -1,1 +1,1 @@
-<h1>Welcome to Manage mpd</h1>
+<a href="/library" class="text-blue-500 hover:underline">Ir a la biblioteca</a>

@@ -5,9 +5,9 @@ import { startListening } from '$lib/mpdListener';
 import { initializeDB } from '$lib/db';
 import { createTRPCHandle } from 'trpc-sveltekit';
 import { createContext } from '$lib/trpc/context';
-import { router } from '$lib/trpc/router';
+import { appRouter } from '$lib/trpc/router';
 
-const trpcHandle: Handle = createTRPCHandle({ router, createContext });
+const trpcHandle: Handle = createTRPCHandle({ router: appRouter, createContext });
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {

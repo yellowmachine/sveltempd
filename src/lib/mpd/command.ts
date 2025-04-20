@@ -74,6 +74,25 @@ type VolumeObj = {
     volume: number;
 }
 
+class Library {
+  private client: Client;
+  constructor(client: any) {
+    this.client = client;
+  }
+  async getFolderContent(folder: string) {
+    const library = await this.client.api.db.lsinfo(folder) as object[];
+  }
+}
+
+let librarySingleton: Library | null = null;
+export async function getLibrary(): Promise<Library> {
+  if (!librarySingleton) {
+    const client = await getMPDClient();
+    librarySingleton = new Library(client);
+  }
+  return librarySingleton;
+}
+
 class Player {
   private client: Client;
 
@@ -90,7 +109,7 @@ class Player {
   }
 
   async seek(time: number) {
-    await this.client.api.playback.seek(''+time);
+    await this.client.api.playback.seekcur(''+time);
   }
 
   async next() {

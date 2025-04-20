@@ -81,5 +81,5 @@
 </script>
 
 <Player total={mpdStatus.value?.time.total} elapsed={mpdStatus.value?.time.elapsed} volume={mpdStatus.value?.volume} isPlaying={ mpdStatus.value?.state === 'play' }/>
-<SongInfo song={currentSong} />
+<!-- <SongInfo song={currentSong} /> -->
 {@render children()}

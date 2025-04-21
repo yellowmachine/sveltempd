@@ -6,6 +6,7 @@
     export let songs: any[];
     export let currentSongId: number | undefined;
     export let elapsed: number | undefined;
+    export let total: number | undefined;
 
     async function clear() {
         await trpc(page).queue.clear.mutate();
@@ -14,7 +15,6 @@
 </script>
 
 <div class="queue">
-    <h2>Queue</h2>
     <button
       onclick={clear}
       class="px-5 py-2.5 rounded-md font-semibold text-white bg-gradient-to-r from-orange-500 via-orange-600 to-red-600
@@ -26,7 +26,7 @@
   </button>
 
     <div class="queue-content">
-      <SongList {songs} {currentSongId} {elapsed} />
+      <SongList {songs} {currentSongId} {elapsed} {total} />
     </div>
 </div>
   

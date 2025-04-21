@@ -3,10 +3,8 @@
     export let songs: any[] = [];
     export let currentSongId: number | undefined;
     export let elapsed: number | undefined; 
+    export let total: number | undefined;
   
-    function getElapsed(songId: number) {
-      return songId === currentSongId ? elapsed : undefined;
-    }
   </script>
   
   <ul>
@@ -17,11 +15,10 @@
           currentSongId={currentSongId}
           title={song.title}
           artist={song.artist}
-          duration={song.duration}
-          elapsed={getElapsed(song.id)}
+          {elapsed}
+          {total}
           {...song}
         />
       </li>
     {/each}
   </ul>
-  

@@ -6,9 +6,8 @@ import type { MPDStatus } from './types';
 const execAsync = promisify(exec);
 
 function formatSong(line: string) {
-    const [artist, ...songParts] = line.trim().split(' - ');
-    const title = songParts.join(' - ');
-    return { artist: artist || '', title: title || '' };
+    const [artist, title, id] = line.trim().split(' - ');
+    return { artist: artist || '', title: title || '', id: id || '' };
 }
 
 function formatSongArray(stdout: string) {
@@ -22,7 +21,7 @@ function formatSongArray(stdout: string) {
 export async function queueMsg(){
   let msg;
   try {
-    const { stdout } = await execAsync('mpc queue');
+    const { stdout } = await execAsync('mpc -f "%artist% - %title% - %id%" playlist');
     const queue = formatSongArray(stdout);
     msg = { queue };
   } catch {

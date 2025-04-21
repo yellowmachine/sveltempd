@@ -2,6 +2,7 @@ import { getMPDClient } from '$lib/mpdClient';
 import type { MPDApi } from 'mpd-api';
 import { z } from 'zod';
 import { db } from '$lib/db';
+import { queueMsg } from '$lib/messages';
 
 
 export const ChangeCardOptionsSchema = z.object({
@@ -236,7 +237,7 @@ class Queue {
     this.client = client;
   }
   async info() {
-    const queue = await this.client.api.queue.info();
+    const queue = await queueMsg()//this.client.api.queue.info();
     return queue;
   }
   async remove(uri: string) {

@@ -5,12 +5,16 @@
   	import { trpc } from '$lib/trpc/client';
 	import PlayerButton from './PlayerButton.svelte';
 	import ProgressBar from './ProgressBar.svelte';
+	import SongInfo from '$lib/components/SongInfo.svelte';
+	import { getCurrentSong } from '$lib/stores.svelte';
 
 	let { isPlaying, volume, total, elapsed }: 
 		{isPlaying: boolean, volume: number | undefined, elapsed?: number, total?: number} = $props();
 	
     let loading = $state(false);
 	let error = $state<string | null>(null);
+
+	const currentSong = getCurrentSong();
 
 	function play() { trpc(page).player.play.mutate(); }
 	function pause() { trpc(page).player.pause.mutate(); }
@@ -23,7 +27,7 @@
 	
 </script>
 
-<div class="flex items-center gap-4 border-2 rounded-md p-4 w-full max-w-md bg-white text-black dark:bg-black dark:text-white">
+<div class="flex items-center gap-4 border-2 rounded-md p-4 w-full max-w-md bg-white text-orange-500 dark:bg-orange-500 dark:text-white">
 	<PlayerButton
 		onClick={previous}
 		ariaLabel="Anterior"
@@ -81,6 +85,7 @@
 	{/if}
 </div>
 <ProgressBar {isPlaying} {total} {elapsed} />  
+<SongInfo song={currentSong} />
 
 {#if loading}
 <Jumper size="60" color="#FF3E00" unit="px" duration="1s" />

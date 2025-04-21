@@ -33,7 +33,7 @@
 </script>
 
 <div class="max-w-md">
-    <label for="player-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+    <label for="player-range" class="block mb-2 text-sm font-medium text-orange-500 dark:text-white">
         Progreso
     </label>
     <input
@@ -43,7 +43,7 @@
         max={total}
         step="1"
         bind:value={elapsed}
-        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+        class="w-full h-2 bg-orange-200 rounded-lg appearance-none cursor-pointer dark:bg-orange-500"
         onchange={onChange}
     />
 

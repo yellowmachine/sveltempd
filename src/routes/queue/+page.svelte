@@ -1,8 +1,12 @@
 <script>
 	import Queue from "$lib/components/Queue.svelte";
     import { mpdStatus } from "$lib/stores.svelte";
+    import { queue } from "$lib/stores.svelte";
     
-    let { data } = $props();	
+    let { data } = $props();
+    
+    queue.update(data.queue)
+
 </script>
 
-<Queue songs={ data.queue } currentSongId={ mpdStatus.value?.songid } elapsed={ mpdStatus.value?.elapsed }  />
+<Queue songs={ queue.value } currentSongId={ mpdStatus.value?.songid } elapsed={ mpdStatus.value?.elapsed }  />

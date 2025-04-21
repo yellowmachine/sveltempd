@@ -1,8 +1,11 @@
 <script>
 	import Playlist from "$lib/components/Playlist.svelte";
-    import { mpdStatus } from "$lib/stores.svelte";
+    import { mpdStatus, playlist } from "$lib/stores.svelte";
     
     let { data } = $props();	
+
+    playlist.update(data.playlist)
+
 </script>
 
-<Playlist songs={ data.playlist } currentSongId={ mpdStatus.value?.songid } elapsed={ mpdStatus.value?.elapsed }  />
+<Playlist songs={ playlist.value } currentSongId={ mpdStatus.value?.songid } elapsed={ mpdStatus.value?.elapsed }  />

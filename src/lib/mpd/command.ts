@@ -242,7 +242,7 @@ class Queue {
   async remove(uri: string) {
     await this.client.api.queue.delete(uri);
   }
-  async clear(name: string) {
+  async clear() {
     await this.client.api.queue.clear();
   }
 }

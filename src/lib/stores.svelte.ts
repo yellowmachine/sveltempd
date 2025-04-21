@@ -42,3 +42,19 @@ const currentSong = $derived.by( () => {
 export function getCurrentSong() {
   return currentSong;
 }
+
+
+function createQueueStore() {
+  let queue: Array<{ artist: string; title: string }> = $state([]);
+
+  return {
+    update(newQueue: Array<{ artist: string; title: string }>) {
+      queue = [...newQueue];
+    },
+    get value() {
+      return queue;
+    }
+  };
+}
+
+export const queue = createQueueStore();

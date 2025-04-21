@@ -20,11 +20,8 @@ export const queue = t.router({
         }
     ),
     clear: t.procedure
-        .input(z.object({
-            name: z.string()
-        }))
         .mutation(async ({ input, ctx }) => {
-            await ctx.queue.clear(input.name);
+            await ctx.queue.clear();
         }
     )
 });

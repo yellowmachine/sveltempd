@@ -1,25 +1,29 @@
 <script module>
     import { defineMeta } from '@storybook/addon-svelte-csf';
     import Menu from '$lib/components/Menu.svelte';
-
+  
     const { Story } = defineMeta({
       title: 'Example/Menu',
       component: Menu,
-      tags: ['autodocs'],
-      argTypes: {
-        
+      parameters: {
+        viewport: {
+          defaultViewport: 'desktop',
+        },
       },
-      args: {
-        
-      }
     });
-</script>
+  </script>
   
-<Story name="Desktop"  />
-
-<Story name="Mobile">
-    <div class="w-[375px] mx-auto">
+  <Story name="Desktop" />
+  
+  <Story
+    name="Mobile"
+    parameters={{
+      viewport: {
+        defaultViewport: 'mobile',
+      },
+    }}
+  >
+    <div style="width: 375px; margin: 0 auto;">
         <Menu />
     </div>
-</Story>
-
+  </Story>

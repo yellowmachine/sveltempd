@@ -4,7 +4,7 @@
     function closeMenu() { open = false; }
   </script>
   
-  <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-20 relative">
+  <nav class="bg-white dark:bg-orange-900 border-b border-orange-200 dark:border-orange-800 shadow-sm z-20 relative">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-14 items-center">
         <!-- Logo o título -->
@@ -31,7 +31,7 @@
   
     <!-- Menú desplegable en móvil -->
     {#if open}
-      <ul class="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 py-2 space-y-2 animate-fade-in absolute w-full left-0">
+      <ul class="md:hidden bg-white dark:bg-orange-900 border-t border-orange-200 dark:border-orange-800 px-4 py-2 space-y-2 animate-fade-in absolute w-full left-0">
         <li><a href="/api/queue" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>Queue</a></li>
         <li><a href="/api/playlists" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>List Management</a></li>
         <li><a href="/api/library" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>Library</a></li>

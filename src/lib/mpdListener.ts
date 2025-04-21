@@ -34,9 +34,9 @@ export async function broadcast(event: string) {
   if(event === 'playlist') {
     msg = await playlistMsg();
   } else if(event === 'player' || event === 'mixer') {
-    msg = await playerMsg();
-  } else if(event === 'queue') {
-    msg = await queueMsg();
+    const player = await playerMsg();
+    const queue = await queueMsg();
+    msg = { player, queue };
   } 
   else {
     msg = null;

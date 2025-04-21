@@ -1,24 +1,24 @@
 <script lang="ts">
 	import '../app.css';
 	import { onDestroy, onMount } from 'svelte';
-	import { mpdStatus, playlist } from '$lib/stores.svelte';
+	import { mpdStatus, playlist, queue } from '$lib/stores.svelte';
 	import type { MPDStatus } from '$lib/types/index';
 	import Player from '$lib/components/Player.svelte';
-	//import SongInfo from '$lib/components/SongInfo.svelte';
 	import Menu from '$lib/components/Menu.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import type { LayoutProps } from './$types';
 	
 	let { data, children }: LayoutProps = $props();	
 
-	mpdStatus.update(data.status);
-	playlist.update(data.playlist);
+	if(data.player)
+		mpdStatus.update(data.player);
+
+	queue.update(data.queue);
+	//playlist.update(data.playlist);
 
 	let evtSource: EventSource | null = null;
 	let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 	let reconnectDelay = 2000; 
-
-	//const currentSong = getCurrentSong();
 
 	onMount(() => {
 		connectEventSource();
@@ -32,25 +32,22 @@
 		evtSource = new EventSource('/api/events');
 
 		evtSource.addEventListener("player", (event) => {
-			const data: MPDStatus = JSON.parse((event as MessageEvent).data);
+			const data: {player: MPDStatus, queue: Array<{artist: string, title: string}>} = JSON.parse((event as MessageEvent).data);
 
-			if (data.state) {
-				mpdStatus.update(data); 
-			}
+			mpdStatus.update(data.player);
+			queue.update(data.queue);
 		});
 
 		evtSource.addEventListener("mixer", (event) => {
 			const data: MPDStatus = JSON.parse((event as MessageEvent).data);
-
-			if (data.state) {
-				mpdStatus.update(data); 
-			}
+			//if (data.state) {
+			mpdStatus.update(data); 
+			//}
 		});
 
 		evtSource.addEventListener("playlist", (event) => {
 			const playlistData = JSON.parse(event.data);
-			console.log("Playlist recibida:", playlistData);
-			// ...actualiza la UI o el estado de la app
+			playlist.update(playlistData);
 		});
 
 
@@ -81,12 +78,7 @@
 	});
 </script>
 
-,<Menu />
-{#if mpdStatus.value?.state === 'play' }
-<h1 class="text-8xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-	Playing!
-  </h1>
-{/if}
+<Menu isPlaying={mpdStatus.value?.state === 'play'} />
 <Player total={mpdStatus.value?.time.total} elapsed={mpdStatus.value?.time.elapsed} volume={mpdStatus.value?.volume} isPlaying={ mpdStatus.value?.state === 'play' }/>
-<!-- <SongInfo song={currentSong} /> -->
+
 {@render children()}

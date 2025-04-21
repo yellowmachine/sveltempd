@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let data: { rootContents: any[] };
+    export let data;
     import Library from '$lib/components/Library.svelte';
 </script>
   

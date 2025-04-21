@@ -1,6 +1,6 @@
 import { getMPDClient } from '$lib/mpdClient';
 import type { MPDApi } from 'mpd-api';
-import { z } from 'zod';
+import { string, z } from 'zod';
 import { db } from '$lib/db';
 import { queueMsg } from '$lib/messages';
 
@@ -75,13 +75,46 @@ type VolumeObj = {
     volume: number;
 }
 
+function getFirstLevel(array: {directory: string, file: string[]}[], ruta: string) {
+  // Inicializa sets para evitar duplicados
+  const dirs = new Set();
+  const files = new Set();
+
+  // Normaliza la ruta para evitar problemas de barra final
+  const rutaNorm = ruta.replace(/\/$/, "");
+
+  array.forEach(entry => {
+    // Si el directorio es exactamente la ruta, sus archivos son de primer nivel
+    if (entry.directory === rutaNorm) {
+      (entry.file || []).forEach(f => {
+        // Solo añade los archivos que están directamente bajo la ruta
+        const rel = f.slice(rutaNorm.length + 1); // +1 para la barra
+        if (!rel.includes("/")) files.add(rel);
+      });
+    }
+    // Si es un subdirectorio inmediato de la ruta
+    else if (entry.directory.startsWith(rutaNorm + "/")) {
+      const resto = entry.directory.slice(rutaNorm.length + 1);
+      if (resto && !resto.includes("/")) dirs.add(resto);
+    }
+  });
+
+  return {
+    directories: Array.from(dirs) as string[],
+    files: Array.from(files) as string[]
+  };
+}
+
+
 class Library {
   private client: Client;
   constructor(client: any) {
     this.client = client;
   }
   async getFolderContent(folder: string) {
-    const library = await this.client.api.db.lsinfo(folder) as object[];
+    const array = await this.client.api.db.listall(folder) as {directory: string, file: string[]}[];
+    console.log('Library', array);
+    return getFirstLevel(array, folder);
   }
 }
 

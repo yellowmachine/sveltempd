@@ -19,9 +19,9 @@
         
         <!-- Menú horizontal en md+ -->
         <ul class="hidden md:flex space-x-6">
-          <li><a href="/api/queue" class="hover:text-orange-600 font-medium transition-colors">Queue</a></li>
-          <li><a href="/api/playlists" class="hover:text-orange-600 font-medium transition-colors">List Management</a></li>
-          <li><a href="/api/library" class="hover:text-orange-600 font-medium transition-colors">Library</a></li>
+          <li><a href="/queue" class="hover:text-orange-600 font-medium transition-colors">Queue</a></li>
+          <li><a href="/playlists" class="hover:text-orange-600 font-medium transition-colors">List Management</a></li>
+          <li><a href="/library" class="hover:text-orange-600 font-medium transition-colors">Library</a></li>
         </ul>
   
         <!-- Botón hamburguesa en móvil -->
@@ -39,9 +39,9 @@
     <!-- Menú desplegable en móvil -->
     {#if open}
       <ul class="md:hidden bg-white dark:bg-orange-900 border-t border-orange-200 dark:border-orange-800 px-4 py-2 space-y-2 animate-fade-in absolute w-full left-0">
-        <li><a href="/api/queue" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>Queue</a></li>
-        <li><a href="/api/playlists" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>List Management</a></li>
-        <li><a href="/api/library" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>Library</a></li>
+        <li><a href="/queue" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>Queue</a></li>
+        <li><a href="/playlists" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>List Management</a></li>
+        <li><a href="/library" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>Library</a></li>
       </ul>
     {/if}
   </nav>

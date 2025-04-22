@@ -75,7 +75,7 @@ type VolumeObj = {
     volume: number;
 }
 
-function getFirstLevel(array: {directory: string, file: string[]}[], ruta: string) {
+export function getFirstLevel(array: {directory: string, file: string[]}[], ruta: string) {
   // Inicializa sets para evitar duplicados
   const dirs = new Set();
   const files = new Set();
@@ -89,8 +89,12 @@ function getFirstLevel(array: {directory: string, file: string[]}[], ruta: strin
 
     if (entry.directory === rutaNorm) {
       (entry.file || []).forEach(f => {
-        const rel = f.slice(rutaNorm.length); 
-        files.add(rel);
+        let rel = f.slice(rutaNorm.length);
+        if(rel.startsWith('/')){
+          rel = rel.slice(1);
+        } 
+        if(rel !== '' && !rel.includes('/')) 
+          files.add(rel);
       });
     }
     
@@ -99,8 +103,8 @@ function getFirstLevel(array: {directory: string, file: string[]}[], ruta: strin
       if(resto.startsWith('/')){
         resto = resto.slice(1);
       }
-      
-      dirs.add(resto);
+      if(resto !== '')
+        dirs.add(resto);
     }
   });
 

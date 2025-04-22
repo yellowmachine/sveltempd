@@ -1,6 +1,5 @@
 <script lang="ts">
-	  import { trpc } from "$lib/trpc/client";
-    import { page } from "$app/state";
+	  import type { TRPCQueue } from "./trpcClients";
 
     export let songId: number;
     export let currentSongId: number | undefined;
@@ -9,14 +8,15 @@
     export let artist: string;
     export let elapsed: number | undefined; 
     export let total: number | undefined;
-    
+    export let trpcQueue: TRPCQueue
+
     let showModal = false;
 
     async function handlePlay() {
       try{
-        await trpc(page).queue.clear.mutate();
-        await trpc(page).queue.add.mutate({ uri });
-        await trpc(page).player.play.mutate();
+        await trpcQueue.clear();
+        await trpcQueue.add(uri);
+        await trpcQueue.play();
       }finally{
         showModal = false;
       }
@@ -24,14 +24,12 @@
 
     async function handleAddToPlaylist() {
       try{
-        await trpc(page).queue.add.mutate({ uri });
+        await trpcQueue.add(uri);
       }finally{
         showModal = false;
       }
     }
 
-  
-    // Formatea el tiempo en mm:ss
     function formatTime(seconds?: number) {
       if (!seconds) return '';
       const min = Math.floor(seconds / 60);

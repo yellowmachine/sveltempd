@@ -46,10 +46,10 @@ export function getCurrentSong() {
 
 
 function createQueueStore() {
-  let queue: Array<{ artist: string; title: string }> = $state([]);
+  let queue: Array<Song> = $state([]);
 
   return {
-    update(newQueue: Array<{ artist: string; title: string }>) {
+    update(newQueue: Array<Song>) {
       queue = [...newQueue];
     },
     get value() {

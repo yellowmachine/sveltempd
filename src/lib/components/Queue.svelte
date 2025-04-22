@@ -1,8 +1,7 @@
 <script lang="ts">
-  	import { trpc } from '$lib/trpc/client';
-    import { page } from '$app/state';
-    import SongList from './SongList.svelte';
+  	import SongList from './SongList.svelte';
     import type { Song as TSong } from '$lib/messages';
+    import { trpcQueue } from './trpcClients'
     
     export let songs: TSong[];
     export let currentSongId: number | undefined;
@@ -10,9 +9,8 @@
     export let total: number | undefined;
 
     async function clear() {
-        await trpc(page).queue.clear.mutate();
+        await trpcQueue.clear();
     }
-
 </script>
 
 <div class="queue">
@@ -27,7 +25,7 @@
   </button>
 
     <div class="queue-content">
-      <SongList {songs} {currentSongId} {elapsed} {total} />
+      <SongList {trpcQueue} {songs} {currentSongId} {elapsed} {total} />
     </div>
 </div>
   

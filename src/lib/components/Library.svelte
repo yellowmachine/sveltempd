@@ -2,20 +2,20 @@
     import { trpc } from '$lib/trpc/client';
     import { page } from '$app/state';
     import PlayHere from './PlayHere.svelte';
+	  import type { Song as TSong } from '$lib/messages';
+	  import Song from './Song.svelte';
+	  import { trpcQueue } from './trpcClients';
   
-    export let initialContents: {directories: string[], files: string[]} = {directories: [], files: []};
-    export let currentFolder = ''; // Raíz
+    export let initialContents: {directories: string[], files: TSong[]} = {directories: [], files: []};
+    export let currentFolder = '';
+    export let currentSongId: number | undefined;
+    export let elapsed: number | undefined;
+    export let total: number | undefined;
     
     let history: string[] = [];
     let loading = false;
-    let contents: {directories: string[], files: string[]} = initialContents;
+    let contents: {directories: string[], files: TSong[]} = initialContents;
 
-    function formatDuration(seconds?: number) {
-      if (!seconds) return '';
-      const min = Math.floor(seconds / 60);
-      const sec = Math.floor(seconds % 60);
-      return `${min}:${sec.toString().padStart(2, '0')}`;
-    }
   
     async function loadFolder(folder: string) {
       loading = true;
@@ -94,15 +94,16 @@
       </li>
       {/each}
       {#each contents.files as file}
-        <li 
-          class="flex items-center p-2 rounded 
-                  bg-gray-50 hover:bg-gray-100 
-                  dark:bg-gray-800 dark:hover:bg-gray-700
-                  transition-colors"
-        >
-          <span class="flex-1 truncate">{file.split('/').pop()}</span>
-          
-        </li>
+      <Song 
+        songId={file.id}
+        title={file.title}
+        artist={file.artist}
+        uri={file.uri}
+        {currentSongId} 
+        {total} 
+        {elapsed}
+        {trpcQueue}
+      />
       {/each}
     </ul>
     

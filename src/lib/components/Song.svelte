@@ -46,7 +46,7 @@
     `}
   >
     <!-- Vista destacada si es la canción actual -->
-    {#if ''+songId === ''+currentSongId}
+    {#if songId === currentSongId}
       <div class="flex-1 max-w-md">
         <div class="flex items-center gap-2">
           <span class="text-blue-600 font-bold animate-pulse">●</span>

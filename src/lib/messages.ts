@@ -6,11 +6,11 @@ import type { MPDStatus } from './types';
 const execAsync = promisify(exec);
 
 function formatSong(line: string) {
-    const [artist, title, id, uri] = line.trim().split(' - ');
-    return { artist: artist || '', title: title || '', id: parseInt(id), uri: uri || '' };
+    const [artist, title, id, uri, time, ...rest] = line.trim().split(' - ');
+    return { artist: artist || '', title: title || '', id: parseInt(id), uri: uri || '', time: parseInt(time) || 0 };
 }
 
-function formatSongArray(stdout: string) {
+export function formatSongArray(stdout: string) {
     const lines = stdout.trim().split('\n');
     const songs = lines.map(line => {
         return formatSong(line);
@@ -23,6 +23,7 @@ export type Song = {
     title: string;
     id: number;
     uri: string;
+    time: number;
 };
 
 export async function queueMsg(): Promise<Song[]> { 

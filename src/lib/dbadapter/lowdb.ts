@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import { access } from 'node:fs/promises';
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
 
@@ -38,16 +38,16 @@ class LowdbAdapter {
   }
 
   async initialize() {
-    if (!fs.existsSync(dbFile)) {
+    try {
+      await access(dbFile); 
       await this.db.read();
-      if (this.db.data === null) {
-        this.db.data = defaultData;
-        await this.db.write();
-      }
-    } else {
-      await this.db.read();
+    } catch (err) {
+      this.db.data = defaultData;
+      await this.db.write();
     }
   }
+  
 }
+
 
 export default LowdbAdapter;

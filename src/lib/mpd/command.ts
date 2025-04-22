@@ -2,7 +2,12 @@ import { getMPDClient } from '$lib/mpdClient';
 import type { MPDApi } from 'mpd-api';
 import { z } from 'zod';
 import { db } from '$lib/db';
-import { queueMsg } from '$lib/messages';
+import { formatSongArray, queueMsg } from '$lib/messages';
+import { exec } from 'child_process';
+import { promisify } from 'node:util';
+
+
+const execAsync = promisify(exec);
 
 
 export const ChangeCardOptionsSchema = z.object({
@@ -116,27 +121,23 @@ export function getFirstLevel(array: {directory: string, file: string[]}[], ruta
   };
 }
 
+type ListAllItem = { file?: string; directory?: string };
 
 class Library {
   private client: Client;
   constructor(client: any) {
     this.client = client;
   }
-  async getFolderContent(folder: string) {
-    const array = await this.client.api.db.listall(folder) as {directory: string, file: string[]}[];
-    return getFirstLevel(array, folder);
-  }
-  async getFiles(path: string) {
-    const array = await this.client.api.db.listall(path) as {directory: string, file: string[]}[];
-    const entry = array.find(e => e.directory === path);
-  
-    if (!entry || !entry.file) return [];
-  
-    return entry.file
-      .map(f => {
-        return f.slice(path.length + 1);
-      })
-      .filter(Boolean);
+  async getFolderContent(path: string) {
+    const { stdout } = await execAsync('mpc -f "%artist% - %title% - %id% - %file%" - %total% listall "' + path + '"');
+    const files = formatSongArray(stdout);
+
+    const result = await this.client.api.db.listall(path) as ListAllItem[];
+    const directories = result.
+      filter(item => typeof item.directory === 'string' && item.directory.startsWith(path)).
+      map(item => item.directory).filter(item => item !== undefined)
+    
+    return {files, directories};
   }
 }
 
@@ -162,14 +163,15 @@ class Player {
     if (playlistName) {
       await this.client.api.playlists.load(playlistName);
     } else if (path) {
-      const files = await librarySingleton?.getFiles(path) || [];
-      for (const file of files) {
-        await this.client.api.queue.add(file);
+      const content = await librarySingleton?.getFolderContent(path);
+      if(content){
+        for (const file of content.files) {
+          await this.client.api.queue.add(file.uri);
+        }
       }
     }
 
     await this.client.api.playback.play();
-    return { ok: true };
   }
 
 

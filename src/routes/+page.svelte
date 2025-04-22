@@ -5,7 +5,7 @@
     
     let { data } = $props();
     
-    queue.update(data)
+    queue.update(data.queue)
 
 </script>
 

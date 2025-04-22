@@ -50,6 +50,7 @@ function createQueueStore() {
 
   return {
     update(newQueue: Array<Song>) {
+      console.log("Updating queue", newQueue);
       queue = [...newQueue];
     },
     get value() {

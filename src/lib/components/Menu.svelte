@@ -38,7 +38,7 @@
   
     <!-- Menú desplegable en móvil -->
     {#if open}
-      <ul class="md:hidden bg-white dark:bg-orange-900 border-t border-orange-200 dark:border-orange-800 px-4 py-2 space-y-2 animate-fade-in absolute w-full left-0">
+      <ul class="md:hidden bg-white dark:bg-orange-900 border-t border-orange-200 dark:border-orange-800 px-4 py-2 space-y-2 animate-fade-in absolute left-0">
         <li><a href="/queue" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>Queue</a></li>
         <li><a href="/playlists" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>List Management</a></li>
         <li><a href="/library" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>Library</a></li>

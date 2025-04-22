@@ -51,7 +51,7 @@
 
   </script>
   
-  <div class="max-w-xl mx-auto p-4">
+  <div class="w-full mx-auto p-4">
     <div class="flex items-center gap-2 mb-4">
       {#if currentFolder !== ""}
       <button
@@ -93,12 +93,12 @@
         </button>
       </li>
       {/each}
-      {#each contents.files as file}
+      {#each contents.files as song}
       <Song 
-        songId={file.id}
-        title={file.title}
-        artist={file.artist}
-        uri={file.uri}
+        songId={song.id}
+        title={song.title}
+        artist={song.artist}
+        uri={song.uri}
         {currentSongId} 
         {total} 
         {elapsed}

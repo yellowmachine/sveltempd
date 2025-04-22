@@ -36,7 +36,7 @@ export const player = t.router({
     playHere: t.procedure
     .input(z.object({
         playlistName: z.string().optional(),
-        files: z.array(z.string()).optional(),
+        path: z.string().optional(),
     }))
     .mutation(async ({ input, ctx }) => {
         await ctx.player.playHere(input);

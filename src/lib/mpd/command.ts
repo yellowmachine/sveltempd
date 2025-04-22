@@ -84,18 +84,23 @@ function getFirstLevel(array: {directory: string, file: string[]}[], ruta: strin
   const rutaNorm = ruta.replace(/\/$/, "");
 
   array.forEach(entry => {
-    // Si el directorio es exactamente la ruta, sus archivos son de primer nivel
+    if(entry.directory)
+      console.log('Entry', entry.directory, rutaNorm);
+
     if (entry.directory === rutaNorm) {
       (entry.file || []).forEach(f => {
-        // Solo añade los archivos que están directamente bajo la ruta
-        const rel = f.slice(rutaNorm.length + 1); // +1 para la barra
-        if (!rel.includes("/")) files.add(rel);
+        const rel = f.slice(rutaNorm.length); 
+        files.add(rel);
       });
     }
-    // Si es un subdirectorio inmediato de la ruta
-    else if (entry.directory.startsWith(rutaNorm + "/")) {
-      const resto = entry.directory.slice(rutaNorm.length + 1);
-      if (resto && !resto.includes("/")) dirs.add(resto);
+    
+    if (entry.directory.startsWith(rutaNorm)) {
+      let resto = entry.directory.slice(rutaNorm.length);
+      if(resto.startsWith('/')){
+        resto = resto.slice(1);
+      }
+      
+      dirs.add(resto);
     }
   });
 
@@ -113,8 +118,19 @@ class Library {
   }
   async getFolderContent(folder: string) {
     const array = await this.client.api.db.listall(folder) as {directory: string, file: string[]}[];
-    console.log('Library', array);
     return getFirstLevel(array, folder);
+  }
+  async getFiles(path: string) {
+    const array = await this.client.api.db.listall(path) as {directory: string, file: string[]}[];
+    const entry = array.find(e => e.directory === path);
+  
+    if (!entry || !entry.file) return [];
+  
+    return entry.file
+      .map(f => {
+        return f.slice(path.length + 1);
+      })
+      .filter(Boolean);
   }
 }
 
@@ -134,14 +150,15 @@ class Player {
     this.client = client;
   }
 
-  async playHere({playlistName, files}: {playlistName?: string, files?: string[]}) {
+  async playHere({playlistName, path}: {playlistName?: string, path?: string}) {
     await this.client.api.queue.clear();
 
     if (playlistName) {
       // Cargar la playlist por nombre
       await this.client.api.playlists.load(playlistName);
-    } else if (files) {
+    } else if (path) {
       // Añadir canciones una a una
+      const files = await librarySingleton?.getFiles(path) || [];
       for (const file of files) {
         await this.client.api.queue.add(file);
       }

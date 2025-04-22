@@ -42,7 +42,7 @@
       loading = true;
       try {
         if (contents.files.length > 0) {
-          await trpc(page).player.playHere.mutate({ files: contents.files });
+          await trpc(page).player.playHere.mutate({ path: history.join('/') });
         }
       } finally {
         loading = false;
@@ -92,17 +92,17 @@
           <span>{dir}</span>
         </button>
       </li>
-        {#each contents.files as file}
-          <li 
-            class="flex items-center p-2 rounded 
-                   bg-gray-50 hover:bg-gray-100 
-                   dark:bg-gray-800 dark:hover:bg-gray-700
-                   transition-colors"
-          >
-            <span class="flex-1 truncate">{file.split('/').pop()}</span>
-            
-          </li>
-        {/each}
+      {/each}
+      {#each contents.files as file}
+        <li 
+          class="flex items-center p-2 rounded 
+                  bg-gray-50 hover:bg-gray-100 
+                  dark:bg-gray-800 dark:hover:bg-gray-700
+                  transition-colors"
+        >
+          <span class="flex-1 truncate">{file.split('/').pop()}</span>
+          
+        </li>
       {/each}
     </ul>
     

@@ -1,4 +1,5 @@
 import type { MPDStatus } from '$lib/types/index';
+import type { Song } from './messages';
 
 function createMPDStore() {
   let state: MPDStatus | null = $state(null);
@@ -16,10 +17,10 @@ function createMPDStore() {
 export const mpdStatus = createMPDStore();
 
 function createPlaylistStore() {
-  let playlist: Array<{ artist: string; title: string }> = $state([]);
+  let playlist: Array<Song> = $state([]);
 
   return {
-    update(newPlaylist: Array<{ artist: string; title: string }>) {
+    update(newPlaylist: Array<Song>) {
       playlist = [...newPlaylist];
     },
     get value() {

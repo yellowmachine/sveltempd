@@ -5,8 +5,13 @@
     
     let { data } = $props();
     
-    queue.update(data.queue)
+    queue.update(data)
 
 </script>
 
-<Queue songs={ queue.value } currentSongId={ mpdStatus.value?.songid } total={mpdStatus.value?.time?.total} elapsed={mpdStatus.value?.time?.elapsed}  />
+<Queue 
+    songs={ queue.value } 
+    currentSongId={ mpdStatus.value?.songid + '' } 
+    total={mpdStatus.value?.time?.total} 
+    elapsed={mpdStatus.value?.time?.elapsed}  
+/>

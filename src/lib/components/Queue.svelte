@@ -2,8 +2,9 @@
   	import { trpc } from '$lib/trpc/client';
     import { page } from '$app/state';
     import SongList from './SongList.svelte';
+    import type { Song as TSong } from '$lib/messages';
     
-    export let songs: any[];
+    export let songs: TSong[];
     export let currentSongId: number | undefined;
     export let elapsed: number | undefined;
     export let total: number | undefined;

@@ -11,6 +11,15 @@ export const queue = t.router({
             return library;
         }
     ),
+    add: t.procedure
+        .input(z.object({
+            uri: z.string()
+        }))
+        .mutation(async ({ input, ctx }) => {
+            const { uri } = input;
+            await ctx.queue.add(uri);
+        }
+    ),
     remove: t.procedure
         .input(z.object({
             uri: z.string(),

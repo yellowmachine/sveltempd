@@ -1,10 +1,12 @@
 <script lang="ts">
+	  import type { Song as TSong } from '$lib/messages';
     import SongList from './SongList.svelte';
-    // Supón que tienes las props o el store adecuado:
-    export let songs: any[];
+    
+    export let songs: TSong[];
     export let currentSongId: number | undefined;
     export let elapsed: number | undefined;
+    export let total: number | undefined;
   </script>
   
-<SongList {songs} {currentSongId} {elapsed} />
+<SongList {songs} {currentSongId} {elapsed} {total} />
   

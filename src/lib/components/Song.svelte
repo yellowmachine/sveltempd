@@ -1,10 +1,34 @@
 <script lang="ts">
-    export let songId: string;
-    export let currentSongId: string;
+	  import { trpc } from "$lib/trpc/client";
+    import { page } from "$app/state";
+
+    export let songId: number;
+    export let currentSongId: number | undefined;
+    export let uri: string;
     export let title: string;
     export let artist: string;
     export let elapsed: number | undefined; 
     export let total: number | undefined;
+    
+    let showModal = false;
+
+    async function handlePlay() {
+      try{
+        await trpc(page).queue.clear.mutate();
+        await trpc(page).queue.add.mutate({ uri });
+        await trpc(page).player.play.mutate();
+      }finally{
+        showModal = false;
+      }
+    }
+
+    async function handleAddToPlaylist() {
+      try{
+        await trpc(page).queue.add.mutate({ uri });
+      }finally{
+        showModal = false;
+      }
+    }
 
   
     // Formatea el tiempo en mm:ss
@@ -51,3 +75,30 @@
       </div>
     {/if}
   </div>
+  {#if showModal}
+  <div class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-72">
+      <h2 class="text-lg font-semibold mb-4">{title}</h2>
+      <div class="flex flex-col gap-3">
+        <button
+          class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          onclick={handlePlay}
+        >
+          ▶️ Play
+        </button>
+        <button
+          class="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+          onclick={handleAddToPlaylist}
+        >
+          ➕ Add to Playlist
+        </button>
+        <button
+          class="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
+          onclick={() => showModal = false}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}

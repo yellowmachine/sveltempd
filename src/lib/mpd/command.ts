@@ -294,6 +294,9 @@ class Queue {
     const queue = await queueMsg();
     return queue;
   }
+  async add(uri: string) {
+    await this.client.api.queue.add(uri);
+  }
   async remove(uri: string) {
     await this.client.api.queue.delete(uri);
   }

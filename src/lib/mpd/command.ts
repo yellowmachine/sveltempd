@@ -129,15 +129,16 @@ class Library {
     this.client = client;
   }
   async getFolderContent(path: string) {
-    const { stdout } = await execAsync('mpc -f "%artist% - %title% - %id% - %file%" - %total% listall "' + path + '"');
-    const files = formatSongArray(stdout);
-
+    const { stdout } = await execAsync('mpc -f "%artist% - %title% - %id% - %file% - %time%" listall "' + path + '"');
+    const files = formatSongArray(stdout).filter(item => path !== '' && item.uri.startsWith(path));
+    const currentSong = (await execAsync('mpc current -f "%file%"')).stdout
+    
     const result = await this.client.api.db.listall(path) as ListAllItem[];
     const directories = result.
       filter(item => typeof item.directory === 'string' && item.directory.startsWith(path)).
       map(item => item.directory).filter(item => item !== undefined)
     
-    return {files, directories};
+    return {files, directories, currentSong};
   }
 }
 

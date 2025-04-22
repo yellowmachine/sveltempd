@@ -6,8 +6,7 @@
 </script>
   
 <Library 
-    initialContents={data.rootContents} 
-    currentSongId={mpdStatus.value?.songid}
+    initialContents={data} 
     total={ mpdStatus.value?.time?.total } 
     elapsed={ mpdStatus.value?.time?.elapsed }
 />

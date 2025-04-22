@@ -4,7 +4,7 @@
     import { trpcQueue } from './trpcClients'
     
     export let songs: TSong[];
-    export let currentSongId: number | undefined;
+    export let currentSong: string;
     export let elapsed: number | undefined;
     export let total: number | undefined;
 
@@ -25,7 +25,7 @@
   </button>
 
     <div class="queue-content">
-      <SongList {trpcQueue} {songs} {currentSongId} {elapsed} {total} />
+      <SongList {trpcQueue} {songs} {currentSong} {elapsed} {total} />
     </div>
 </div>
   

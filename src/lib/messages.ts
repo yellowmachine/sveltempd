@@ -6,8 +6,9 @@ import type { MPDStatus } from './types';
 const execAsync = promisify(exec);
 
 function formatSong(line: string) {
-    const [artist, title, id, uri, time, ...rest] = line.trim().split(' - ');
-    return { artist: artist || '', title: title || '', id: parseInt(id), uri: uri || '', time: parseInt(time) || 0 };
+    const [artist, title, id, uri, time, ...rest] = line.trim().split('-').map(c => c.trim());
+    console.log(line, line.trim().split('-').map(c => c.trim()))
+    return { artist: artist || '', title: title || uri || '', id: parseInt(id), uri: uri || '', time: time || '' };
 }
 
 export function formatSongArray(stdout: string) {
@@ -23,17 +24,18 @@ export type Song = {
     title: string;
     id: number;
     uri: string;
-    time: number;
+    time: string;
 };
 
-export async function queueMsg(): Promise<Song[]> { 
-  let msg: Song[];
+export async function queueMsg(): Promise<{queue: Song[], currentSong: string}> { 
+  let msg;
   try {
-    const { stdout } = await execAsync('mpc -f "%artist% - %title% - %id% - %file%" playlist');
+    const { stdout } = await execAsync('mpc -f "%artist% - %title% - %id% - %file% - %time%" playlist');
     const queue = formatSongArray(stdout);
-    msg = queue;
+    const currentSong = (await execAsync('mpc current -f "%file%"')).stdout
+    msg = {queue, currentSong};
   } catch {
-    msg = [];
+    msg = {queue: [], currentSong: ''};
   }
   return msg;
 }

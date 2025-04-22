@@ -6,9 +6,8 @@
 	  import Song from './Song.svelte';
 	  import { trpcQueue } from './trpcClients';
   
-    export let initialContents: {directories: string[], files: TSong[]} = {directories: [], files: []};
+    export let initialContents: {directories: string[], files: TSong[], currentSong: string} = {directories: [], files: [], currentSong: ''};
     export let currentFolder = '';
-    export let currentSongId: number | undefined;
     export let elapsed: number | undefined;
     export let total: number | undefined;
     
@@ -94,16 +93,17 @@
       </li>
       {/each}
       {#each contents.files as song}
-      <Song 
-        songId={song.id}
-        title={song.title}
-        artist={song.artist}
-        uri={song.uri}
-        {currentSongId} 
-        {total} 
-        {elapsed}
-        {trpcQueue}
-      />
+      <div>
+        <Song 
+          title={song.title}
+          artist={song.artist}
+          uri={song.uri}
+          currentSong={initialContents.currentSong}
+          {total} 
+          {elapsed}
+          {trpcQueue}
+        />
+      </div>
       {/each}
     </ul>
     

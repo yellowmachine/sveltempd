@@ -11,7 +11,7 @@
 
 <Queue 
     songs={ queue.value } 
-    currentSongId={ mpdStatus.value?.songid } 
+    currentSong={ data.currentSong } 
     total={ mpdStatus.value?.time?.total } 
     elapsed={ mpdStatus.value?.time?.elapsed }  
 />

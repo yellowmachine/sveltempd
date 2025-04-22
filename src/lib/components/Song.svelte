@@ -1,8 +1,7 @@
 <script lang="ts">
 	  import type { TRPCQueue } from "./trpcClients";
 
-    export let songId: number;
-    export let currentSongId: number | undefined;
+    export let currentSong: string;
     export let uri: string;
     export let title: string;
     export let artist: string;
@@ -40,13 +39,13 @@
   
   <div
     class={`w-auto inline-flex flex-col sm:flex-row items-center gap-2 p-3 rounded transition-all
-      ${songId === currentSongId
+      ${title === currentSong
         ? 'bg-blue-50 border border-blue-300 shadow-sm'
         : 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700'}
     `}
   >
     <!-- Vista destacada si es la canción actual -->
-    {#if songId === currentSongId}
+    {#if uri === currentSong}
     <div>
       <div class="flex items-center gap-2">
         <span class="text-blue-600 font-bold animate-pulse">●</span>

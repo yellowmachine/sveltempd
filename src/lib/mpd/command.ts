@@ -1,6 +1,6 @@
 import { getMPDClient } from '$lib/mpdClient';
 import type { MPDApi } from 'mpd-api';
-import { string, z } from 'zod';
+import { z } from 'zod';
 import { db } from '$lib/db';
 import { queueMsg } from '$lib/messages';
 
@@ -96,17 +96,17 @@ export function getFirstLevel(array: {directory: string, file: string[]}[], ruta
     if (entry.directory === rutaNorm) {
       (entry.file || []).forEach(f => {
         let rel = f.slice(rutaNorm.length);
-        const included = toBeIncluded(rel);
-        if(included) 
-          files.add(included);
+        const include = toBeIncluded(rel);
+        if(include) 
+          files.add(include);
       });
     }
     
     if (entry.directory.startsWith(rutaNorm)) {
       let resto = entry.directory.slice(rutaNorm.length);
-      const included = toBeIncluded(resto);
-      if(included)
-        dirs.add(included);
+      const include = toBeIncluded(resto);
+      if(include)
+        dirs.add(include);
     }
   });
 
@@ -160,10 +160,8 @@ class Player {
     await this.client.api.queue.clear();
 
     if (playlistName) {
-      // Cargar la playlist por nombre
       await this.client.api.playlists.load(playlistName);
     } else if (path) {
-      // Añadir canciones una a una
       const files = await librarySingleton?.getFiles(path) || [];
       for (const file of files) {
         await this.client.api.queue.add(file);
@@ -293,7 +291,7 @@ class Queue {
     this.client = client;
   }
   async info() {
-    const queue = await queueMsg()//this.client.api.queue.info();
+    const queue = await queueMsg();
     return queue;
   }
   async remove(uri: string) {

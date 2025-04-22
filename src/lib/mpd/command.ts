@@ -75,6 +75,15 @@ type VolumeObj = {
     volume: number;
 }
 
+export function toBeIncluded(entry: string) {
+  if(entry.startsWith('/')){
+    entry = entry.slice(1);
+  } 
+  if(entry !== '' && !entry.includes('/'))
+    return entry;
+  return null;
+}
+
 export function getFirstLevel(array: {directory: string, file: string[]}[], ruta: string) {
   // Inicializa sets para evitar duplicados
   const dirs = new Set();
@@ -84,27 +93,20 @@ export function getFirstLevel(array: {directory: string, file: string[]}[], ruta
   const rutaNorm = ruta.replace(/\/$/, "");
 
   array.forEach(entry => {
-    if(entry.directory)
-      console.log('Entry', entry.directory, rutaNorm);
-
     if (entry.directory === rutaNorm) {
       (entry.file || []).forEach(f => {
         let rel = f.slice(rutaNorm.length);
-        if(rel.startsWith('/')){
-          rel = rel.slice(1);
-        } 
-        if(rel !== '' && !rel.includes('/')) 
-          files.add(rel);
+        const included = toBeIncluded(rel);
+        if(included) 
+          files.add(included);
       });
     }
     
     if (entry.directory.startsWith(rutaNorm)) {
       let resto = entry.directory.slice(rutaNorm.length);
-      if(resto.startsWith('/')){
-        resto = resto.slice(1);
-      }
-      if(resto !== '')
-        dirs.add(resto);
+      const included = toBeIncluded(resto);
+      if(included)
+        dirs.add(included);
     }
   });
 

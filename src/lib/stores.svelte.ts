@@ -49,8 +49,8 @@ function createQueueStore() {
   let queue: Array<Song> = $state([]);
 
   return {
-    update(newQueue: Array<Song>) {
-      queue = [...newQueue];
+    update(newQueue: {queue: Array<Song>}) {
+      queue = [...newQueue.queue];
     },
     get value() {
       return queue;

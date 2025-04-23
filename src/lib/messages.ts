@@ -7,7 +7,6 @@ const execAsync = promisify(exec);
 
 function formatSong(line: string) {
     const [artist, title, id, uri, time, ...rest] = line.trim().split('-').map(c => c.trim());
-    console.log(line, line.trim().split('-').map(c => c.trim()))
     return { artist: artist || '', title: title || uri || '', id: parseInt(id), uri: uri || '', time: time || '' };
 }
 

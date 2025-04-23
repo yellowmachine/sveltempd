@@ -32,7 +32,7 @@
 		evtSource = new EventSource('/api/events');
 
 		evtSource.addEventListener("player", (event) => {
-			const data: {player: MPDStatus, queue: Array<Song>} = JSON.parse((event as MessageEvent).data);
+			const data: {player: MPDStatus, queue: {queue: Array<Song>}} = JSON.parse((event as MessageEvent).data);
 
 			mpdStatus.update(data.player);
 			queue.update(data.queue);

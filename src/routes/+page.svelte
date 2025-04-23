@@ -5,7 +5,7 @@
     
     let { data } = $props();
     
-    queue.update(data.queue.queue)
+    //queue.update(data.queue); //no deberia hacer esto sino invalidar al layout pues es este quien obtiene esa info
 
 </script>
 

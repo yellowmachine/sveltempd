@@ -23,14 +23,14 @@
 	function mute() { trpc(page).player.mute.mutate(); }
 	function unmute() { trpc(page).player.unmute.mutate(); }
 
-	const width = '24'
-	const height = '24'
+	const width = '32'
+	const height = '32'
 
 	const currentSong = getCurrentSongInfo()
 	
 </script>
 
-<div class="flex items-center gap-4 border-2 rounded-md p-4 w-full max-w-md bg-white text-orange-500 dark:bg-orange-500 dark:text-white">
+<div class="flex items-center gap-4 border-2 rounded-md p-4 w-max bg-white text-orange-500 dark:bg-orange-500 dark:text-white">
 	<PlayerButton
 		onClick={previous}
 		ariaLabel="Anterior"

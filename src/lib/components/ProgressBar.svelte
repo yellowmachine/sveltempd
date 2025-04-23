@@ -47,9 +47,7 @@
 </script>
 
 <div class="max-w-md">
-    <label for="player-range" class="block mb-2 text-sm font-medium text-orange-500 dark:text-white">
-        Progreso
-    </label>
+    
     <input
         id="player-range"
         type="range"

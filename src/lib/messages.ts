@@ -26,12 +26,14 @@ export type Song = {
     time: string;
 };
 
-export async function queueMsg(): Promise<{queue: Song[], currentSong: string}> { 
+export type QueueMsg = {queue: Song[], currentSong: string}
+
+export async function queueMsg(): Promise<QueueMsg> { 
   let msg;
   try {
     const { stdout } = await execAsync('mpc -f "%artist% - %title% - %id% - %file% - %time%" playlist');
     const queue = formatSongArray(stdout);
-    const currentSong = (await execAsync('mpc current -f "%file%"')).stdout
+    const currentSong = (await execAsync('mpc current -f "%file%"')).stdout.trim()
     msg = {queue, currentSong};
   } catch {
     msg = {queue: [], currentSong: ''};

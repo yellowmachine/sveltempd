@@ -36,7 +36,7 @@
       return `${min}:${sec.toString().padStart(2, '0')}`;
     }
   </script>
-  
+
   <div
     class={`w-auto inline-flex flex-col sm:flex-row items-center gap-2 p-3 rounded transition-all
       ${title === currentSong

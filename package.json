@@ -71,6 +71,7 @@
 		"canvas-confetti": "^1.9.3",
 		"lowdb": "^7.0.1",
 		"mpd-api": "^1.1.2",
+		"node-ssh": "^13.2.1",
 		"svelte-loading-spinners": "^0.3.6",
 		"trpc-sveltekit": "^3.6.3",
 		"zod": "^3.24.3"

@@ -5,7 +5,7 @@
 
 
     const { Story } = defineMeta({
-      title: 'Example/Player',
+      title: 'Player/Player',
       component: Player,
       tags: ['autodocs'],
       argTypes: {

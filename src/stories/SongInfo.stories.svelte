@@ -4,7 +4,7 @@
     
 
     const { Story } = defineMeta({
-      title: 'Example/SongInfo',
+      title: 'Song/SongInfo',
       component: SongInfo,
       tags: ['autodocs'],
       argTypes: {

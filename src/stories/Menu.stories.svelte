@@ -3,7 +3,7 @@
     import Menu from '$lib/components/Menu.svelte';
   
     const { Story } = defineMeta({
-      title: 'Example/Menu',
+      title: 'Menu/Menu',
       component: Menu,
       parameters: {
         viewport: {
@@ -24,6 +24,6 @@
     }}
   >
     <div style="width: 375px; margin: 0 auto;">
-        <Menu />
+        <Menu isPlaying/>
     </div>
   </Story>

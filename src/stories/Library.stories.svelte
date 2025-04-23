@@ -4,7 +4,7 @@
     
 
     const { Story } = defineMeta({
-      title: 'Example/Library',
+      title: 'Library/Library',
       component: Library,
       tags: ['autodocs'],
       argTypes: {
@@ -17,7 +17,8 @@
 
     const initialContents = {
       directories: [ 'the rolling stones', 'the beatles', 'pink floyd' ],
-      files: [ 'the rolling stones - satisfaction.mp3', 'the beatles - hey jude.mp3', 'the beatles - let it be.mp3', 'pink floyd - time.mp3', 'pink floyd - comfortably numb.mp3' ],
+      currentSong: 'the rolling stones - satisfaction.mp3', 
+      files: [] // poner un array de Songs  
     };
 
 </script>

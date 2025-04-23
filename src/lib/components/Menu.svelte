@@ -20,7 +20,7 @@
         <!-- Menú horizontal en md+ -->
         <ul class="hidden md:flex space-x-6 border border-orange-400 rounded px-2 py-1">
           <li><a href="/queue" class="hover:text-orange-600 font-medium transition-colors">Cola</a></li>
-          <li><a href="/playlists" class="hover:text-orange-600 font-medium transition-colors">Listas</a></li>
+          <!-- <li><a href="/playlists" class="hover:text-orange-600 font-medium transition-colors">Listas</a></li> -->
           <li><a href="/library" class="hover:text-orange-600 font-medium transition-colors">Biblioteca</a></li>
         </ul>
   
@@ -40,7 +40,7 @@
     {#if open}
       <ul class="md:hidden bg-white dark:bg-orange-900 border-t border-orange-200 dark:border-orange-800 px-4 py-2 space-y-2 animate-fade-in absolute left-0">
         <li><a href="/queue" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>Queue</a></li>
-        <li><a href="/playlists" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>List Management</a></li>
+        <!-- <li><a href="/playlists" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>List Management</a></li> -->
         <li><a href="/library" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>Library</a></li>
       </ul>
     {/if}

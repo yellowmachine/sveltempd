@@ -81,9 +81,9 @@
       {#each contents.directories as dir}
       <li>
         <button
-          class="flex items-center w-full text-left p-2 rounded 
+          class="flex items-center w-full text-left p-2 rounded mt-2
                   bg-orange-100 hover:bg-orange-200 
-                  dark:bg-orange-900 dark:hover:bg-orange-800
+                  dark:bg-orange-900 dark:hover:bg-orange-800 cursor-pointer
                   transition-colors"
           on:click={() => enterFolder(dir)}
           aria-label={`Abrir carpeta ${dir}`}

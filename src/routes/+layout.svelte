@@ -8,6 +8,8 @@
 	import { m } from '$lib/paraglide/messages';
 	import type { LayoutProps } from './$types';
 	import type { QueueMsg } from '$lib/messages';
+	import { trpcPlayer } from '$lib/components/trpcClients';
+	import { getCurrentSongInfo } from '$lib/stores.svelte';
 	
 	let { data, children }: LayoutProps = $props();	
 
@@ -16,6 +18,7 @@
 
 	queue.update(data.queue);
 	currentSong.update(data.queue.currentSong)
+	const currentSongInfo = getCurrentSongInfo()
 
 	let evtSource: EventSource | null = null;
 	let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -79,6 +82,13 @@
 </script>
 
 <Menu isPlaying={mpdStatus.value?.state === 'play'} />
-<Player total={mpdStatus.value?.time?.total} elapsed={mpdStatus.value?.time?.elapsed} volume={mpdStatus.value?.volume || 0} playStatus={ mpdStatus.value?.state }/>
+<Player 
+	currentSong={currentSongInfo}
+	total={mpdStatus.value?.time?.total} 
+	elapsed={mpdStatus.value?.time?.elapsed} 
+	volume={mpdStatus.value?.volume || 0} 
+	playStatus={ mpdStatus.value?.state }
+	{trpcPlayer}
+/>
 
 {@render children()}

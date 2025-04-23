@@ -1,62 +1,57 @@
 <script lang="ts">
     import Icon from '@iconify/svelte';
 	import { Jumper } from 'svelte-loading-spinners';
-	import { page } from '$app/state';
-  	import { trpc } from '$lib/trpc/client';
 	import PlayerButton from './PlayerButton.svelte';
 	import ProgressBar from './ProgressBar.svelte';
 	import SongInfo from '$lib/components/SongInfo.svelte';
-	import { getCurrentSongInfo } from '$lib/stores.svelte';
+	import type { TRPCPlayer } from './trpcClients';
+	import type { Song as TSong } from '$lib/messages';
 
-	let { playStatus, volume, total, elapsed }: 
-		{ playStatus: 'stop' | 'play' | 'pause' | undefined, volume: number, elapsed?: number, total?: number} = $props();
+	let { playStatus, volume, total, elapsed, trpcPlayer, currentSong }: 
+		{ playStatus: 'stop' | 'play' | 'pause' | undefined, 
+		volume: number, 
+		elapsed?: number, 
+		total?: number,
+		trpcPlayer: TRPCPlayer,
+		currentSong: TSong | null
+	} = $props();
 	
     let loading = $state(false);
 	let error = $state<string | null>(null);
-
-	function play() { trpc(page).player.play.mutate(); }
-	function pause() { trpc(page).player.pause.mutate(); }
-	function next() { trpc(page).player.next.mutate(); }
-	function previous() { trpc(page).player.prev.mutate(); }
-	function volumeUp() { trpc(page).player.volumeInc.mutate({ amount: 10 }); }
-	function volumeDown() { trpc(page).player.volumeInc.mutate({ amount: -10 }); }
-	function mute() { trpc(page).player.mute.mutate(); }
-	function unmute() { trpc(page).player.unmute.mutate(); }
+	
+	function setVolume(volume: number) { trpcPlayer.volume(volume); }
 
 	const width = '32'
 	const height = '32'
 
-	const currentSong = getCurrentSongInfo()
 	let showVolumeControl = $state(false);
 
 	function correctVolume(amount: number) {
 		return Math.round(100*Math.max(0, Math.min(100, amount)))
 	}
 
-	function getVoumeCorrected(event: TouchEvent | MouseEvent, x: number){
-		const rect = (event.target as HTMLDivElement).getBoundingClientRect();
-		return correctVolume((rect.bottom - x) / rect.height);
+	function getY(event: TouchEvent | MouseEvent) {
+		if (event instanceof TouchEvent)	
+			return event.touches[0].clientY;
+		else
+			return event.clientY;
 	}
 
 	async function handleVolumeClickOuter(event: MouseEvent) {
+		const y = getY(event);
 		const rect = (event.currentTarget as HTMLElement).previousElementSibling?.getBoundingClientRect();
-		if(rect)
-			volume = correctVolume((rect.bottom - event.clientY) / rect.height);
+		if(rect){
+			volume = correctVolume((rect.bottom - y) / rect.height);
+			await setVolume(volume);
+		}	
 	}
 
 	async function handleVolumeClick(event: TouchEvent | MouseEvent) {
-		if (event instanceof TouchEvent && event.type === 'touchmove') {
-			volume = getVoumeCorrected(event, event.touches[0].clientY);		
-		} else if (event instanceof TouchEvent && event.type === 'touchend') {
-			//await trpc(page).player.volume.mutate({ amount: volume });
-		}
-		else if (event instanceof MouseEvent && event.type === 'click') {
-			volume = getVoumeCorrected(event, event.clientY);
-			//await trpc(page).player.volume.mutate({ amount: volume });
-		} else if(event instanceof MouseEvent && event.type === 'mousemove') {
-			volume = getVoumeCorrected(event, event.clientY);
-		} else if(event instanceof MouseEvent && event.type === 'mouseout') {
-			//await trpc(page).player.volume.mutate({ amount: volume });
+		const y = getY(event);
+		const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+		if(rect){
+			volume = correctVolume((rect.bottom - y) / rect.height);
+			await setVolume(volume);
 		}
   	}
 
@@ -70,38 +65,37 @@
 	
 </script>
 
-{volume}
 {#if playStatus === 'play' || playStatus === 'pause'}
 <div class="flex items-center gap-4 border-2 rounded-md p-4 w-max bg-white text-orange-500 dark:bg-orange-500 dark:text-white">
 	<PlayerButton
-		onClick={previous}
+		onClick={() => trpcPlayer.prev()}
 		ariaLabel="Anterior"
 		disabled={loading}>
 		<Icon icon="mdi:skip-previous" {width} {height} />
 	</PlayerButton>
 	{#if playStatus === 'pause'}
 	<PlayerButton
-		onClick={pause}
+		onClick={() => trpcPlayer.pause()}
 		ariaLabel="Pausar"
 		disabled={loading}>
 		<Icon icon="mdi:pause" {width} {height} />
 	</PlayerButton>
 	{:else}
 	<PlayerButton
-		onClick={play}
+		onClick={() => trpcPlayer.play()}
 		ariaLabel="Reproducir"
 		disabled={loading}>
 		<Icon icon="mdi:play" {width} {height} />
 	</PlayerButton>
 	{/if}
 	<PlayerButton
-		onClick={next}
+		onClick={() => trpcPlayer.next()}
 		ariaLabel="Siguiente"
 		disabled={loading}>
 		<Icon icon="mdi:skip-next" {width} {height} />
 	</PlayerButton>
 	<PlayerButton
-		onClick={volumeDown}
+		onClick={() => trpcPlayer.volumeInc(-10)}
 		ariaLabel="Bajar volumen"
 		disabled={loading}>
 		<Icon icon="mdi:volume-minus" {width} {height} />
@@ -128,31 +122,31 @@
 						>
 					</button>
 					<button
-					 aria-label="Cambiar volumen"
-					  class="absolute w-2 bg-gray-600 rounded-lg"
-					  onclick={handleVolumeClickOuter}
-					  style={`height: ${volume}%; bottom: 0`}
+					 	aria-label="Cambiar volumen"
+					  	class="absolute w-2 bg-gray-600 rounded-lg"
+					  	onclick={handleVolumeClickOuter}
+					  	style={`height: ${volume}%; bottom: 0`}
 					></button>
 				</div>
 			</div>
 		{/if}
 		</span>
 	<PlayerButton
-		onClick={volumeUp}
+		onClick={() => trpcPlayer.volumeInc(10)}
 		ariaLabel="Subir volumen"
 		disabled={loading}>
 		<Icon icon="mdi:volume-plus" {width} {height} />
 	</PlayerButton>
 	{#if volume !== 0}
 	<PlayerButton
-		onClick={mute}
+		onClick={() => trpcPlayer.mute()}
 		ariaLabel="Mute"
 		disabled={loading}>
 		<Icon icon="mdi:volume-mute" {width} {height} />
 	</PlayerButton>
 	{:else}
 	<PlayerButton
-		onClick={unmute}
+		onClick={() => trpcPlayer.unmute()}
 		ariaLabel="Deshacer mute"
 		disabled={loading}>
 		<Icon icon="mdi:volume-high" {width} {height} />

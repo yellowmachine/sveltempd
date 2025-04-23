@@ -39,10 +39,10 @@
 </script>
 
 <div
-    class={`w-auto cursor-pointer inline-flex flex-col sm:flex-row items-center gap-2 p-3 rounded transition-all
-      ${title === currentSong
-        ? 'bg-blue-50 border border-blue-300 shadow-sm'
-        : 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700'}
+    class={`mt-2 w-full cursor-pointer inline-flex flex-col sm:flex-row items-center gap-2 p-3 rounded transition-all
+      ${uri === currentSong
+        ? 'hover:bg-blue-100 bg-blue-50 border border-blue-300 shadow-sm'
+        : 'bg-white hover:bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:hover:bg-gray-700'}
     `}
   >
     <!-- Vista destacada si es la canción actual -->

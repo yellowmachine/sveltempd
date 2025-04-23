@@ -6,15 +6,13 @@
 	import PlayerButton from './PlayerButton.svelte';
 	import ProgressBar from './ProgressBar.svelte';
 	import SongInfo from '$lib/components/SongInfo.svelte';
-	import { getCurrentSong } from '$lib/stores.svelte';
+	import { getCurrentSongInfo } from '$lib/stores.svelte';
 
 	let { isPlaying, volume, total, elapsed }: 
 		{isPlaying: boolean, volume: number | undefined, elapsed?: number, total?: number} = $props();
 	
     let loading = $state(false);
 	let error = $state<string | null>(null);
-
-	const currentSong = getCurrentSong();
 
 	function play() { trpc(page).player.play.mutate(); }
 	function pause() { trpc(page).player.pause.mutate(); }
@@ -24,6 +22,11 @@
 	function volumeDown() { trpc(page).player.volume.mutate({ amount: -10 }); }
 	function mute() { trpc(page).player.mute.mutate(); }
 	function unmute() { trpc(page).player.unmute.mutate(); }
+
+	const width = '24'
+	const height = '24'
+
+	const currentSong = getCurrentSongInfo()
 	
 </script>
 
@@ -32,55 +35,55 @@
 		onClick={previous}
 		ariaLabel="Anterior"
 		disabled={loading}>
-		<Icon icon="mdi:skip-previous" width="32" height="32" />
+		<Icon icon="mdi:skip-previous" {width} {height} />
 	</PlayerButton>
 	{#if isPlaying}
 	<PlayerButton
 		onClick={pause}
 		ariaLabel="Pausar"
 		disabled={loading}>
-		<Icon icon="mdi:pause" width="32" height="32" />
+		<Icon icon="mdi:pause" {width} {height} />
 	</PlayerButton>
 	{:else}
 	<PlayerButton
 		onClick={play}
 		ariaLabel="Reproducir"
 		disabled={loading}>
-		<Icon icon="mdi:play" width="32" height="32" />
+		<Icon icon="mdi:play" {width} {height} />
 	</PlayerButton>
 	{/if}
 	<PlayerButton
 		onClick={next}
 		ariaLabel="Siguiente"
 		disabled={loading}>
-		<Icon icon="mdi:skip-next" width="32" height="32" />
+		<Icon icon="mdi:skip-next" {width} {height} />
 	</PlayerButton>
 	<PlayerButton
 		onClick={volumeDown}
 		ariaLabel="Bajar volumen"
 		disabled={loading}>
-		<Icon icon="mdi:volume-minus" width="32" height="32" />
+		<Icon icon="mdi:volume-minus" {width} {height} />
 	</PlayerButton>
 	<span class="text-2xl">{volume}</span>
 	<PlayerButton
 		onClick={volumeUp}
 		ariaLabel="Subir volumen"
 		disabled={loading}>
-		<Icon icon="mdi:volume-plus" width="32" height="32" />
+		<Icon icon="mdi:volume-plus" {width} {height} />
 	</PlayerButton>
 	{#if volume !== 0}
 	<PlayerButton
 		onClick={mute}
 		ariaLabel="Mute"
 		disabled={loading}>
-		<Icon icon="mdi:volume-mute" width="32" height="32" />
+		<Icon icon="mdi:volume-mute" {width} {height} />
 	</PlayerButton>
 	{:else}
 	<PlayerButton
 		onClick={unmute}
 		ariaLabel="Deshacer mute"
 		disabled={loading}>
-		<Icon icon="mdi:volume-high" width="32" height="32" />
+		<Icon icon="mdi:volume-high" {width} {height} />
 	</PlayerButton>
 	{/if}
 </div>

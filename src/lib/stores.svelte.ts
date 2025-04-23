@@ -31,7 +31,7 @@ function createPlaylistStore() {
 
 export const playlist = createPlaylistStore();
 
-const currentSong = $derived.by( () => {
+const currentSongInfo = $derived.by( () => {
   const current = mpdStatus.value?.song;
 
   if(current === undefined) return null;
@@ -40,8 +40,9 @@ const currentSong = $derived.by( () => {
   return playlist.value[current];
 });
 
-export function getCurrentSong() {
-  return currentSong;
+
+export function getCurrentSongInfo() {
+  return currentSongInfo;
 }
 
 
@@ -59,3 +60,17 @@ function createQueueStore() {
 }
 
 export const queue = createQueueStore();
+
+function createCurrentSongStore() {
+  let currentSong: string | null = $state(null);
+
+  return {
+    update(newValue: string | null) {
+      currentSong = newValue
+    },
+    get value() {
+      return currentSong;
+    }
+  };
+}
+export const currentSong = createCurrentSongStore();

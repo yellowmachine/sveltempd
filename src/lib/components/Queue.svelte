@@ -4,7 +4,7 @@
     import { trpcQueue } from './trpcClients'
     
     export let songs: TSong[];
-    export let currentSong: string;
+    export let currentSong: string | null;
     export let elapsed: number | undefined;
     export let total: number | undefined;
 

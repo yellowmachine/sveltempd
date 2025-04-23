@@ -1,7 +1,7 @@
 <script lang="ts">
 	  import type { TRPCQueue } from "./trpcClients";
 
-    export let currentSong: string;
+    export let currentSong: string | null;
     export let uri: string;
     export let title: string;
     export let artist: string;

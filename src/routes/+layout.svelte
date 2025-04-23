@@ -1,13 +1,13 @@
 <script lang="ts">
 	import '../app.css';
 	import { onDestroy, onMount } from 'svelte';
-	import { mpdStatus, playlist, queue } from '$lib/stores.svelte';
+	import { currentSong, mpdStatus, playlist, queue } from '$lib/stores.svelte';
 	import type { MPDStatus } from '$lib/types/index';
 	import Player from '$lib/components/Player.svelte';
 	import Menu from '$lib/components/Menu.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import type { LayoutProps } from './$types';
-	import type { Song } from '$lib/messages';
+	import type { QueueMsg } from '$lib/messages';
 	
 	let { data, children }: LayoutProps = $props();	
 
@@ -15,6 +15,7 @@
 		mpdStatus.update(data.player);
 
 	queue.update(data.queue);
+	currentSong.update(data.queue.currentSong)
 
 	let evtSource: EventSource | null = null;
 	let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -32,10 +33,11 @@
 		evtSource = new EventSource('/api/events');
 
 		evtSource.addEventListener("player", (event) => {
-			const data: {player: MPDStatus, queue: {queue: Array<Song>}} = JSON.parse((event as MessageEvent).data);
+			const data: {player: MPDStatus, queue: QueueMsg} = JSON.parse((event as MessageEvent).data);
 
 			mpdStatus.update(data.player);
 			queue.update(data.queue);
+			currentSong.update(data.queue.currentSong)
 		});
 
 		evtSource.addEventListener("mixer", (event) => {

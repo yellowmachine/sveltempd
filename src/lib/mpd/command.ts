@@ -219,6 +219,10 @@ class Player {
   }
 
   async volume(amount: number) {
+    await this.setVol(amount);
+  }
+
+  async volumeInc(amount: number) {
     const currentVolume = await this.getCurrentVolume();
     let newVolume = currentVolume + amount;
     if(newVolume > 100) {

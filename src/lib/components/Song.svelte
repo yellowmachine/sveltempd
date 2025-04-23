@@ -35,10 +35,11 @@
       const sec = Math.floor(seconds % 60);
       return `${min}:${sec.toString().padStart(2, '0')}`;
     }
-  </script>
 
-  <div
-    class={`w-auto inline-flex flex-col sm:flex-row items-center gap-2 p-3 rounded transition-all
+</script>
+
+<div
+    class={`w-auto cursor-pointer inline-flex flex-col sm:flex-row items-center gap-2 p-3 rounded transition-all
       ${title === currentSong
         ? 'bg-blue-50 border border-blue-300 shadow-sm'
         : 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700'}

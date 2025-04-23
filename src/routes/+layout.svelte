@@ -79,6 +79,6 @@
 </script>
 
 <Menu isPlaying={mpdStatus.value?.state === 'play'} />
-<Player total={mpdStatus.value?.time?.total} elapsed={mpdStatus.value?.time?.elapsed} volume={mpdStatus.value?.volume} isPlaying={ mpdStatus.value?.state === 'play' }/>
+<Player total={mpdStatus.value?.time?.total} elapsed={mpdStatus.value?.time?.elapsed} volume={mpdStatus.value?.volume || 0} playStatus={ mpdStatus.value?.state }/>
 
 {@render children()}

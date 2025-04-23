@@ -12,8 +12,11 @@
         volume: { 
             control: 'text' 
         },
-        isPlaying: {
-            control: 'boolean',
+        playStatus: {
+            control: {
+                type: 'select',
+                options: ['stop', 'play', 'pause']
+            }
         },
       },
       args: {
@@ -22,10 +25,12 @@
     });
 </script>
   
-<Story name="Primary" args={{ volume: 75, isPlaying: false }} />
+<Story name="Play" args={{ volume: 75, playStatus: 'play'}} />
 
-<Story name="Dark" args={{ volume: 75, isPlaying: false }}>
+<Story name="Pause" args={{ volume: 30, playStatus: 'pause'}} />
+
+<Story name="Dark" args={{ volume: 15, playStatus: 'pause' }}>
     <DarkDecorator>
-        <Player volume={10} isPlaying={true} />
+        <Player volume={10} playStatus={'play'} />
     </DarkDecorator>
 </Story>

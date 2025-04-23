@@ -27,34 +27,36 @@
 	const height = '32'
 
 	const currentSong = getCurrentSongInfo()
-
 	let showVolumeControl = $state(false);
+
+	function correctVolume(amount: number) {
+		return Math.round(100*Math.max(0, Math.min(100, amount)))
+	}
+
+	function getVoumeCorrected(event: TouchEvent | MouseEvent, x: number){
+		const rect = (event.target as HTMLDivElement).getBoundingClientRect();
+		return correctVolume((rect.bottom - x) / rect.height);
+	}
+
+	async function handleVolumeClickOuter(event: MouseEvent) {
+		const rect = (event.currentTarget as HTMLElement).previousElementSibling?.getBoundingClientRect();
+		if(rect)
+			volume = correctVolume((rect.bottom - event.clientY) / rect.height);
+	}
 
 	async function handleVolumeClick(event: TouchEvent | MouseEvent) {
 		if (event instanceof TouchEvent && event.type === 'touchmove') {
-			const rect = (event.target as HTMLDivElement).getBoundingClientRect();
-			const height = rect.height;
-			const touchY = event.touches[0].clientY - rect.top;
-			const newVolume = touchY / height;
-			volume = Math.max(0, Math.min(1, newVolume));		
+			volume = getVoumeCorrected(event, event.touches[0].clientY);		
 		} else if (event instanceof TouchEvent && event.type === 'touchend') {
-			await trpc(page).player.volume.mutate({ amount: volume });
+			//await trpc(page).player.volume.mutate({ amount: volume });
 		}
 		else if (event instanceof MouseEvent && event.type === 'click') {
-			const rect = (event.target as HTMLDivElement).getBoundingClientRect();
-			const height = rect.height;
-			const clickY = event.clientY - rect.top;
-			const newVolume = clickY / height;
-			volume = Math.max(0, Math.min(1, newVolume));
-			await trpc(page).player.volume.mutate({ amount: volume });
+			volume = getVoumeCorrected(event, event.clientY);
+			//await trpc(page).player.volume.mutate({ amount: volume });
 		} else if(event instanceof MouseEvent && event.type === 'mousemove') {
-			const rect = (event.target as HTMLDivElement).getBoundingClientRect();
-			const height = rect.height;
-			const clickY = event.clientY - rect.top;
-			const newVolume = clickY / height;
-			volume = Math.max(0, Math.min(1, newVolume));
+			volume = getVoumeCorrected(event, event.clientY);
 		} else if(event instanceof MouseEvent && event.type === 'mouseout') {
-			await trpc(page).player.volume.mutate({ amount: volume });
+			//await trpc(page).player.volume.mutate({ amount: volume });
 		}
   	}
 
@@ -68,6 +70,7 @@
 	
 </script>
 
+{volume}
 {#if playStatus === 'play' || playStatus === 'pause'}
 <div class="flex items-center gap-4 border-2 rounded-md p-4 w-max bg-white text-orange-500 dark:bg-orange-500 dark:text-white">
 	<PlayerButton
@@ -109,7 +112,7 @@
 		tabindex="0"
 		onmouseover={() => showVolumeControl = true}
 		onfocus={() => showVolumeControl = true}
-		onmouseout={() => showVolumeControl = false}
+		onmouseleave={() => showVolumeControl = false}
 		onblur={() => showVolumeControl = false}
 		ontouchstart={handleShowVolumeControl}
 		ontouchend={handleHideVolumeControl}
@@ -117,15 +120,20 @@
 		{volume}
 		{#if showVolumeControl}
 			<div class="absolute bg-gray-200 rounded-lg p-2 shadow-md" style={`top: 100%; left: 50%; transform: translateX(-50%)`}>
-			<div class="flex flex-col items-center">
-				<button
-					aria-label="Cambiar volumen"
-					class="w-2 h-20 bg-gray-400 rounded-lg relative"
-					onclick={handleVolumeClick}
-					>
-					<div class="absolute w-2 h-2 bg-gray-500 rounded-full" style={`top: ${volume * 100}%`}></div>
-				</button>
-			</div>
+				<div class="flex flex-col items-center">
+					<button
+						aria-label="Cambiar volumen"
+						class="w-2 h-20 bg-gray-400 rounded-lg relative"
+						onclick={handleVolumeClick}
+						>
+					</button>
+					<button
+					 aria-label="Cambiar volumen"
+					  class="absolute w-2 bg-gray-600 rounded-lg"
+					  onclick={handleVolumeClickOuter}
+					  style={`height: ${volume}%; bottom: 0`}
+					></button>
+				</div>
 			</div>
 		{/if}
 		</span>

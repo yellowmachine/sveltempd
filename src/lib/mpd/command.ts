@@ -222,16 +222,6 @@ class Player {
     await this.setVol(amount);
   }
 
-  async volumeInc(amount: number) {
-    const currentVolume = await this.getCurrentVolume();
-    let newVolume = currentVolume + amount;
-    if(newVolume > 100) {
-        newVolume = 100;
-    } else if(newVolume < 0) {
-        newVolume = 0;
-    }
-    await this.setVol(newVolume);
-  }
   async stop() {
     await this.client.api.playback.stop();
   }

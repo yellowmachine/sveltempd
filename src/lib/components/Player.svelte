@@ -16,16 +16,16 @@
 		currentSong: TSong | null
 	} = $props();
 	
-    let loading = $state(false);
-	let error = $state<string | null>(null);
-	
-	function setVolume(volume: number) { trpcPlayer.volume(volume); }
-
 	const width = '32'
 	const height = '32'
-
+    
+	let loading = $state(false);
+	let error = $state<string | null>(null);
+	let lastVolume = volume;
 	let showVolumeControl = $state(false);
 
+	function setVolume(volume: number) { trpcPlayer.volume(volume); }
+	
 	function correctVolume(amount: number) {
 		return Math.round(100*Math.max(0, Math.min(100, amount)))
 	}
@@ -37,21 +37,19 @@
 			return event.clientY;
 	}
 
-	async function handleVolumeClickOuter(event: MouseEvent) {
+	function handleVolumeClickOuter(event: MouseEvent) {
 		const y = getY(event);
 		const rect = (event.currentTarget as HTMLElement).previousElementSibling?.getBoundingClientRect();
 		if(rect){
 			volume = correctVolume((rect.bottom - y) / rect.height);
-			await setVolume(volume);
 		}	
 	}
 
-	async function handleVolumeClick(event: TouchEvent | MouseEvent) {
+	function handleVolumeClick(event: TouchEvent | MouseEvent) {
 		const y = getY(event);
 		const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
 		if(rect){
 			volume = correctVolume((rect.bottom - y) / rect.height);
-			await setVolume(volume);
 		}
   	}
 
@@ -62,6 +60,11 @@
 	function handleHideVolumeControl() {
 		showVolumeControl = false;
 	}
+
+	$effect(() => {
+		lastVolume = volume;
+		setVolume(volume);
+	})
 	
 </script>
 
@@ -95,7 +98,7 @@
 		<Icon icon="mdi:skip-next" {width} {height} />
 	</PlayerButton>
 	<PlayerButton
-		onClick={() => trpcPlayer.volumeInc(-10)}
+		onClick={() => volume -= 10}
 		ariaLabel="Bajar volumen"
 		disabled={loading}>
 		<Icon icon="mdi:volume-minus" {width} {height} />
@@ -132,21 +135,21 @@
 		{/if}
 		</span>
 	<PlayerButton
-		onClick={() => trpcPlayer.volumeInc(10)}
+		onClick={() => volume += 10}
 		ariaLabel="Subir volumen"
 		disabled={loading}>
 		<Icon icon="mdi:volume-plus" {width} {height} />
 	</PlayerButton>
 	{#if volume !== 0}
 	<PlayerButton
-		onClick={() => trpcPlayer.mute()}
+		onClick={() => volume = 0}
 		ariaLabel="Mute"
 		disabled={loading}>
 		<Icon icon="mdi:volume-mute" {width} {height} />
 	</PlayerButton>
 	{:else}
 	<PlayerButton
-		onClick={() => trpcPlayer.unmute()}
+		onClick={() => volume = lastVolume}
 		ariaLabel="Deshacer mute"
 		disabled={loading}>
 		<Icon icon="mdi:volume-high" {width} {height} />

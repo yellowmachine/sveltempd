@@ -1,7 +1,9 @@
 <script lang="ts">
+	  //import Icon from "@iconify/svelte";
 	  import type { TRPCQueue } from "./trpcClients";
-
+    
     export let currentSong: string | null;
+    export let isInQueue = true;
     export let uri: string;
     export let title: string;
     export let artist: string;
@@ -21,12 +23,17 @@
       }
     }
 
-    async function handleAddToPlaylist() {
+    async function handleAddToQueue() {
       try{
         await trpcQueue.add(uri);
       }finally{
         showModal = false;
       }
+    }
+
+    async function handleRemoveFromQueue() {
+      await trpcQueue.remove(uri);
+      showModal = false;
     }
 
     function formatTime(seconds?: number) {
@@ -50,7 +57,7 @@
     <div>
       <div class="flex items-center gap-2">
         <span class="text-blue-600 font-bold animate-pulse">●</span>
-        <span class="font-semibold text-blue-700">{title}</span>
+        <span class={`font-medium ${isInQueue ? 'text-orange-600' : ''}`}>{title}</span>
         <span class="text-xs text-blue-400 ml-2">({artist})</span>
         <span class="text-blue-500">
           {formatTime(elapsed)} / {formatTime(total)}
@@ -66,37 +73,50 @@
     </div>
   {:else}
     <!-- Vista normal -->
-    <div class="flex items-center gap-2">
+    <button aria-label="cancion" onclick={() => showModal = true} class="relative flex items-center gap-2">
+      
       <span class="font-medium">{title}</span>
       <span class="text-xs text-gray-400 ml-2">({artist})</span>
       <span class="ml-auto text-xs text-gray-400">{formatTime(total)}</span>
-    </div>
+      {#if showModal}
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div aria-label="acciones" onblur={() => showModal = false} onmouseout={(e) => {
+          if (!e.relatedTarget || !e.currentTarget.contains(e.relatedTarget as Node)) {
+            showModal = false;
+          }
+        }} class="absolute left-0 top-full mt-2 z-50">
+          <div class="bg-white rounded-lg shadow-lg p-4 w-40">
+            <div class="flex flex-col gap-2">
+              <a href="/#"
+                class="w-full px-2 py-1 bg-green-300 text-white rounded hover:bg-gray-300 transition"
+                onclick={handlePlay}
+              >
+                play
+              </a>
+              <a href="/#"
+                class="w-full px-2 py-1 bg-gray-300 text-white rounded hover:bg-gray-300 transition"
+                onclick={handleAddToQueue}
+              >
+                add to playlist
+              </a>
+              <!--
+              <Icon icon="mdi:play" width="34" height="34" class="bg-orange-300 text-white" />
+                <Icon icon="mdi:plus" width="34" height="34" class="bg-orange-300 text-white" />
+                <Icon icon="mdi:minus" width="34" height="34" class="bg-orange-300 text-white" />
+            -->
+              {#if isInQueue}
+              <a href="/#"
+                class="w-full px-2 py-1 bg-orange-200 text-white rounded hover:bg-gray-300 transition"
+                onclick={handleRemoveFromQueue}
+              >
+                remove from playlist
+              </a>
+              {/if}
+            </div>
+          </div>
+        </div>
+      {/if}
+      </button>
   {/if}
   </div>
-  {#if showModal}
-  <div class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-72">
-      <h2 class="text-lg font-semibold mb-4">{title}</h2>
-      <div class="flex flex-col gap-3">
-        <button
-          class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-          onclick={handlePlay}
-        >
-          ▶️ Play
-        </button>
-        <button
-          class="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-          onclick={handleAddToPlaylist}
-        >
-          ➕ Add to Playlist
-        </button>
-        <button
-          class="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
-          onclick={() => showModal = false}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-{/if}
+  

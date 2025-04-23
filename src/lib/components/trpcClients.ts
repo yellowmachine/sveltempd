@@ -8,6 +8,9 @@ export const trpcQueue = {
     clear: async () => {
       await trpc(page).queue.clear.mutate();
     },
+    remove: async (uri: string) => {
+      await trpc(page).queue.remove.mutate({ uri });
+    },
     add: async (uri: string) => {
       await trpc(page).queue.add.mutate({ uri });
     }
@@ -27,9 +30,6 @@ export const trpcPlayer = {
     },
     unmute: async () => {
         await trpc(page).player.unmute.mutate();
-    },
-    volumeInc: async (amount: number) => {
-        await trpc(page).player.volumeInc.mutate({ amount });
     },
     volume: async (amount: number) => {
         await trpc(page).player.volume.mutate({ amount });

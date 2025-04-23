@@ -5,6 +5,7 @@
 	  import type { Song as TSong } from '$lib/messages';
 	  import Song from './Song.svelte';
 	  import { trpcQueue } from './trpcClients';
+	  import { queue } from '$lib/stores.svelte';
   
     export let initialContents: {directories: string[], files: TSong[], currentSong: string} = {directories: [], files: [], currentSong: ''};
     export let currentFolder = '';
@@ -96,6 +97,7 @@
       <div>
         <Song 
           title={song.title}
+          isInQueue={queue.isIn(song.uri)}
           artist={song.artist}
           uri={song.uri}
           currentSong={initialContents.currentSong}

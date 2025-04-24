@@ -1,10 +1,11 @@
-<!-- src/lib/components/Menu.svelte -->
 <script lang="ts">
+    import { trpcSnapclient } from '$lib/components/trpcClients';
+
     export let isPlaying: boolean;
     let open = false;
 
     function closeMenu() { open = false; }
-  </script>
+</script>
   
   <nav class="w-max bg-white dark:bg-orange-900 border-b border-orange-200 dark:border-orange-800 z-20 relative">
     {#if isPlaying }
@@ -22,12 +23,18 @@
           <li><a href="/queue" class="hover:text-orange-600 font-medium transition-colors">Cola</a></li>
           <li><a href="/playlists" class="hover:text-orange-600 font-medium transition-colors">Listas</a></li>
           <li><a href="/library" class="hover:text-orange-600 font-medium transition-colors">Biblioteca</a></li>
+          <button onclick={trpcSnapclient.restart}>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg">](http://www.w3.org/2000/svg">)
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+          </button>
+          
         </ul>
   
         <!-- Botón hamburguesa en móvil -->
         <button class="md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
           aria-label="Abrir menú"
-          on:click={() => open = !open}>
+          onclick={() => open = !open}>
           <svg class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round"
               d="M4 6h16M4 12h16M4 18h16" />
@@ -39,9 +46,9 @@
     <!-- Menú desplegable en móvil -->
     {#if open}
       <ul class="md:hidden bg-white dark:bg-orange-900 border-t border-orange-200 dark:border-orange-800 px-4 py-2 space-y-2 animate-fade-in absolute left-0">
-        <li><a href="/queue" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>Queue</a></li>
-        <li><a href="/playlists" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>List Management</a></li>
-        <li><a href="/library" class="block py-2 font-medium hover:text-orange-600" on:click={closeMenu}>Library</a></li>
+        <li><a href="/queue" class="block py-2 font-medium hover:text-orange-600" onclick={closeMenu}>Queue</a></li>
+        <li><a href="/playlists" class="block py-2 font-medium hover:text-orange-600" onclick={closeMenu}>List Management</a></li>
+        <li><a href="/library" class="block py-2 font-medium hover:text-orange-600" onclick={closeMenu}>Library</a></li>
       </ul>
     {/if}
   </nav>

@@ -3,13 +3,19 @@ import type { Song } from './messages';
 
 function createTrpcErrorStore() {
   let error: string | null = $state(null);
+  let timeout: ReturnType<typeof setTimeout> | null = null;
 
   return {
     update(value: string | null) {
       error = value;
+      timeout = setTimeout(() => error = null, 5000);
     },
     get value() {
       return error;
+    },
+    clear() {
+      error = null;
+      if(timeout) clearTimeout(timeout);
     }
   };
 }

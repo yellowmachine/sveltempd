@@ -8,9 +8,10 @@
 	import { m } from '$lib/paraglide/messages';
 	import type { LayoutProps } from './$types';
 	import type { QueueMsg, Song } from '$lib/messages';
-	import { trpcPlayer, trpcSnapclient } from '$lib/components/trpcClients';
+	import { trpcPlayer } from '$lib/components/trpcClients';
 	import { getCurrentSongInfo } from '$lib/stores.svelte';
-	import Icon from '@iconify/svelte';
+	import Alert from '$lib/components/Alert.svelte';
+	import { trpcError } from '$lib/stores.svelte';
 
 	
 	let { data, children }: LayoutProps = $props();	
@@ -85,9 +86,6 @@
 </script>
 
 <Menu isPlaying={mpdStatus.value?.state === 'play'} />
-<button onclick={trpcSnapclient.restart}>
-	<Icon icon="mdi:restart" style="float: right; cursor: pointer;" />
-</button>
 
 <Player 
 	currentSong={currentSongInfo}
@@ -99,3 +97,4 @@
 />
 
 {@render children()}
+<Alert message={trpcError.value} clear={trpcError.clear} />

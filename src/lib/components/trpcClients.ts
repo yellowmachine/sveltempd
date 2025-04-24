@@ -13,6 +13,9 @@ export const trpcQueue = {
     },
     add: async (uri: string) => {
       await trpc(page).queue.add.mutate({ uri });
+    },
+    saveCurrentPlaylist: async (name: string) => {
+      await trpc(page).playlist.save.mutate({ name, mode: 'replace' });
     }
   };
 

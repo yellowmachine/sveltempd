@@ -272,6 +272,10 @@ class Playlist {
   async clear(name: string) {
     await this.client.api.playlists.clear();
   }
+
+  async save(name: string, mode: string) {
+    await this.client.api.playlists.save(name, mode);
+  }
 }
 
 let queueSingleton: Queue | null = null;

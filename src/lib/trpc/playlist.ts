@@ -55,5 +55,14 @@ export const playlist = t.router({
         .mutation(async ({ input, ctx }) => {
             await ctx.playlist.clear(input.name);
         }
-    )
+    ),
+    save: t.procedure
+        .input(z.object({
+            name: z.string(),
+            mode: z.string()
+        }))
+        .mutation(async ({ input, ctx }) => {
+            await ctx.playlist.save(input.name, input.mode);
+        }
+    )   
 });

@@ -1,4 +1,4 @@
-import { getPlayer, getLibrary, getPlaylist, getQueue } from '$lib/mpd/command';
+import { getPlayer, getLibrary, getPlaylist, getQueue, snapclient } from '$lib/mpd/command';
 import type { RequestEvent } from '@sveltejs/kit';
 
 
@@ -8,7 +8,8 @@ export async function createContext(event: RequestEvent) {
     player: await getPlayer(),
     library: await getLibrary(),
     playlist: await getPlaylist(),
-    queue: await getQueue()
+    queue: await getQueue(),
+    snapclient
   };
 }
 

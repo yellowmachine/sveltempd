@@ -1,11 +1,39 @@
 import { trpc } from '$lib/trpc/client';
 import { page } from '$app/state';
+import { trpcError } from '$lib/stores.svelte';
+import { TRPCClientError } from '@trpc/client';
 
-export const trpcSnapclient = {
+
+function withTrpcError<T extends (...args: any[]) => Promise<any>>(fn: T): T {
+  return (async (...args: any[]) => {
+    try {
+      return await fn(...args);
+    } catch (err) {
+      if (err instanceof TRPCClientError) {
+        trpcError.update(JSON.stringify(err))
+      }
+      throw err;
+    }
+  }) as T;
+}
+
+function decorateTrpcObject<T extends Record<string, any>>(obj: T): T {
+  const result: Record<string, any> = {};
+  for (const key in obj) {
+    if (typeof obj[key] === 'function') {
+      result[key] = withTrpcError(obj[key]);
+    } else {
+      result[key] = obj[key];
+    }
+  }
+  return result as T;
+}
+
+export const trpcSnapclient = decorateTrpcObject({
     restart: async () => {
         await trpc(page).snapclient.restart.mutate();
     }
-}
+})
 
 export const trpcQueue = {
     play: async (pos?: number) => {

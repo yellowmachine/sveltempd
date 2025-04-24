@@ -42,6 +42,7 @@
       try {
         if (contents.files.length > 0) {
           await trpc(page).player.playHere.mutate({ path: history.join('/') });
+          //await trpc(page).snapclient.restart.mutate();
         }
       } finally {
         loading = false;

@@ -6,6 +6,6 @@ export const t = initTRPC.context<Context>().create();
 
 export const snapclient = t.router({
     restart: t.procedure.mutation(async ({ ctx }) => {
-        // exec ssh command
+        await ctx.snapclient.restart();
     })
 });

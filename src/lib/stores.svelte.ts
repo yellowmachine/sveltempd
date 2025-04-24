@@ -1,6 +1,21 @@
 import type { MPDStatus } from '$lib/types/index';
 import type { Song } from './messages';
 
+function createTrpcErrorStore() {
+  let error: string | null = $state(null);
+
+  return {
+    update(value: string | null) {
+      error = value;
+    },
+    get value() {
+      return error;
+    }
+  };
+}
+
+export const trpcError = createTrpcErrorStore();
+
 function createMPDStore() {
   let state: MPDStatus | null = $state(null);
 

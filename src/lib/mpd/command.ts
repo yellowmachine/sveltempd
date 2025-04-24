@@ -1,6 +1,6 @@
 import { getMPDClient } from '$lib/mpdClient';
 import type { MPDApi } from 'mpd-api';
-import { z } from 'zod';
+import { string, z } from 'zod';
 import { db } from '$lib/db';
 import { formatSongArray, queueMsg } from '$lib/messages';
 import { exec } from 'child_process';
@@ -174,11 +174,13 @@ class Player {
     }
 
     await this.client.api.playback.play();
+    await snapclient.restart();
   }
 
 
   async play(pos?: number) {
     await this.client.api.playback.play(''+pos);
+    await snapclient.restart();
   }
 
   async pause() {
@@ -313,13 +315,7 @@ class Queue {
   }
 }
 
-export async function updateSnapclientOpts(
-  host: string,
-  username: string,
-  password: string,
-  currentSnapOpts: string,
-  newSnapOpts: string
-) {
+export async function executeSSH(command: string, host: string, username: string, password: string) {
   const ssh = new NodeSSH();
   try {
     await ssh.connect({
@@ -328,14 +324,7 @@ export async function updateSnapclientOpts(
       password
     });
 
-    const obj = { ...parseSnapclientOpts(currentSnapOpts), ...parseSnapclientOpts(newSnapOpts) };
-    let newOpts = joinSnapClientOpts(obj);
-
-    newOpts = newOpts.replace(/"/g, '\\"');
-    const replaceCmd = `sudo sed -i 's/^SNAPCLIENT_OPTS=.*/SNAPCLIENT_OPTS="${newOpts}"/' /etc/default/snapclient`;
-    const restartCmd = 'sudo systemctl restart snapclient';
-
-    const { stdout, stderr } = await ssh.execCommand(`${replaceCmd} && ${restartCmd}`);
+    const { stdout, stderr } = await ssh.execCommand(`${command}`);
     if (stderr) {
       throw new Error(stderr);
     }
@@ -343,6 +332,30 @@ export async function updateSnapclientOpts(
   } finally {
     ssh.dispose();
   }
+}
+
+class Snapclient {
+  async restart(){
+    await restartSnapclient({host: '192.168.1.44', username: 'miguel', password: '123'});
+  }
+}
+
+export const snapclient = new Snapclient();
+
+export const restartSnapclient = async ({host, username, password}: 
+    {host: string, username: string, password: string}) => 
+    await executeSSH('sudo systemctl restart snapclient', host, username, password)
+
+export const updateSnapclientOpts = async ({host, username, password, currentSnapOpts, newSnapOpts}: 
+  {host: string, username: string, password: string, currentSnapOpts: string, newSnapOpts: string}) => {
+  
+                                      const obj = { ...parseSnapclientOpts(currentSnapOpts), ...parseSnapclientOpts(newSnapOpts) };
+  let newOpts = joinSnapClientOpts(obj);
+
+  newOpts = newOpts.replace(/"/g, '\\"');
+  const replaceCmd = `sudo sed -i 's/^SNAPCLIENT_OPTS=.*/SNAPCLIENT_OPTS="${newOpts}"/' /etc/default/snapclient`;
+  const restartCmd = 'sudo systemctl restart snapclient';
+  await executeSSH(`${replaceCmd} && ${restartCmd}`, host, username, password)
 }
 
 export function joinSnapClientOpts(obj: Record<string, string | boolean>): string {

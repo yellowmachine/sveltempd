@@ -1,15 +1,20 @@
 <script lang="ts">
   import { trpcQueue } from "./trpcClients";
 
-  export let playlists: {name: string, description: string}[];
+  export let playlist: {name: string, songs: {name: string, file: string, time: number, duration: number}[]};
     
 </script>
   
-{#each playlists as playlist} 
-  <h3 class="font-bold">{JSON.stringify(playlist)}</h3>
-  <button 
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" 
-      onclick={() => trpcQueue.load(playlist.name)}>
-    Cargar
-  </button>
-{/each}  
+<button 
+  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out"
+  onclick={() => trpcQueue.load(playlist.name)}>
+  Cargar
+</button>
+
+<ul class="list-none p-0 m-0">
+  {#each playlist.songs as song} 
+    <li class="py-2">
+      <h3 class="font-bold text-lg">{song.name}</h3>
+    </li>
+  {/each}  
+</ul>

@@ -5,6 +5,10 @@ import { z } from 'zod';
 export const t = initTRPC.context<Context>().create();
 
 export const playlist = t.router({
+    get: t.procedure
+        .query(async ({ ctx }) => {
+            return await ctx.playlist.get();
+    }),
     create: t.procedure
         .input(z.object({
             name: z.string(),

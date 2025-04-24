@@ -253,11 +253,16 @@ class Playlist {
     this.client = client;
   }
 
+  async get() {
+    return await this.client.api.playlists.get() as unknown as {name: string}[];
+  }
+
   async create(name: string) {
     await this.client.api.playlists.save(name);
   }
   async list(name: string) { 
-    return await this.client.api.playlists.listinfo(name);
+    const songs = await this.client.api.playlists.listinfo(name) as unknown as {name: string, file: string, time: number, duration: number}[];
+    return {name, songs}
   }
   async load(name: string) {
     await this.client.api.queue.clear();

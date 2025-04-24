@@ -5,17 +5,16 @@
 	  import type { Song as TSong } from '$lib/messages';
 	  import Song from './Song.svelte';
 	  import { trpcQueue } from './trpcClients';
-	  import { queue } from '$lib/stores.svelte';
   
     export let initialContents: {directories: string[], files: TSong[], currentSong: string} = {directories: [], files: [], currentSong: ''};
     export let currentFolder = '';
     export let elapsed: number | undefined;
     export let total: number | undefined;
+    export let queueUriList: string[] = [];
     
     let history: string[] = [];
     let loading = false;
     let contents: {directories: string[], files: TSong[]} = initialContents;
-
   
     async function loadFolder(folder: string) {
       loading = true;
@@ -97,7 +96,7 @@
       <div>
         <Song 
           title={song.title}
-          isInQueue={queue.isIn(song.uri)}
+          {queueUriList}
           artist={song.artist}
           uri={song.uri}
           currentSong={initialContents.currentSong}

@@ -3,7 +3,7 @@
 	  import type { TRPCQueue } from "./trpcClients";
     
     export let currentSong: string | null;
-    export let isInQueue = true;
+    export let queueUriList: string[] = [];
     export let uri: string;
     export let title: string;
     export let artist: string;
@@ -12,6 +12,8 @@
     export let trpcQueue: TRPCQueue
 
     let showModal = false;
+
+    $: isInQueue = queueUriList.includes(uri);
 
     async function handlePlay() {
       try{
@@ -75,7 +77,7 @@
     <!-- Vista normal -->
     <button aria-label="cancion" onclick={() => showModal = true} class="relative flex items-center gap-2">
       
-      <span class="font-medium">{title}</span>
+      <span class={`font-medium ${isInQueue ? 'text-orange-600' : ''}`}>{title}</span>
       <span class="text-xs text-gray-400 ml-2">({artist})</span>
       <span class="ml-auto text-xs text-gray-400">{formatTime(total)}</span>
       {#if showModal}

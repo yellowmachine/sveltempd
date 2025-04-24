@@ -7,12 +7,6 @@
       title: 'Library/Library',
       component: Library,
       tags: ['autodocs'],
-      argTypes: {
-                
-      },
-      args: {
-        
-      }
     });
 
     const songs: Song[] = [
@@ -47,4 +41,4 @@
 
 </script>
   
-<Story name="Biblioteca" args={{ currentFolder: "Depeche mode", initialContents }} /> 
+<Story name="Biblioteca" args={{ queueUriList: ['music/beatles/hey_jude.mp3', 'music/nirvana/smells_like_teen_spirit.mp3'], currentFolder: "Depeche mode", initialContents }} /> 

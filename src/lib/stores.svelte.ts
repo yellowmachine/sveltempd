@@ -53,8 +53,8 @@ function createQueueStore() {
     update(newQueue: {queue: Array<Song>}) {
       queue = [...newQueue.queue];
     },
-    isIn(uri: string) {
-      return queue.some((song) => song.uri === uri);
+    get uriList() {
+      return queue.map((song) => song.uri);
     },
     get value() {
       return queue;

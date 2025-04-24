@@ -11,6 +11,8 @@ function formatSong(line: string) {
 }
 
 export function formatSongArray(stdout: string) {
+    if(stdout.trim() === '') return [];
+    
     const lines = stdout.trim().split('\n');
     const songs = lines.map(line => {
         return formatSong(line);
@@ -42,19 +44,7 @@ export async function queueMsg(): Promise<QueueMsg> {
 }
 
 export async function playlistMsg(){
-  let msg;
-
-  try {
-    const { stdout } = await execAsync('mpc playlist');
-    const playlist = formatSongArray(stdout);
-    msg = { playlist };
-    return msg;
-  } catch {
-    msg = { playlist: [] };
-    return msg;
-  }
-
-  //return msg;
+  return await queueMsg();
 }
 
 export async function playerMsg(){

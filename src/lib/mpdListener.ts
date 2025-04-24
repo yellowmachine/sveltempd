@@ -33,6 +33,7 @@ export async function broadcast(event: string) {
 
   if(event === 'playlist') {
     msg = await playlistMsg();
+    console.log(msg)
   } else if(event === 'player' || event === 'mixer') {
     const player = await playerMsg();
     const queue = await queueMsg();

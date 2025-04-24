@@ -7,7 +7,7 @@
 	import Menu from '$lib/components/Menu.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import type { LayoutProps } from './$types';
-	import type { QueueMsg } from '$lib/messages';
+	import type { QueueMsg, Song } from '$lib/messages';
 	import { trpcPlayer } from '$lib/components/trpcClients';
 	import { getCurrentSongInfo } from '$lib/stores.svelte';
 	
@@ -49,8 +49,9 @@
 		});
 
 		evtSource.addEventListener("playlist", (event) => {
-			const playlistData = JSON.parse(event.data);
-			playlist.update(playlistData);
+			const data: {queue: Song[]} = JSON.parse((event as MessageEvent).data);
+			queue.update(data);
+			//currentSong.update(data.queue.currentSong)
 		});
 
 

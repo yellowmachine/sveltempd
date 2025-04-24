@@ -1,10 +1,10 @@
 <script lang="ts">
     import Library from '$lib/components/Library.svelte';
     import { mpdStatus, queue } from "$lib/stores.svelte";
-    export let data;
+    let { data } = $props();
 
-    $: queueUriList = queue.uriList;
-
+    let queueUriList: string[] = $derived(queue.uriList);
+    
 </script>
   
 <Library 

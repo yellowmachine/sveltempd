@@ -89,35 +89,30 @@
         }} class="absolute left-0 top-full mt-2 z-50">
           <div class="bg-white rounded-lg shadow-lg p-4 w-40">
             <div class="flex flex-col gap-2">
-              <a href="/#"
+              <div
                 class="w-full px-2 py-1 bg-green-300 text-white rounded hover:bg-gray-300 transition"
                 onclick={handlePlay}
               >
                 play
-              </a>
-              <a href="/#"
-                class="w-full px-2 py-1 bg-gray-300 text-white rounded hover:bg-gray-300 transition"
-                onclick={handleAddToQueue}
-              >
-                add to playlist
-              </a>
-              <!--
-              <Icon icon="mdi:play" width="34" height="34" class="bg-orange-300 text-white" />
-                <Icon icon="mdi:plus" width="34" height="34" class="bg-orange-300 text-white" />
-                <Icon icon="mdi:minus" width="34" height="34" class="bg-orange-300 text-white" />
-            -->
+                </div>
+                <div
+                  class="w-full px-2 py-1 bg-gray-300 text-white rounded hover:bg-gray-300 transition"
+                  onclick={handleAddToQueue}
+                >
+                  add to playlist
+              </div>
               {#if isInQueue}
-              <a href="/#"
-                class="w-full px-2 py-1 bg-orange-200 text-white rounded hover:bg-gray-300 transition"
-                onclick={handleRemoveFromQueue}
-              >
-                remove from playlist
-              </a>
+                <div
+                  class="w-full px-2 py-1 bg-orange-200 text-white rounded hover:bg-gray-300 transition"
+                  onclick={handleRemoveFromQueue}
+                >
+                  remove from playlist
+                </div>
               {/if}
+              </div>
             </div>
           </div>
-        </div>
-      {/if}
+        {/if}
       </button>
   {/if}
   </div>

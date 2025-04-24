@@ -2,8 +2,8 @@ import { trpc } from '$lib/trpc/client';
 import { page } from '$app/state';
 
 export const trpcQueue = {
-    play: async () => {
-        await trpc(page).player.play.mutate();
+    play: async (pos?: number) => {
+        await trpc(page).player.play.mutate(pos);
     },
     clear: async () => {
       await trpc(page).queue.clear.mutate();

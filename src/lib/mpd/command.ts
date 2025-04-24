@@ -177,8 +177,8 @@ class Player {
   }
 
 
-  async play() {
-    await this.client.api.playback.play();
+  async play(pos?: number) {
+    await this.client.api.playback.play(''+pos);
   }
 
   async pause() {

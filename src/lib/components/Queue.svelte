@@ -11,6 +11,14 @@
     async function clear() {
         await trpcQueue.clear();
     }
+
+    function play(uri: string){
+        const songIndex = songs.findIndex((song) => song.uri === uri);
+        if (songIndex) {
+            trpcQueue.play(songIndex);
+        }
+    }
+
 </script>
 
 <div class="queue">
@@ -28,7 +36,7 @@
   {/if}
 
     <div class="queue-content">
-      <SongList {trpcQueue} {songs} {currentSong} {elapsed} {total} />
+      <SongList playInQueue={play} {trpcQueue} {songs} {currentSong} {elapsed} {total} />
     </div>
 </div>
   

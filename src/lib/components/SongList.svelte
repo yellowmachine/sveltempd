@@ -8,6 +8,7 @@
     export let elapsed: number | undefined; 
     export let total: number | undefined;
     export let trpcQueue: TRPCQueue;
+    export let playInQueue: (uri: string) => void = (arg: string) => {};
   
   </script>
   
@@ -15,6 +16,7 @@
     {#each songs as song}
       <li>
         <Song
+          {playInQueue}
           {trpcQueue}
           {currentSong}
           title={song.title}

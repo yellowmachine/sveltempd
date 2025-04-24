@@ -11,5 +11,7 @@
     initialContents={data} 
     total={ mpdStatus.value?.time?.total } 
     elapsed={ mpdStatus.value?.time?.elapsed }
-    {queueUriList}
+    {queueUriList} 
 />
+
+<!-- queueUriList={queue.uriList} funiona ?? -->

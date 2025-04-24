@@ -10,12 +10,14 @@
     export let elapsed: number | undefined; 
     export let total: number | undefined;
     export let trpcQueue: TRPCQueue
+    export let playInQueue: (uri: string) => void = (arg: string) => {};
 
     let showModal = false;
 
     $: isInQueue = queueUriList.includes(uri);
 
     async function handlePlay() {
+      if(playInQueue) return playInQueue(uri);
       try{
         await trpcQueue.clear();
         await trpcQueue.add(uri);

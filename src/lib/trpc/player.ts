@@ -5,8 +5,8 @@ import { z } from 'zod';
 export const t = initTRPC.context<Context>().create();
 
 export const player = t.router({
-    play: t.procedure.mutation(async ({ ctx }) => {
-        await ctx.player.play()
+    play: t.procedure.input(z.number().int().optional()).mutation(async ({ ctx, input }) => {
+        await ctx.player.play(input)
     }),
     pause: t.procedure.mutation(async ({ ctx }) => {
         await ctx.player.pause()

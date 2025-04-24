@@ -23,15 +23,6 @@ export const playlist = t.router({
             return library;
         }
     ),
-    load: t.procedure
-        .input(z.object({
-            name: z.string()
-        }))
-        .query(async ({ input, ctx }) => {
-            const playlist = await ctx.playlist.load(input.name);
-            return playlist;
-        }
-    ),
     add: t.procedure
         .input(z.object({
             uri: z.string()
@@ -64,5 +55,13 @@ export const playlist = t.router({
         .mutation(async ({ input, ctx }) => {
             await ctx.playlist.save(input.name, input.mode);
         }
-    )   
+    ),
+    load: t.procedure
+        .input(z.object({
+            name: z.string()
+        }))
+        .mutation(async ({ input, ctx }) => {
+            await ctx.playlist.load(input.name);
+        }
+    )
 });

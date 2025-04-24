@@ -26,7 +26,7 @@
     }
 
     function save() {
-      trpcQueue.saveCurrentPlaylist(saveAsName() || 'default');
+      trpcQueue.saveAs(saveAsName() || 'default');
     }
 
 </script>

@@ -245,6 +245,7 @@ export async function getPlaylist(): Promise<Playlist> {
   }
   return playlistSingleton;
 }
+
 class Playlist {
   private client: Client;
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { onDestroy, onMount } from 'svelte';
-	import { currentSong, mpdStatus, playlist, queue } from '$lib/stores.svelte';
+	import { currentSong, mpdStatus, queue } from '$lib/stores.svelte';
 	import type { MPDStatus } from '$lib/types/index';
 	import Player from '$lib/components/Player.svelte';
 	import Menu from '$lib/components/Menu.svelte';
@@ -83,6 +83,7 @@
 </script>
 
 <Menu isPlaying={mpdStatus.value?.state === 'play'} />
+<span class="mdi mdi-restart" style="float: right; cursor: pointer;"></span>
 <Player 
 	currentSong={currentSongInfo}
 	total={mpdStatus.value?.time?.total} 

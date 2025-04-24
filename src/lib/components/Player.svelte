@@ -6,6 +6,9 @@
 	import SongInfo from '$lib/components/SongInfo.svelte';
 	import type { TRPCPlayer } from './trpcClients';
 	import type { Song as TSong } from '$lib/messages';
+	import VolumeBar from './VolumeBar.svelte';
+	import Volume from './Volume.svelte';
+
 
 	let { playStatus, volume, total, elapsed, trpcPlayer, currentSong }: 
 		{ playStatus: 'stop' | 'play' | 'pause' | undefined, 
@@ -25,41 +28,6 @@
 	let showVolumeControl = $state(false);
 
 	function setVolume(volume: number) { trpcPlayer.volume(volume); }
-	
-	function correctVolume(amount: number) {
-		return Math.round(100*Math.max(0, Math.min(100, amount)))
-	}
-
-	function getY(event: TouchEvent | MouseEvent) {
-		if (event instanceof TouchEvent)	
-			return event.touches[0].clientY;
-		else
-			return event.clientY;
-	}
-
-	function handleVolumeClickOuter(event: MouseEvent) {
-		const y = getY(event);
-		const rect = (event.currentTarget as HTMLElement).previousElementSibling?.getBoundingClientRect();
-		if(rect){
-			volume = correctVolume((rect.bottom - y) / rect.height);
-		}	
-	}
-
-	function handleVolumeClick(event: TouchEvent | MouseEvent) {
-		const y = getY(event);
-		const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-		if(rect){
-			volume = correctVolume((rect.bottom - y) / rect.height);
-		}
-  	}
-
-	function handleShowVolumeControl() {
-		showVolumeControl = true;
-	}
-
-	function handleHideVolumeControl() {
-		showVolumeControl = false;
-	}
 
 	$effect(() => {
 		lastVolume = volume;
@@ -103,37 +71,7 @@
 		disabled={loading}>
 		<Icon icon="mdi:volume-minus" {width} {height} />
 	</PlayerButton>
-	<span
-		class="text-2xl relative"
-		role="button" 
-		tabindex="0"
-		onmouseover={() => showVolumeControl = true}
-		onfocus={() => showVolumeControl = true}
-		onmouseleave={() => showVolumeControl = false}
-		onblur={() => showVolumeControl = false}
-		ontouchstart={handleShowVolumeControl}
-		ontouchend={handleHideVolumeControl}
-		>
-		{volume}
-		{#if showVolumeControl}
-			<div class="absolute bg-gray-200 rounded-lg p-2 shadow-md" style={`top: 100%; left: 50%; transform: translateX(-50%)`}>
-				<div class="flex flex-col items-center">
-					<button
-						aria-label="Cambiar volumen"
-						class="w-2 h-20 bg-gray-400 rounded-lg relative"
-						onclick={handleVolumeClick}
-						>
-					</button>
-					<button
-					 	aria-label="Cambiar volumen"
-					  	class="absolute w-2 bg-gray-600 rounded-lg"
-					  	onclick={handleVolumeClickOuter}
-					  	style={`height: ${volume}%; bottom: 0`}
-					></button>
-				</div>
-			</div>
-		{/if}
-		</span>
+	<Volume bind:volume />
 	<PlayerButton
 		onClick={() => volume += 10}
 		ariaLabel="Subir volumen"

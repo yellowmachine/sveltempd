@@ -1,6 +1,12 @@
 import { trpc } from '$lib/trpc/client';
 import { page } from '$app/state';
 
+export const trpcSnapclient = {
+    restart: async () => {
+        await trpc(page).snapclient.restart.mutate();
+    }
+}
+
 export const trpcQueue = {
     play: async (pos?: number) => {
         await trpc(page).player.play.mutate(pos);
@@ -14,8 +20,11 @@ export const trpcQueue = {
     add: async (uri: string) => {
       await trpc(page).queue.add.mutate({ uri });
     },
-    saveCurrentPlaylist: async (name: string) => {
+    saveAs: async (name: string) => {
       await trpc(page).playlist.save.mutate({ name, mode: 'replace' });
+    },
+    load: async (name: string) => {
+      await trpc(page).playlist.load.mutate({ name });
     }
   };
 

@@ -48,6 +48,12 @@
       }
     }
 
+    async function play(uri: string){
+      await trpcQueue.clear();
+      await trpcQueue.add(uri);
+      await trpcQueue.play();
+    }
+
   </script>
   
   <div class="w-full mx-auto p-4">
@@ -94,7 +100,8 @@
       {/each}
       {#each contents.files as song}
       <div>
-        <Song 
+        <Song
+          {play} 
           title={song.title}
           {queueUriList}
           artist={song.artist}

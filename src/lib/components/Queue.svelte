@@ -36,7 +36,7 @@
   {/if}
 
     <div class="queue-content">
-      <SongList playInQueue={play} {trpcQueue} {songs} {currentSong} {elapsed} {total} />
+      <SongList {play} {trpcQueue} {songs} {currentSong} {elapsed} {total} />
     </div>
 </div>
   

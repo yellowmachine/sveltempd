@@ -1,6 +1,7 @@
 <script lang="ts">
-	  //import Icon from "@iconify/svelte";
-	  import type { TRPCQueue } from "./trpcClients";
+	  //import ActionButton from "./ActionButton.svelte";
+	  import SongPopup from "./SongPopup.svelte";
+    import type { TRPCQueue } from "./trpcClients";
     
     export let currentSong: string | null;
     export let queueUriList: string[] = [];
@@ -76,40 +77,15 @@
       <span class={`font-medium ${isInQueue ? 'text-orange-600' : ''}`}>{title}</span>
       <span class="text-xs text-gray-400 ml-2">({artist})</span>
       <span class="ml-auto text-xs text-gray-400">{formatTime(total)}</span>
-      {#if showModal}
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div aria-label="acciones" onblur={() => showModal = false} onmouseout={(e) => {
-          if (!e.relatedTarget || !e.currentTarget.contains(e.relatedTarget as Node)) {
-            showModal = false;
-          }
-        }} class="absolute left-0 top-full mt-2 z-50">
-          <div class="bg-white rounded-lg shadow-lg p-4 w-40">
-            <div class="flex flex-col gap-2">
-              <div
-                class="w-full px-2 py-1 bg-white text-gray-600 rounded hover:bg-gray-300 transition"
-                onclick={handlePlay}
-              >
-                play
-                </div>
-                <div
-                  class="w-full px-2 py-1 bg-white text-gray-600 rounded hover:bg-gray-300 transition"
-                  onclick={handleAddToQueue}
-                >
-                  add to playlist
-              </div>
-              {#if isInQueue}
-                <div
-                  class="w-full px-2 py-1 bg-white text-gray-600 rounded hover:bg-gray-300 transition"
-                  onclick={handleRemoveFromQueue}
-                >
-                  remove from playlist
-                </div>
-              {/if}
-              </div>
-            </div>
-          </div>
-        {/if}
-      </button>
+      
+    </button>
+    <SongPopup
+      handlePlay={handlePlay}
+      handleAddToQueue={handleAddToQueue}
+      handleRemoveFromQueue={handleRemoveFromQueue}
+      isInQueue={isInQueue}
+      showModal={showModal}
+      />  
   {/if}
   </div>
   

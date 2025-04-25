@@ -26,7 +26,7 @@
   
   <div class="relative inline-block">
     <button
-      class="px-4 py-2 rounded bg-orange-600 text-white font-semibold hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+      class="bg-white text-gray-600 hover:bg-gray-300 transition px-4 py-2 rounded transition"
       on:click={handleClick}
     >
       {text}

@@ -5,6 +5,7 @@ import { TRPCClientError } from '@trpc/client';
 import type { Settings } from './schemas';
 
 
+/*
 function withTrpcError<T extends (...args: any[]) => Promise<any>>(fn: T): T {
   return (async (...args: any[]) => {
     try {
@@ -13,7 +14,7 @@ function withTrpcError<T extends (...args: any[]) => Promise<any>>(fn: T): T {
       if (err instanceof TRPCClientError) {
         trpcError.update(JSON.stringify(err))
       }
-      throw err;
+      //throw err;
     }
   }) as T;
 }
@@ -29,18 +30,19 @@ function decorateTrpcObject<T extends Record<string, any>>(obj: T): T {
   }
   return result as T;
 }
+*/
 
-export const trpcSnapclient = decorateTrpcObject({
+export const trpcSnapclient = {
     restart: async () => {
         await trpc(page).snapclient.restart.mutate();
     }
-})
+}
 
-export const trpcAdmin = decorateTrpcObject({
+export const trpcAdmin = {
   save: async (form: Settings) => {
       return await trpc(page).admin.save.mutate(form);
   }
-})
+}
 
 export const trpcQueue = {
     play: async (pos?: number) => {

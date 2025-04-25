@@ -6,7 +6,7 @@
 
     let {data}: {data?: Settings} = $props();
 
-    const m = createMutation(submit);
+    const mut = createMutation(submit);
 
     let form: Settings = $state(data || { global: { latency: 100 }, 
                                           server: { ip: '', username: '', password: '' }, 
@@ -14,8 +14,6 @@
                                         });
   
     let errors: Record<string, string> = $state({});
-    let success = $state(false);
-    let loading = $state(false);
     let isFormValid = $state(false);
 
     $effect(() => {
@@ -34,19 +32,11 @@
       return true;
     }
   
-    async function submit() {
-        //event.preventDefault();
+    async function submit(event: SubmitEvent) {
+        event.preventDefault();
         if (!validate()) return;
-        loading = true;
-        try {
-            form = await trpcAdmin.save(form)
-            success = true;
-        } catch (e) {
-            success = false;
-            // Manejo de error real aquí
-        } finally {
-            loading = false;
-        }
+        
+        form = await trpcAdmin.save(form) 
     }
   
     function addClient() {
@@ -121,15 +111,12 @@
       {#if errors['global.latency']}<span class="text-red-500 text-xs">{errors['global.latency']}</span>{/if}
     </div>
   
-    <ActionButton action={m.mutate} successMessage={"guardado"} {m} disabled={m.loading || !isFormValid}>
-        <div class="p-4 bg-gray-600 text-white disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed">
-            {loading ? 'Guardando...' : 'Guardar configuración'}
-        </div>
+    <ActionButton successMessage={"guardado"} {mut} >
+        <button disabled={mut.loading} class="p-4 bg-gray-600 text-white disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed">
+            {mut.loading ? 'Guardando...' : 'Guardar configuración'}
+        </button>
     </ActionButton>
     
-    {#if success}
-      <div class="text-green-600 mt-2">¡Configuración guardada correctamente!</div>
-    {/if}
   </form>
   
   

@@ -1,8 +1,7 @@
 <script module lang="ts">
     import { defineMeta } from '@storybook/addon-svelte-csf';
     import ActionButton from '$lib/components/ActionButton.svelte';
-	import { createMutation } from '$lib/stores.svelte';
-	import { m } from '$lib/paraglide/messages';
+	  import { createMutation } from '$lib/stores.svelte';
 
     const { Story } = defineMeta({
       title: 'Button/ActionButton',
@@ -16,7 +15,7 @@
 </script>
   
 <Story name="ok" >
-  <ActionButton m={mok} action={mok.mutate} successMessage="ok" disabled={false} >
+  <ActionButton mut={mok} >
     <button
       class="bg-white text-gray-600 hover:bg-gray-300 transition px-4 rounded transition"
     >
@@ -26,7 +25,7 @@
 </Story>
 
 <Story name="error">
-  <ActionButton m={merror} action={merror.mutate} successMessage="ok" disabled={false}>
+  <ActionButton mut={merror} >
     <button
       class="bg-white text-gray-600 hover:bg-gray-300 transition px-4 rounded transition"
     >

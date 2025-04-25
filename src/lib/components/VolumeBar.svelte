@@ -1,5 +1,6 @@
 <script lang="ts">
     let {volume=$bindable()}: {volume: number} = $props();
+    import { correctVolume } from "$lib/utils";
 
     let container: HTMLElement;
     let dragging = $state(false);
@@ -35,10 +36,6 @@
             window.removeEventListener('touchend', stopDrag);
         }
     }
-    
-    function correctVolume(amount: number) {
-		return Math.round(100*Math.max(0, Math.min(100, amount)))
-	}
 
 	function getY(event: TouchEvent | MouseEvent) {
 		if (event instanceof TouchEvent)	

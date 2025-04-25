@@ -1,11 +1,12 @@
 <script lang="ts">
       import { fade } from 'svelte/transition';
 
-    let {action}: {action: () => Promise<void>} = $props();
+    let {action, disabled=false}: {action: () => Promise<void>, disabled: boolean} = $props();
     let popup: { message: string; type: "success" | "error" } | null = $state(null);
     let timeout: NodeJS.Timeout | null = null;
   
     async function handleClick() {
+      if(disabled) return;
       try {
         await action();
         showPopup("ok", "success");
@@ -26,13 +27,6 @@
     <span onclick={handleClick}>
       <slot />
     </span>
-    <!--<button
-      class="bg-white text-gray-600 hover:bg-gray-300 transition px-4 rounded transition"
-      onclick={handleClick}
-    >
-      {text}
-    </button>
-  -->
   
     {#if popup}
       <div

@@ -5,6 +5,7 @@ import { library } from './library';
 import { playlist } from './playlist';
 import { snapclient } from './snapclient';
 import { queue } from './queue';
+import { admin } from './admin';
 
 export const t = initTRPC.context<Context>().create();
 
@@ -13,7 +14,8 @@ export const appRouter = t.router({
     library,
     playlist,
     queue,
-    snapclient
+    snapclient,
+    admin
 });
 
 export const createCaller = t.createCallerFactory(appRouter);

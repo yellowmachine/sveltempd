@@ -2,6 +2,7 @@ import { trpc } from '$lib/trpc/client';
 import { page } from '$app/state';
 import { trpcError } from '$lib/stores.svelte';
 import { TRPCClientError } from '@trpc/client';
+import type { Settings } from './schemas';
 
 
 function withTrpcError<T extends (...args: any[]) => Promise<any>>(fn: T): T {
@@ -33,6 +34,12 @@ export const trpcSnapclient = decorateTrpcObject({
     restart: async () => {
         await trpc(page).snapclient.restart.mutate();
     }
+})
+
+export const trpcAdmin = decorateTrpcObject({
+  save: async (form: Settings) => {
+      await trpc(page).admin.save.mutate(form);
+  }
 })
 
 export const trpcQueue = {

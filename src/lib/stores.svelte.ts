@@ -15,7 +15,9 @@ export function createMutation<T>(fn: Function) {
         loading = true;
         value = await fn(event);
         ok = true;
+        error = null;
       } catch (e) {
+        ok = null;
         error = e instanceof Error ? e.message : String(e);
         trpcError.update(JSON.stringify(error))
       } finally {
@@ -36,9 +38,7 @@ export function createMutation<T>(fn: Function) {
     },
     clear() {
       error = null;
-      loading = false;
       ok = null;
-      //value = null;
     }
   }
 }

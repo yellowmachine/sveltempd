@@ -19,20 +19,20 @@
 
     async function handlePlay() {
       play(uri);
-      showModal = false;
+      //showModal = false;
     }
 
     async function handleAddToQueue() {
       try{
         await trpcQueue.add(uri);
       }finally{
-        showModal = false;
+        //showModal = false;
       }
     }
 
     async function handleRemoveFromQueue() {
       await trpcQueue.remove(uri);
-      showModal = false;
+      //showModal = false;
     }
 
     function formatTime(seconds?: number) {
@@ -77,15 +77,14 @@
       <span class={`font-medium ${isInQueue ? 'text-orange-600' : ''}`}>{title}</span>
       <span class="text-xs text-gray-400 ml-2">({artist})</span>
       <span class="ml-auto text-xs text-gray-400">{formatTime(total)}</span>
-      
-    </button>
-    <SongPopup
-      handlePlay={handlePlay}
-      handleAddToQueue={handleAddToQueue}
-      handleRemoveFromQueue={handleRemoveFromQueue}
-      isInQueue={isInQueue}
-      showModal={showModal}
+      <SongPopup
+        {handlePlay}
+        {handleAddToQueue}
+        {handleRemoveFromQueue}
+        {isInQueue}
+        bind:showModal
       />  
+    </button>
   {/if}
   </div>
   

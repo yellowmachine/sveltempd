@@ -14,7 +14,7 @@
         showModal = false;
       }
     }} class="absolute left-0 top-full mt-2 z-50">
-      <div class="bg-white rounded-lg shadow-lg p-4 w-80">
+      <div class="bg-white rounded-lg shadow-lg p-4 w-40">
         <div class="flex flex-col gap-2">
             <ActionButton
                 text="play"

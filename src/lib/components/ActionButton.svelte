@@ -1,11 +1,8 @@
 <script lang="ts">
       import { fade } from 'svelte/transition';
 
-
-    export let text: string;
-    export let action: () => Promise<void>;
-  
-    let popup: { message: string; type: "success" | "error" } | null = null;
+    let {text, action}: {text: string, action: () => Promise<void>} = $props();
+    let popup: { message: string; type: "success" | "error" } | null = $state(null);
     let timeout: NodeJS.Timeout | null = null;
   
     async function handleClick() {
@@ -22,12 +19,13 @@
       if (timeout) clearTimeout(timeout);
       timeout = setTimeout(() => (popup = null), 2500);
     }
+
   </script>
   
   <div class="relative inline-block">
     <button
-      class="bg-white text-gray-600 hover:bg-gray-300 transition px-4 py-2 rounded transition"
-      on:click={handleClick}
+      class="bg-white text-gray-600 hover:bg-gray-300 transition px-4 rounded transition"
+      onclick={handleClick}
     >
       {text}
     </button>

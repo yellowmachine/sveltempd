@@ -1,7 +1,7 @@
 <script lang="ts">
   	import SongList from './SongList.svelte';
     import type { Song as TSong } from '$lib/messages';
-    import { trpcQueue } from './trpcClients'
+    import { trpcQueue } from '../trpcClients'
     
     let {data} = $props();
     let {songs, currentSong, elapsed, total, lastLoadedPlaylist}: 

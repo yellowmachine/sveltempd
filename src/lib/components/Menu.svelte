@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { trpcSnapclient } from '$lib/components/trpcClients';
+    import { trpcSnapclient } from '../trpcClients';
 
     export let isPlaying: boolean;
     let open = false;

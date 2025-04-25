@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { trpcQueue } from "./trpcClients";
+  import { trpcQueue } from "../trpcClients";
 
   export let playlist: {name: string, songs: {name: string, file: string, time: number, duration: number}[]};
     

@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Song as TSong } from '$lib/messages';
     import Song from './Song.svelte';
-	  import type { TRPCQueue } from './trpcClients';
+	  import type { TRPCQueue } from '../trpcClients';
 
     export let songs: TSong[] = [];
     export let currentSong: string | null;

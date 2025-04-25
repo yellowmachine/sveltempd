@@ -8,7 +8,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import type { LayoutProps } from './$types';
 	import type { QueueMsg, Song } from '$lib/messages';
-	import { trpcPlayer } from '$lib/components/trpcClients';
+	import { trpcPlayer } from '$lib/trpcClients';
 	import { getCurrentSongInfo } from '$lib/stores.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import { trpcError } from '$lib/stores.svelte';

@@ -1,7 +1,8 @@
 <script lang="ts">
-	  //import ActionButton from "./ActionButton.svelte";
-	  import SongPopup from "./SongPopup.svelte";
-    import type { TRPCQueue } from "./trpcClients";
+
+  import SongPopup from "./SongPopup.svelte";
+    import type { TRPCQueue } from "../trpcClients";
+    import { formatTime } from "$lib/utils";
     
     export let currentSong: string | null;
     export let queueUriList: string[] = [];
@@ -18,28 +19,15 @@
     $: isInQueue = queueUriList.includes(uri);
 
     async function handlePlay() {
-      play(uri);
-      //showModal = false;
+      await play(uri);
     }
 
     async function handleAddToQueue() {
-      try{
         await trpcQueue.add(uri);
-      }finally{
-        //showModal = false;
-      }
     }
 
     async function handleRemoveFromQueue() {
       await trpcQueue.remove(uri);
-      //showModal = false;
-    }
-
-    function formatTime(seconds?: number) {
-      if (!seconds) return '';
-      const min = Math.floor(seconds / 60);
-      const sec = Math.floor(seconds % 60);
-      return `${min}:${sec.toString().padStart(2, '0')}`;
     }
 
 </script>

@@ -1,6 +1,8 @@
 <script lang="ts">
     import { trpc } from '$lib/trpc/client';
     import { page } from '$app/state';
+    import { formatTime } from "$lib/utils";
+    
 
     let { isPlaying, total = 0, elapsed = 0 } = $props();
 
@@ -28,12 +30,6 @@
             if (timer) clearInterval(timer);
         };
     });
-
-    function formatTime(seconds: number) {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = Math.floor(seconds % 60);
-        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-    }
 
     function onInput(event: Event) {
         currentElapsed = Number((event.target as HTMLInputElement).value);

@@ -4,7 +4,7 @@
 	import PlayerButton from './PlayerButton.svelte';
 	import ProgressBar from './ProgressBar.svelte';
 	import SongInfo from '$lib/components/SongInfo.svelte';
-	import type { TRPCPlayer } from './trpcClients';
+	import type { TRPCPlayer } from '../trpcClients';
 	import type { Song as TSong } from '$lib/messages';
 	import VolumeBar from './VolumeBar.svelte';
 	import Volume from './Volume.svelte';

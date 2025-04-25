@@ -4,7 +4,7 @@
     import PlayHere from './PlayHere.svelte';
 	  import type { Song as TSong } from '$lib/messages';
 	  import Song from './Song.svelte';
-	  import { trpcQueue } from './trpcClients';
+	  import { trpcQueue } from '../trpcClients';
   
     export let initialContents: {directories: string[], files: TSong[], currentSong: string} = {directories: [], files: [], currentSong: ''};
     export let currentFolder = '';

@@ -86,20 +86,20 @@
           <div class="bg-white rounded-lg shadow-lg p-4 w-40">
             <div class="flex flex-col gap-2">
               <div
-                class="w-full px-2 py-1 bg-green-300 text-white rounded hover:bg-gray-300 transition"
+                class="w-full px-2 py-1 bg-white text-gray-600 rounded hover:bg-gray-300 transition"
                 onclick={handlePlay}
               >
                 play
                 </div>
                 <div
-                  class="w-full px-2 py-1 bg-gray-300 text-white rounded hover:bg-gray-300 transition"
+                  class="w-full px-2 py-1 bg-white text-gray-600 rounded hover:bg-gray-300 transition"
                   onclick={handleAddToQueue}
                 >
                   add to playlist
               </div>
               {#if isInQueue}
                 <div
-                  class="w-full px-2 py-1 bg-orange-200 text-white rounded hover:bg-gray-300 transition"
+                  class="w-full px-2 py-1 bg-white text-gray-600 rounded hover:bg-gray-300 transition"
                   onclick={handleRemoveFromQueue}
                 >
                   remove from playlist

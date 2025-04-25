@@ -85,8 +85,8 @@
 	});
 </script>
 
+<Alert message={trpcError.value} clear={trpcError.clear} />
 <Menu isPlaying={mpdStatus.value?.state === 'play'} />
-
 <Player 
 	currentSong={currentSongInfo}
 	total={mpdStatus.value?.time?.total} 
@@ -97,4 +97,3 @@
 />
 
 {@render children()}
-<Alert message={trpcError.value} clear={trpcError.clear} />

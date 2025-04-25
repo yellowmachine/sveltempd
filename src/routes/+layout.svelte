@@ -54,7 +54,6 @@
 		evtSource.addEventListener("playlist", (event) => {
 			const data: {queue: Song[]} = JSON.parse((event as MessageEvent).data);
 			queue.update(data);
-			//currentSong.update(data.queue.currentSong)
 		});
 
 

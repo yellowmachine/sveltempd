@@ -1,5 +1,6 @@
 <script lang="ts">
     import { trpcSnapclient } from '../trpcClients';
+	import IsPlaying from './IsPlaying.svelte';
 
     export let isPlaying: boolean;
     let open = false;
@@ -9,9 +10,7 @@
   
   <nav class="w-max bg-white dark:bg-orange-900 border-b border-orange-200 dark:border-orange-800 z-20 relative">
     {#if isPlaying }
-      <h1 class="text-8xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-        Playing!
-      </h1>
+      <IsPlaying />
     {/if}
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-14 items-center">

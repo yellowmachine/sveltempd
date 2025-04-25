@@ -1,13 +1,14 @@
 <script lang="ts">
-    import { settingsSchema } from "$lib/schemas";
+    import { settingsSchema, type Settings } from "$lib/schemas";
 	import { trpcAdmin } from "$lib/trpcClients";
 	import ActionButton from "./ActionButton.svelte";
 
-    let form = $state({
-      server: { ip: '', username: '', password: '' },
-      clients: [{ ip: '', username: '', password: '' }],
-      global: { latency: 0 }
-    });
+    let {data}: {data?: Settings} = $props();
+
+    let form: Settings = $state(data || { global: { latency: 100 }, 
+                                          server: { ip: '', username: '', password: '' }, 
+                                          clients: [] 
+                                        });
   
     let errors: Record<string, string> = $state({});
     let success = $state(false);
@@ -35,7 +36,7 @@
         if (!validate()) return;
         loading = true;
         try {
-            await trpcAdmin.save(form)
+            form = await trpcAdmin.save(form)
             success = true;
         } catch (e) {
             success = false;

@@ -1,14 +1,15 @@
 import { access } from 'node:fs/promises';
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
+import type { Settings } from '$lib/schemas';
 
-type Data = { volume: number };
+type Data = { volume: number, admin?: Settings };
 
 const defaultData: Data = { volume: 50 }; 
 const dbFile = 'db.json';
 
 class LowdbAdapter {
-  db: Low<{ volume: number }>;
+  db: Low<Data>;
   
   constructor(filename = dbFile) {
     this.db = new Low(new JSONFile<{ volume: number }>(filename), defaultData);

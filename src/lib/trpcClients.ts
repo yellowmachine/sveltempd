@@ -38,7 +38,7 @@ export const trpcSnapclient = decorateTrpcObject({
 
 export const trpcAdmin = decorateTrpcObject({
   save: async (form: Settings) => {
-      await trpc(page).admin.save.mutate(form);
+      return await trpc(page).admin.save.mutate(form);
   }
 })
 

@@ -1,6 +1,50 @@
 import type { MPDStatus } from '$lib/types/index';
 import type { Song } from './messages';
 
+//export type M<T> = ReturnType<typeof createMutation<T>>
+export type M = Pick<ReturnType<typeof createMutation>, 'ok' | 'error' | 'clear'>
+
+export function createMutation(fn: Function) {
+  let error: string | null = $state(null);
+  let loading: boolean = $state(false);
+  //let value: T | null = $state(null);
+  let ok: true | null = $state(null);
+
+  return {
+    async mutate(){
+      try {
+        loading = true;
+        //value = 
+        await fn();
+        ok = true;
+      } catch (e) {
+        error = e instanceof Error ? e.message : String(e);
+        //throw e;
+      } finally {
+        loading = false;
+      }
+    },
+    //get value() {
+      //return value;
+    //},
+    get error() {
+      return error;
+    },
+    get loading() {
+      return loading;
+    },
+    get ok() {
+      return ok;
+    },
+    clear() {
+      error = null;
+      loading = false;
+      ok = null;
+      //value = null;
+    }
+  }
+}
+
 function createTrpcErrorStore() {
   let error: string | null = $state(null);
   let timeout: ReturnType<typeof setTimeout> | null = null;

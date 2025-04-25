@@ -1,9 +1,12 @@
 <script lang="ts">
     import { settingsSchema, type Settings } from "$lib/schemas";
+	import { createMutation } from "$lib/stores.svelte";
 	import { trpcAdmin } from "$lib/trpcClients";
 	import ActionButton from "./ActionButton.svelte";
 
     let {data}: {data?: Settings} = $props();
+
+    const m = createMutation(submit);
 
     let form: Settings = $state(data || { global: { latency: 100 }, 
                                           server: { ip: '', username: '', password: '' }, 
@@ -118,7 +121,7 @@
       {#if errors['global.latency']}<span class="text-red-500 text-xs">{errors['global.latency']}</span>{/if}
     </div>
   
-    <ActionButton action={submit} disabled={loading || !isFormValid}>
+    <ActionButton action={m.mutate} successMessage={"guardado"} {m} disabled={m.loading || !isFormValid}>
         <div class="p-4 bg-gray-600 text-white disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed">
             {loading ? 'Guardando...' : 'Guardar configuración'}
         </div>

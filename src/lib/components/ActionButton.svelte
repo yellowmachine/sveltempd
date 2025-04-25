@@ -1,25 +1,28 @@
 <script lang="ts">
-      import { fade } from 'svelte/transition';
+	  import { fade } from 'svelte/transition';
+    import type { M } from '$lib/stores.svelte';
 
-    let {action, disabled=false}: {action: () => Promise<void>, disabled: boolean} = $props();
-    let popup: { message: string; type: "success" | "error" } | null = $state(null);
+    let {action, disabled=false, successMessage="ok", m}: 
+        {action: () => Promise<void>, disabled: boolean, 
+          successMessage: string, m: M} = $props();
     let timeout: NodeJS.Timeout | null = null;
+
+    let error = $state<string | null>(null);
   
     async function handleClick() {
       if(disabled) return;
       try {
         await action();
-        showPopup("ok", "success");
       } catch (e) {
-        showPopup(e instanceof Error ? e.message : String(e), "error");
+        error = e instanceof Error ? e.message : String(e);
       }
     }
-  
-    function showPopup(message: string, type: "success" | "error") {
-      popup = { message, type };
-      if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(() => (popup = null), 2500);
-    }
+
+    $effect(() => {
+      if (m.ok || m.error) {
+        timeout = setTimeout(m.clear, 2500);
+      }
+    })
 
   </script>
   
@@ -28,16 +31,23 @@
       <slot />
     </span>
   
-    {#if popup}
-      <div
+    {#if m.ok}
+    <div
         class="absolute left-full top-1/2 -translate-y-1/2 ml-4 min-w-[100px] px-4 py-2 rounded shadow-lg text-sm font-medium
-          {popup.type === 'success'
-            ? 'bg-green-100 text-green-800 border border-green-300'
-            : 'bg-red-100 text-red-800 border border-red-300'}"
+           bg-green-100 text-green-800 border border-green-300"
         transition:fade
       >
-        {popup.message}
+        {successMessage}
       </div>
+    {/if}
+    {#if m.error || error}
+    <div
+        class="absolute left-full top-1/2 -translate-y-1/2 ml-4 min-w-[100px] px-4 py-2 rounded shadow-lg text-sm font-medium
+          bg-red-100 text-red-800 border border-red-300"
+        transition:fade
+      >
+      {m.error || error}
+    </div>
     {/if}
   </div>
   

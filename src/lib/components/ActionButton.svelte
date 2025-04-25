@@ -5,16 +5,11 @@
     let { successMessage="ok!", mut}: 
         { successMessage?: string, mut: M} = $props();
     let timeout: NodeJS.Timeout | null = null;
-
-    //let error = $state<string | null>(null);
       
     async function handleClick(event: Event) {
-      if(mut.loading) return;
-      //try {
+      if(mut.loading) 
+        return;
       await mut.mutate(event);
-      //} catch (e) {
-      //  error = e instanceof Error ? e.message : String(e);
-      //}
     }
 
     $effect(() => {

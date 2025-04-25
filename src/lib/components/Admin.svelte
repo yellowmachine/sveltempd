@@ -51,18 +51,18 @@
     <h2 class="text-2xl font-bold mb-4">Configuración del Servidor</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="p-2">
-          <label class="block font-medium mb-1">IP</label>
-          <input class="input w-full" bind:value={form.server.ip} />
+          <label for="server-ip" class="block font-medium mb-1">IP</label>
+          <input id="server-ip" class="input w-full" bind:value={form.server.ip} />
           {#if errors['server.ip']}<span class="text-red-500 text-xs">{errors['server.ip']}</span>{/if}
         </div>
         <div class="p-2">
-          <label class="block font-medium mb-1">Usuario</label>
-          <input class="input w-full" bind:value={form.server.username} />
+          <label for="server-username" class="block font-medium mb-1">Usuario</label>
+          <input id="server-username" class="input w-full" bind:value={form.server.username} />
           {#if errors['server.username']}<span class="text-red-500 text-xs">{errors['server.username']}</span>{/if}
         </div>
         <div class="p-2">
-          <label class="block font-medium mb-1">Contraseña</label>
-          <input class="input w-full" type="password" bind:value={form.server.password} />
+          <label for="server-password" class="block font-medium mb-1">Contraseña</label>
+          <input id="server-password" class="input w-full" type="password" bind:value={form.server.password} />
           {#if errors['server.password']}<span class="text-red-500 text-xs">{errors['server.password']}</span>{/if}
         </div>
       </div>
@@ -72,23 +72,23 @@
       {#each form.clients as client, i (i)}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
           <div class="p-2">
-            <label class="block font-medium mb-1">IP</label>
-            <input class="input w-full" bind:value={client.ip} />
+            <label for="client-ip" class="block font-medium mb-1">IP</label>
+            <input id="client-ip" class="input w-full" bind:value={client.ip} />
             {#if errors[`clients.${i}.ip`]}
               <span class="text-red-500 text-xs">{errors[`clients.${i}.ip`]}</span>
             {/if}
           </div>
           <div class="p-2">
-            <label class="block font-medium mb-1">Usuario</label>
-            <input class="input w-full" bind:value={client.username} />
+            <label for="client-username" class="block font-medium mb-1">Usuario</label>
+            <input id="client-username" class="input w-full" bind:value={client.username} />
             {#if errors[`clients.${i}.username`]}
               <span class="text-red-500 text-xs">{errors[`clients.${i}.username`]}</span>
             {/if}
           </div>
           <div class="p-2 flex items-end space-x-2">
             <div class="flex-1">
-              <label class="block font-medium mb-1">Contraseña</label>
-              <input class="input w-full" type="password" bind:value={client.password} />
+              <label for="client-password" class="block font-medium mb-1">Contraseña</label>
+              <input id="client-password" class="input w-full" type="password" bind:value={client.password} />
               {#if errors[`clients.${i}.password`]}
                 <span class="text-red-500 text-xs">{errors[`clients.${i}.password`]}</span>
               {/if}
@@ -106,13 +106,13 @@
 
     <h2 class="text-2xl font-bold mb-4">Global</h2>
     <div class="mb-4">
-      <label class="block font-medium">Latencia (ms)</label>
-      <input class="input" type="number" min="0" bind:value={form.global.latency} />
+      <label for="latency" class="block font-medium">Latencia (ms)</label>
+      <input id="latency" class="input" type="number" min="0" bind:value={form.global.latency} />
       {#if errors['global.latency']}<span class="text-red-500 text-xs">{errors['global.latency']}</span>{/if}
     </div>
   
     <ActionButton successMessage={"guardado"} {mut} >
-        <button disabled={mut.loading} class="p-4 bg-gray-600 text-white disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed">
+        <button disabled={mut.loading} class="bg-white text-gray-600 hover:bg-gray-300 px-4 rounded transition disabled:cursor-not-allowed">
             {mut.loading ? 'Guardando...' : 'Guardar configuración'}
         </button>
     </ActionButton>

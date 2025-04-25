@@ -1,10 +1,15 @@
 <script lang="ts">
+	import { createMutation } from "$lib/stores.svelte";
 	import ActionButton from "./ActionButton.svelte";
     export let handleAddToQueue;
     export let handleRemoveFromQueue;
     export let handlePlay;
     export let isInQueue;
     export let showModal = false;
+
+    const play = createMutation(handlePlay);
+    const add = createMutation(handleAddToQueue);
+    const remove = createMutation(handleRemoveFromQueue);
 
 </script>
 {#if showModal}
@@ -16,20 +21,18 @@
     }} class="absolute left-0 top-full mt-2 z-50">
       <div class="bg-white rounded-lg shadow-lg p-4 w-40">
         <div class="flex flex-col gap-2">
-            <ActionButton
-                action={handlePlay}
+            <ActionButton mut={play} 
             >
                     <button
-              class="bg-white text-gray-600 hover:bg-gray-300 transition px-4 rounded transition"
+              class="bg-white text-gray-600 hover:bg-gray-300 transition px-4 rounded"
             >
               play
             </button>
             </ActionButton>
-            <ActionButton
-                action={isInQueue ? handleRemoveFromQueue : handleAddToQueue}
+            <ActionButton mut={isInQueue ? remove : add}
             >
             <button
-                class="bg-white text-gray-600 hover:bg-gray-300 transition px-4 rounded transition"
+                class="bg-white text-gray-600 hover:bg-gray-300 transition px-4 rounded"
               >
                 {isInQueue ? "remove from playlist" : "add to playlist"}
               </button>

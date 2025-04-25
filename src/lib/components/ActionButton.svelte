@@ -1,7 +1,7 @@
 <script lang="ts">
       import { fade } from 'svelte/transition';
 
-    let {text, action}: {text: string, action: () => Promise<void>} = $props();
+    let {action}: {action: () => Promise<void>} = $props();
     let popup: { message: string; type: "success" | "error" } | null = $state(null);
     let timeout: NodeJS.Timeout | null = null;
   
@@ -23,12 +23,16 @@
   </script>
   
   <div class="relative inline-block">
-    <button
+    <span onclick={handleClick}>
+      <slot />
+    </span>
+    <!--<button
       class="bg-white text-gray-600 hover:bg-gray-300 transition px-4 rounded transition"
       onclick={handleClick}
     >
       {text}
     </button>
+  -->
   
     {#if popup}
       <div

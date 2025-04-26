@@ -1,6 +1,7 @@
 import { getMPDClient } from './mpdClient';
 import type { MPDStatus } from './types';
 import { executeSSHServer } from './ssh.base';
+import { db } from './db';
 
 
 function formatSong(line: string) {
@@ -25,6 +26,10 @@ export type Song = {
     uri: string;
     time: string;
 };
+
+export const checkIfSetupIsDone = async () => {
+    return (await (db.getData())).setupDone;
+}
 
 export type QueueMsg = {queue: Song[], currentSong: string}
 

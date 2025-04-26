@@ -3,6 +3,7 @@ import { page } from '$app/state';
 //import { trpcError } from '$lib/stores.svelte';
 //import { TRPCClientError } from '@trpc/client';
 import type { Settings } from './schemas';
+import type { Host } from './ssh.base';
 
 
 /*
@@ -39,6 +40,12 @@ export const trpcSnapclient = {
     changeSnapclientOpts: async (opts: string) => {
         await trpc(page).snapclient.changeOpts.mutate({ opts });
     }
+}
+
+export const trpcSetupclient = {
+  update: async ({ip, username, password}: Host) => {
+      return await trpc(page).setup.update.mutate({ip, username, password});
+  }
 }
 
 export const trpcAdmin = {

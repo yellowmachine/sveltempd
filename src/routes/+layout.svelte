@@ -12,6 +12,7 @@
 	import { getCurrentSongInfo } from '$lib/stores.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import { trpcError } from '$lib/stores.svelte';
+	import Setup from '$lib/components/Setup.svelte';
 
 	
 	let { data, children }: LayoutProps = $props();	
@@ -84,6 +85,9 @@
 	});
 </script>
 
+{#if !data.setupDone}
+  <Setup />
+{:else}
 <Alert message={trpcError.value} clear={trpcError.clear} />
 <Menu isPlaying={mpdStatus.value?.state === 'play'} />
 <Player 
@@ -96,3 +100,4 @@
 />
 
 {@render children()}
+{/if}

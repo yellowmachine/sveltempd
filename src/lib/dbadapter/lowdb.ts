@@ -1,7 +1,7 @@
 import { access } from 'node:fs/promises';
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
-import type { Settings } from '$lib/schemas';
+import type { Settings, SettingsWithPassword } from '$lib/schemas';
 
 export type Data = { volume: number, admin: Settings };
 
@@ -40,12 +40,17 @@ class LowdbAdapter {
     await this.db.read();
   }
 
-  async getData() {
+  async getData(): Promise<Data> {
     await this.load();
     return stripPasswords(this.db.data) as Data;
   }
 
-  async setData(data: Partial<Data>) {
+  async getDataWithPassword(): Promise<Omit<Data, 'admin'> & {admin: SettingsWithPassword}> {
+    await this.load();
+    return this.db.data as Omit<Data, 'admin'> & {admin: SettingsWithPassword};
+  }
+
+  async setData(data: Partial<Omit<Data, 'admin'> & {admin: SettingsWithPassword}>) {
     await this.load();
     this.db.data = { ...this.db.data, ...data };
     await this.db.write();

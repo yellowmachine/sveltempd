@@ -1,8 +1,7 @@
 import type { Context } from '$lib/trpc/context';
 import { initTRPC } from '@trpc/server';
-import { settingsSchema, type Settings } from '$lib/schemas';
+import { settingsSchema, type Settings, type SettingsWithPassword } from '$lib/schemas';
 import { db } from '$lib/db';
-import type { Data } from '$lib/dbadapter/lowdb';
 import { encrypt } from '$lib/cryptutils';
 
 export const t = initTRPC.context<Context>().create();
@@ -11,7 +10,7 @@ export const admin = t.router({
   save: t.procedure
     .input(settingsSchema)
     .mutation(async ({ input }) => {
-      const data: Data = await db.getData();
+      const data = await db.getDataWithPassword();
 
       // Copia el objeto anterior
       const prevAdmin = data.admin || {};
@@ -54,7 +53,7 @@ export const admin = t.router({
       };
 
       // --- Monta el nuevo objeto admin ---
-      const newAdmin: Settings = {
+      const newAdmin: SettingsWithPassword = {
         ...prevAdmin,
         ...input,
         server: mergedServer,

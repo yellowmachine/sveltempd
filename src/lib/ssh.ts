@@ -1,7 +1,7 @@
 import { NodeSSH } from 'node-ssh';
 import { db } from './db';
 import { parseSnapclientOpts } from './utils';
-import { executeSSH, isHost, type Host } from './ssh.base';
+import { executeSSH, type Host } from './ssh.base';
 
 
 export async function getSnapclientOpts(host: Host){
@@ -13,11 +13,8 @@ export const restartEachSnapclients = async () => {
 }
 
 export const updateSnapclientOptsEachClient = async (newSnapOpts: string) => {
-    const clients = (await db.getData()).admin?.clients || [];
-    const cmdArray = await Promise.all(clients.map(async (c) => {
-        if (!isHost(c)) {
-            throw new Error('Server not found or missing required fields');
-        }    
+    const clients = (await db.getDataWithPassword()).admin?.clients || [];
+    const cmdArray = await Promise.all(clients.map(async (c) => {    
         const command = await replace(c, newSnapOpts);
         return { ip: c.ip, command };
     }));
@@ -62,7 +59,7 @@ export async function replace(ip: Host, newSnapOpts: string) {
 type Command = string | Record<string, string>; // { [ip: string]: command: string }
 
 async function executeSSHEachClient(cmd: Command) {
-    const clients = (await db.getData()).admin?.clients || [];
+    const clients = (await db.getDataWithPassword()).admin?.clients || [];
     
     // Convertir cmd a un mapa de IPs para O(1) lookups
     const commandMap = typeof cmd === 'string' 
@@ -79,9 +76,6 @@ async function executeSSHEachClient(cmd: Command) {
             }
 
             try {
-                if (!isHost(client)) {
-                    throw new Error('Server not found or missing required fields');
-                }    
                 await executeSSH(command, client);
             } catch (error) {
                 console.error(`Error executing command on ${client.ip}:`, error);

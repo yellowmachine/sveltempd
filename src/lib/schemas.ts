@@ -19,3 +19,11 @@ export const settingsSchema = z.object({
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
+
+type ServerWithPassword = Omit<Settings['server'], 'password'> & { password: string };
+type ClientWithPassword = Omit<Settings['clients'][number], 'password'> & { password: string };
+
+export type SettingsWithPassword = Omit<Settings, 'server' | 'clients'> & {
+  server: ServerWithPassword;
+  clients: ClientWithPassword[];
+};

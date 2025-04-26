@@ -7,10 +7,27 @@ export type Data = { volume: number, admin: Settings };
 
 const defaultData: Data = { volume: 50, admin: {
   global: { latency: 100 },
-  server: { ip: '', username: '', password: '' },
+  server: { ip: 'localhost', username: 'someuser', password: null },
   clients: []
 } }; 
 const dbFile = 'db.json';
+
+function stripPasswords(data: Data) {
+  if (!data.admin) return data;
+  const { server, clients, ...restAdmin } = data.admin;
+
+  const { password, ...serverSinPassword } = server;
+  const clientsSinPassword = clients.map(({ password, ...clientSinPassword }) => clientSinPassword);
+
+  return {
+    ...data,
+    admin: {
+      ...restAdmin,
+      server: serverSinPassword,
+      clients: clientsSinPassword
+    }
+  };
+}
 
 class LowdbAdapter {
   db: Low<Data>;
@@ -25,7 +42,7 @@ class LowdbAdapter {
 
   async getData() {
     await this.load();
-    return this.db.data;
+    return stripPasswords(this.db.data);
   }
 
   async setData(data: Partial<Data>) {

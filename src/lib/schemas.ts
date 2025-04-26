@@ -5,6 +5,12 @@ const passwordField = z.string()
   .nullable()
   .refine(val => val === null || val.length > 0, "Contraseña obligatoria");
 
+export const hostSchema = z.object({
+  ip: z.string().ip().min(1, "IP obligatoria"),
+  username: z.string().min(1, "Usuario obligatorio"),
+  password: z.string().min(1, "Password obligatorio")
+})
+
 export const settingsSchema = z.object({
   server: z.object({
     ip: z.string().ip().min(1, "IP obligatoria"),

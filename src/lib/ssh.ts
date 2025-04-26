@@ -1,9 +1,5 @@
 import { NodeSSH } from 'node-ssh';
-//import { exec } from 'child_process';
-//import { promisify } from 'node:util';
 import { db } from './db';
-
-//const execAsync = promisify(exec);
 
 export async function executeSSH(command: string, host: Host) {
   const ssh = new NodeSSH();
@@ -26,77 +22,194 @@ export async function executeSSH(command: string, host: Host) {
 
 type Host = {ip: string, username: string, password: string}
 
-export const restartEachSnapclients = async () => {
-    const clients = (await db.getData()).admin?.clients;
-    if(clients) {
-        for(const client of clients) {
-            await restartSnapclient(client);
-        }
-    }
+export async function getSnapclientOpts(host: Host){
+    return await executeSSH('cat /etc/default/snapclient | grep ^SNAPCLIENT_OPTS', host);      
 }
 
-export const restartSnapclient = async (host: Host) => 
-    await executeSSH('sudo systemctl restart snapclient', host)
+export const restartEachSnapclients = async () => {
+    await executeSSHEachClient('sudo systemctl restart snapclient')
+}
+
+export const updateSnapclientOptsEachClient = async (newSnapOpts: string) => {
+    const clients = (await db.getData()).admin?.clients || [];
+    const cmdArray = await Promise.all(clients.map(async (c) => {
+        const command = await replace(c, newSnapOpts);
+        return { ip: c.ip, command };
+    }));
+
+    // Convierte el array a un objeto { [ip]: command }
+    const cmd: Record<string, string> = Object.fromEntries(
+        cmdArray.map(({ ip, command }) => [ip, command])
+    );
+
+    await executeSSHEachClient(cmd);
+};
 
 
-export const updateSnapclientOpts = async ({host, currentSnapOpts, newSnapOpts}: 
-    {host: Host, currentSnapOpts: string, newSnapOpts: string}) => {
-    
-                                        const obj = { ...parseSnapclientOpts(currentSnapOpts), ...parseSnapclientOpts(newSnapOpts) };
+async function replace(ip: Host, newSnapOpts: string) {
+    const currentSnapOpts = await getSnapclientOpts(ip);
+
+    // Parsear y fusionar opciones, las nuevas sobrescriben a las actuales
+    const obj = { ...parseSnapclientOpts(currentSnapOpts), ...parseSnapclientOpts(newSnapOpts) };
+
+    // Unir las opciones en una sola línea
     let newOpts = joinSnapClientOpts(obj);
-    
+
+    // Escapar comillas para sed
     newOpts = newOpts.replace(/"/g, '\\"');
+
     const replaceCmd = `sudo sed -i 's/^SNAPCLIENT_OPTS=.*/SNAPCLIENT_OPTS="${newOpts}"/' /etc/default/snapclient`;
     const restartCmd = 'sudo systemctl restart snapclient';
-    await executeSSH(`${replaceCmd} && ${restartCmd}`, host)
-    }
+
+    return `${replaceCmd} && ${restartCmd}`;
+}
+
+
+type Command = string | Record<string, string>; // { [ip: string]: command: string }
+
+async function executeSSHEachClient(cmd: Command) {
+    const clients = (await db.getData()).admin?.clients || [];
     
-    export function joinSnapClientOpts(obj: Record<string, string | boolean>): string {
-    return Object.entries(obj)
-        .map(([key, value]) => {
-        const cliKey = '--' + key.replace(/_/g, '-');
-        if (typeof value === 'boolean') {
-            return value ? cliKey : '';
-        }
-        // Wrap value in quotes if it contains spaces
-        const safeValue = /\s/.test(String(value)) ? `"${value}"` : value;
-        return `${cliKey} ${safeValue}`;
+    // Convertir cmd a un mapa de IPs para O(1) lookups
+    const commandMap = typeof cmd === 'string' 
+        ? Object.fromEntries(clients.map(c => [c.ip, cmd])) 
+        : cmd;
+
+    await Promise.all(
+        clients.map(async (client) => {
+            const command = commandMap[client.ip];
+            
+            if (!command) {
+                console.log(`No command for IP ${client.ip}, skipping.`);
+                return;
+            }
+
+            try {
+                await executeSSH(command, client);
+            } catch (error) {
+                console.error(`Error executing command on ${client.ip}:`, error);
+            }
         })
-        .filter(Boolean)
+    );
+}
+    
+export function joinSnapClientOpts(opts: Record<string, string | boolean | number>): string {
+    return Object.entries(opts)
+        .map(([key, value]) => {
+            const cliKey = '--' + key.replace(/_/g, '-');
+            if (typeof value === 'boolean') {
+                // Solo incluir flags si son true
+                return value ? cliKey : '';
+            } else if (typeof value === 'number') {
+                return `${cliKey}=${value}`;
+            } else {
+                // Si el valor contiene espacios o caracteres especiales, poner comillas
+                const needsQuotes = /\s|["'\\]/.test(value);
+                const safeValue = needsQuotes ? `"${value.replace(/(["\\])/g, '\\$1')}"` : value;
+                return `${cliKey}=${safeValue}`;
+            }
+        })
+        .filter(Boolean) // Elimina cadenas vacías (flags false)
         .join(' ');
+}
+
+const VALID_SNAPCLIENT_OPTS: Record<string, 'string' | 'boolean' | 'number'> = {
+    host: 'string',
+    port: 'number',
+    player: 'string',
+    soundcard: 'string',
+    latency: 'number',
+    buffer: 'number',
+    volume: 'number',
+    user: 'string',
+    password: 'string',
+    logfilter: 'string',
+    daemon: 'boolean',
+    version: 'boolean',
+    help: 'boolean',
+    debug: 'boolean',
+    logtofile: 'string',
+    id: 'string',
+    name: 'string',
+    mixer: 'string',
+    mixer_device: 'string',
+    mixer_control: 'string',
+    alsa_volume_max: 'number',
+    alsa_volume_min: 'number',
+    alsa_card: 'string',
+    alsa_mixer_device: 'string',
+    alsa_mixer_control: 'string'
+  };
+  
+export function parseSnapclientOpts(line: string): Record<string, string | boolean | number> {
+    if (!/^SNAPCLIENT_OPTS="?([^"]*)"?$/.test(line.trim())) {
+      throw new Error('La línea no tiene el formato SNAPCLIENT_OPTS="..."');
     }
-    
-    export function parseSnapclientOpts(line: string): Record<string, string | boolean> {
-    // Remove the prefix and possible quotes
+  
     let opts = line.replace(/^SNAPCLIENT_OPTS="?([^"]*)"?$/, '$1').trim();
-    
-    // Split respecting quoted values
-    const regex = /--([a-zA-Z0-9-]+)(?:[= ]("[^"]+"|'[^']+'|[^\s]+))?/g;
-    const result: Record<string, string | boolean> = {};
-    
+    const regex = /--([a-zA-Z0-9-_]+)(?:[= ]("[^"]+"|'[^']+'|[^\s]+))?/g;
+    const result: Record<string, string | boolean | number> = {};
+  
     let match;
     while ((match = regex.exec(opts)) !== null) {
-        const key = match[1].replace(/-/g, '_');
-        let value = match[2];
-    
-        if (value === undefined) {
-        result[key] = true; // flag option (e.g., --debug)
-        } else {
+      const key = match[1].replace(/-/g, '_');
+      let value = match[2];
+  
+      // Validar si la opción está permitida
+      if (!(key in VALID_SNAPCLIENT_OPTS)) {
+        throw new Error(`Opción no válida para Snapclient: --${key.replace(/_/g, '-')}`);
+      }
+  
+      const expectedType = VALID_SNAPCLIENT_OPTS[key];
+  
+      if (value === undefined) {
+        // Flag (booleano)
+        if (expectedType !== 'boolean') {
+          throw new Error(`La opción --${key.replace(/_/g, '-')} requiere un valor`);
+        }
+        result[key] = true;
+      } else {
         value = value.trim();
-        // Remove surrounding quotes if present
-        if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
-            value = value.slice(1, -1);
+        // Quitar comillas si las tiene
+        if (
+          (value.startsWith('"') && value.endsWith('"')) ||
+          (value.startsWith("'") && value.endsWith("'"))
+        ) {
+          value = value.slice(1, -1);
         }
-        result[key] = value;
+  
+        // Validar tipo de valor
+        if (expectedType === 'number') {
+          const num = Number(value);
+          if (isNaN(num)) {
+            throw new Error(`El valor de --${key.replace(/_/g, '-')} debe ser un número`);
+          }
+          result[key] = num;
+        } else if (expectedType === 'boolean') {
+          // Permitir true/false explícitos, aunque normalmente los flags no llevan valor
+          if (value === 'true' || value === '1') {
+            result[key] = true;
+          } else if (value === 'false' || value === '0') {
+            result[key] = false;
+          } else {
+            throw new Error(`El valor de --${key.replace(/_/g, '-')} debe ser booleano (true/false)`);
+          }
+        } else {
+          result[key] = value;
         }
+      }
     }
-    
+  
+    if (Object.keys(result).length === 0) {
+      throw new Error('No se encontraron opciones válidas en la línea SNAPCLIENT_OPTS');
+    }
+  
     return result;
-    }
-
+  }
+  
 async function streamJournal() {
     const ssh = new NodeSSH();
-    
+
     try {
         await ssh.connect({
         host: 'tuserver.com',
@@ -121,4 +234,4 @@ async function streamJournal() {
     } catch (error) {
         console.error('Error de conexión/comando:', error);
     }
-    }
+}

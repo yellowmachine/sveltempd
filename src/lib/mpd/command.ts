@@ -5,7 +5,7 @@ import { db } from '$lib/db';
 import { formatSongArray, queueMsg } from '$lib/messages';
 import { exec } from 'child_process';
 import { promisify } from 'node:util';
-import { restartEachSnapclients } from '$lib/ssh';
+import { restartEachSnapclients, updateSnapclientOptsEachClient, getSnapclientOpts } from '$lib/ssh';
 
 const execAsync = promisify(exec);
 
@@ -317,7 +317,11 @@ class Snapclient {
   async restart(){
     await restartEachSnapclients();
   }
+  async changeOpts(opts: string){
+    await updateSnapclientOptsEachClient(opts);
+  }
 }
 
 export const snapclient = new Snapclient();
+
 

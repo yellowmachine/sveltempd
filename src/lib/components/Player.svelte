@@ -6,7 +6,6 @@
 	import SongInfo from '$lib/components/SongInfo.svelte';
 	import type { TRPCPlayer } from '../trpcClients';
 	import type { Song as TSong } from '$lib/messages';
-	import VolumeBar from './VolumeBar.svelte';
 	import Volume from './Volume.svelte';
 
 
@@ -25,7 +24,6 @@
 	let loading = $state(false);
 	let error = $state<string | null>(null);
 	let lastVolume = volume;
-	let showVolumeControl = $state(false);
 
 	function setVolume(volume: number) { trpcPlayer.volume(volume); }
 
@@ -36,7 +34,6 @@
 	
 </script>
 
-{#if playStatus === 'play' || playStatus === 'pause'}
 <div class="flex items-center gap-4 border-2 rounded-md p-4 w-max bg-white text-orange-500 dark:bg-orange-500 dark:text-white">
 	<PlayerButton
 		onClick={() => trpcPlayer.prev()}
@@ -94,6 +91,8 @@
 	</PlayerButton>
 	{/if}
 </div>
+
+{#if playStatus === 'play' || playStatus === 'pause'}
 <ProgressBar isPlaying={playStatus === 'play'} {total} {elapsed} />  
 <SongInfo song={currentSong} />
 

@@ -1,8 +1,14 @@
 {
   "volume": 50,
   "admin": {
-    "global": { "latency": 100 },
-    "server": { "ip": "192.168.1.44", "username": "miguel", "password": "123" },
-    "clients": [{ "ip": "192.168.1.44", "username": "miguel", "password": "123" }]
+    "global": {
+      "latency": 100
+    },
+    "server": {
+      "ip": "localhost",
+      "username": "miguel",
+      "password": "1571655bce16c2d7bf65d846984c5702:7719ee67b69118b3112c7ef5d2f5351d"
+    },
+    "clients": []
   }
 }

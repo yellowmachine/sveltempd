@@ -10,7 +10,7 @@
 
     const data = {
       global: { latency: 100 },
-      server: { ip: '192.168.1.44', username: 'miguel', password: 'secret' },
+      server: { ip: '192.168.1.44', username: 'miguel', password: null },
       clients: []
     }
   </script>

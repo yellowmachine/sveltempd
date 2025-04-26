@@ -1,7 +1,7 @@
 import { NodeSSH } from 'node-ssh';
 import { db } from './db';
 import { parseSnapclientOpts } from './utils';
-import { executeSSH, type Host } from './ssh.base';
+import { executeSSH, isHost, type Host } from './ssh.base';
 
 
 export async function getSnapclientOpts(host: Host){
@@ -15,6 +15,9 @@ export const restartEachSnapclients = async () => {
 export const updateSnapclientOptsEachClient = async (newSnapOpts: string) => {
     const clients = (await db.getData()).admin?.clients || [];
     const cmdArray = await Promise.all(clients.map(async (c) => {
+        if (!isHost(c)) {
+            throw new Error('Server not found or missing required fields');
+        }    
         const command = await replace(c, newSnapOpts);
         return { ip: c.ip, command };
     }));
@@ -76,6 +79,9 @@ async function executeSSHEachClient(cmd: Command) {
             }
 
             try {
+                if (!isHost(client)) {
+                    throw new Error('Server not found or missing required fields');
+                }    
                 await executeSSH(command, client);
             } catch (error) {
                 console.error(`Error executing command on ${client.ip}:`, error);

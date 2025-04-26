@@ -10,7 +10,7 @@ export const settingsSchema = z.object({
     z.object({
       ip: z.string().min(1, "IP obligatoria"),
       username: z.string().min(1, "Usuario obligatorio"),
-      password: z.string().min(1, "Contraseña obligatoria")
+      password: z.string().min(1, "Contraseña obligatoria").nullable()
     })
   ),
   global: z.object({

@@ -24,7 +24,7 @@ export async function executeSSH(command: string, host: Host) {
   }
 }
 
-function isHost(obj: any): obj is Host {
+export function isHost(obj: any): obj is Host {
   return !!obj && typeof obj.ip === 'string' && typeof obj.username === 'string' && typeof obj.password === 'string';
 }
 

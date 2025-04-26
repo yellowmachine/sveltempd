@@ -42,7 +42,7 @@ class LowdbAdapter {
 
   async getData() {
     await this.load();
-    return stripPasswords(this.db.data);
+    return stripPasswords(this.db.data) as Data;
   }
 
   async setData(data: Partial<Data>) {

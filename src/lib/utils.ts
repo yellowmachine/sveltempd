@@ -16,7 +16,7 @@ const VALID_SNAPCLIENT_OPTS: Record<string, 'string' | 'boolean' | 'number'> = {
   port: 'number',
   player: 'string',
   soundcard: 'string',
-  latency: 'number',
+  //latency: 'number',
   buffer: 'number',
   volume: 'number',
   user: 'string',
@@ -40,6 +40,7 @@ const VALID_SNAPCLIENT_OPTS: Record<string, 'string' | 'boolean' | 'number'> = {
 };
 
 export function parseSnapclientOpts(line: string): Record<string, string | boolean | number> {
+  console.log(line)
   if (!/^SNAPCLIENT_OPTS="?([^"]*)"?$/.test(line.trim())) {
     throw new Error('La línea no tiene el formato SNAPCLIENT_OPTS="..."');
   }

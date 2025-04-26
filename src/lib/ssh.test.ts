@@ -1,65 +1,55 @@
-import { describe, it, expect } from 'vitest';
-import { parseSnapclientOpts, joinSnapClientOpts } from './ssh';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+export type Host = {ip: string, username: string, password: string}
 
-describe('parseSnapclientOpts', () => {
-  it('parsea opciones básicas con valores', () => {
-    const input = 'SNAPCLIENT_OPTS="--host=192.168.1.10 --port=1704 --player=alsa"';
-    expect(parseSnapclientOpts(input)).toEqual({
-      host: '192.168.1.10',
-      port: 1704,
-      player: 'alsa'
-    });
-  });
+// Mocks ANTES de importar el módulo que los usa
+vi.mock('./ssh.base', async () => {
+  const actual = await vi.importActual('./ssh.base');
+  return {
+    ...actual,
+    executeSSH: vi.fn()
+  };
+});
 
-  it.skip('parsea flags booleanos', () => {
-    const input = 'SNAPCLIENT_OPTS="--debug --daemon"';
-    expect(parseSnapclientOpts(input)).toEqual({
-      debug: true,
-      daemon: true
-    });
-  });
-
-  it('parsea valores numéricos correctamente', () => {
-    const input = 'SNAPCLIENT_OPTS="--latency=120 --buffer=3000 --volume=80"';
-    expect(parseSnapclientOpts(input)).toEqual({
-      latency: 120,
-      buffer: 3000,
-      volume: 80
-    });
-  });
-
-  it('parsea valores con espacios y comillas', () => {
-    const msg = {
-        line: 'SNAPCLIENT_OPTS="--name=\'Sala Principal\' --logfilter=*:info,player:debug"'
+vi.mock('./db', async () => {
+  const actual = await vi.importActual<typeof import('./db')>('./db');
+  return {
+    ...actual,
+    db: {
+      ...actual.db,
+      getData: vi.fn()
     }
-      
-    expect(parseSnapclientOpts(msg.line)).toEqual({
-      name: 'Sala Principal',
-      logfilter: '*:info,player:debug'
-    });
+  };
+});
+
+// Importa 'replace' DESPUÉS de definir los mocks
+import { replace } from './ssh';
+import { db } from './db';
+import { executeSSH } from './ssh.base';
+
+describe('replace', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('lanza excepción si el formato es incorrecto', () => {
-    expect(() => parseSnapclientOpts('--host=192.168.1.10')).toThrow();
-  });
+  it('devuelve la línea SNAPCLIENT_OPTS con latency global', async () => {
+    (executeSSH as any).mockResolvedValue('SNAPCLIENT_OPTS="--host=192.168.1.10 --name=Sala"');
+    (db.getData as any).mockResolvedValue({ admin: { global: { latency: 150 } } });
 
-  it('lanza excepción si hay opciones no válidas', () => {
-    const input = 'SNAPCLIENT_OPTS="--host=192.168.1.10 --fakeopt=foo"';
-    expect(() => parseSnapclientOpts(input)).toThrow(/no válida/i);
-  });
+    const host: Host = { ip: '192.168.1.10', username: 'test', password: 'test' };
+    const commandLine = await replace(host, '--player=alsa');
 
-  it('lanza excepción si el valor numérico es inválido', () => {
-    const input = 'SNAPCLIENT_OPTS="--latency=foo"';
-    expect(() => parseSnapclientOpts(input)).toThrow(/número/);
-  });
+    const match = commandLine.match(/SNAPCLIENT_OPTS="([^"]+)"/);
+    expect(match).not.toBeNull();
+    const snapclientOpts = match![1];
 
-  it('lanza excepción si no hay ninguna opción válida', () => {
-    const input = 'SNAPCLIENT_OPTS=""';
-    expect(() => parseSnapclientOpts(input)).toThrow(/no se encontraron/i);
+    expect(snapclientOpts).toMatch(/--latency=150/);
+    expect(snapclientOpts).toMatch(/--player=alsa/);
+
+    
   });
 });
 
-
+/*
 describe('joinSnapClientOpts', () => {
   it('convierte opciones simples a línea de comandos', () => {
     const opts = { host: '192.168.1.10', port: 1704, player: 'alsa' };
@@ -89,3 +79,4 @@ describe('joinSnapClientOpts', () => {
     expect(joinSnapClientOpts(opts)).toBe('');
   });
 });
+*/

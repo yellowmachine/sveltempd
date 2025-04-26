@@ -1,27 +1,8 @@
 import { NodeSSH } from 'node-ssh';
 import { db } from './db';
 import { parseSnapclientOpts } from './utils';
+import { executeSSH, type Host } from './ssh.base';
 
-export async function executeSSH(command: string, host: Host) {
-  const ssh = new NodeSSH();
-  try {
-    await ssh.connect({
-      host: host.ip,
-      username: host.username,
-      password: host.password
-    });
-
-    const { stdout, stderr } = await ssh.execCommand(`${command}`);
-    if (stderr) {
-      throw new Error(stderr);
-    }
-    return stdout;
-  } finally {
-    ssh.dispose();
-  }
-}
-
-type Host = {ip: string, username: string, password: string}
 
 export async function getSnapclientOpts(host: Host){
     return await executeSSH('cat /etc/default/snapclient | grep ^SNAPCLIENT_OPTS', host);      
@@ -47,11 +28,19 @@ export const updateSnapclientOptsEachClient = async (newSnapOpts: string) => {
 };
 
 
-async function replace(ip: Host, newSnapOpts: string) {
+export async function replace(ip: Host, newSnapOpts: string) {
     const currentSnapOpts = await getSnapclientOpts(ip);
+    let latency = (await db.getData()).admin?.global?.latency || 100;
 
     // Parsear y fusionar opciones, las nuevas sobrescriben a las actuales
-    const obj = { ...parseSnapclientOpts(currentSnapOpts), ...parseSnapclientOpts(newSnapOpts) };
+    //const obj = { ...parseSnapclientOpts(currentSnapOpts), ...parseSnapclientOpts(newSnapOpts) };
+    const obj = parseSnapclientOpts(`SNAPCLIENT_OPTS="${newSnapOpts}"`);
+
+    // Asegúrate de que latency NO está en las opciones individuales
+    delete obj.latency;
+
+    // Añade latency global
+    obj.latency = latency;
 
     // Unir las opciones en una sola línea
     let newOpts = joinSnapClientOpts(obj);
@@ -64,6 +53,7 @@ async function replace(ip: Host, newSnapOpts: string) {
 
     return `${replaceCmd} && ${restartCmd}`;
 }
+
 
 
 type Command = string | Record<string, string>; // { [ip: string]: command: string }

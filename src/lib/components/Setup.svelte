@@ -30,15 +30,15 @@
     }
   </script>
   
-  <form class="max-w-sm mx-auto mt-8 p-6 bg-white rounded border border-orange-300" onsubmit={handleSubmit}>
-    <h2 class="text-2xl font-bold mb-4 text-orange-600 text-center">Configuración inicial</h2>
-    <h2 class="text-2xl font-bold mb-4 text-orange-600 text-center">Datos de ssh al servidor mpd</h2>
+  <form class="max-w-sm mx-auto mt-8 p-6 bg-white rounded border border-brand-300" onsubmit={handleSubmit}>
+    <h2 class="text-2xl font-bold mb-4 text-brand-600 text-center">Configuración inicial</h2>
+    <h2 class="text-2xl font-bold mb-4 text-brand-600 text-center">Datos de ssh al servidor mpd</h2>
     <div class="mb-4">
-      <label class="block text-gray-700 font-bold mb-2 text-orange-600" for="ip">
+      <label class="block text-brand-600 font-bold mb-2" for="ip">
         Ip
       </label>
       <input
-        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 ring-brand-500"
         id="ip"
         type="text"
         bind:value={ip}
@@ -46,11 +46,11 @@
       />
     </div>
     <div class="mb-4">
-      <label class="block text-gray-700 font-bold mb-2 text-orange-600" for="username">
+      <label class="block text-brand-600 font-bold mb-2" for="username">
         Usuario
       </label>
       <input
-        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 ring-brand-500"
         id="username"
         type="text"
         bind:value={username}
@@ -58,11 +58,11 @@
       />
     </div>
     <div class="mb-6">
-      <label class="block text-gray-700 font-bold mb-2 text-orange-600" for="password">
+      <label class="block text-brand-600 font-bold mb-2" for="password">
         Contraseña
       </label>
       <input
-        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-oreange-500"
+        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 ring-brand-500"
         id="password"
         type="password"
         bind:value={password}
@@ -71,7 +71,7 @@
     </div>
     <button
       type="submit"
-      class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition"
+      class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2 px-4 rounded transition"
     >
       Guardar configuración
     </button>

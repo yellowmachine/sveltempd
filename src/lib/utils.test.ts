@@ -62,6 +62,15 @@ describe('parseSnapclientOpts', () => {
     });
   });
 
+  it('parsea opciones básicas con valores excluye latency', () => {
+    const input = 'SNAPCLIENT_OPTS="--host=192.168.1.10 --latency=150 --port=1704 --player=alsa"';
+    expect(parseSnapclientOpts(input)).toEqual({
+      host: '192.168.1.10',
+      port: 1704,
+      player: 'alsa'
+    });
+  });
+
   it.skip('parsea flags booleanos', () => {
     const input = 'SNAPCLIENT_OPTS="--debug --daemon"';
     expect(parseSnapclientOpts(input)).toEqual({
@@ -78,10 +87,6 @@ describe('parseSnapclientOpts', () => {
     });
   });
 
-  it.skip('lanza excepción si latency es pasado como parámetro', () => {
-    const input = 'SNAPCLIENT_OPTS="--host=192.168.1.10 --latency=150"';
-    expect(() => parseSnapclientOpts(input)).toThrow(/latency/i);
-  });
 
   it('parsea valores con espacios y comillas', () => {
     const msg = {

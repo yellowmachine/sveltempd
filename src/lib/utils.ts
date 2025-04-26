@@ -16,7 +16,7 @@ const VALID_SNAPCLIENT_OPTS: Record<string, 'string' | 'boolean' | 'number'> = {
   port: 'number',
   player: 'string',
   soundcard: 'string',
-  //latency: 'number',
+  latency: 'number',
   buffer: 'number',
   volume: 'number',
   user: 'string',
@@ -58,6 +58,9 @@ export function parseSnapclientOpts(line: string): Record<string, string | boole
     if (!(key in VALID_SNAPCLIENT_OPTS)) {
       throw new Error(`Opción no válida para Snapclient: --${key.replace(/_/g, '-')}`);
     }
+
+    if(key === 'latency')
+      continue;
 
     const expectedType = VALID_SNAPCLIENT_OPTS[key];
 

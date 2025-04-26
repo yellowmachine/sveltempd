@@ -1,5 +1,6 @@
 import { NodeSSH } from 'node-ssh';
 import { db } from './db';
+import { decrypt } from './cryptutils';
 
 export type Host = {ip: string, username: string, password: string}
 
@@ -10,7 +11,7 @@ export async function executeSSH(command: string, host: Host) {
     await ssh.connect({
       host: host.ip,
       username: host.username,
-      password: host.password
+      password: decrypt(host.password) 
     });
 
     const { stdout, stderr } = await ssh.execCommand(`${command}`);

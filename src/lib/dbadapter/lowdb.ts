@@ -3,16 +3,20 @@ import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
 import type { Settings } from '$lib/schemas';
 
-type Data = { volume: number, admin?: Settings };
+export type Data = { volume: number, admin: Settings };
 
-const defaultData: Data = { volume: 50 }; 
+const defaultData: Data = { volume: 50, admin: {
+  global: { latency: 100 },
+  server: { ip: '', username: '', password: '' },
+  clients: []
+} }; 
 const dbFile = 'db.json';
 
 class LowdbAdapter {
   db: Low<Data>;
   
   constructor(filename = dbFile) {
-    this.db = new Low(new JSONFile<{ volume: number }>(filename), defaultData);
+    this.db = new Low(new JSONFile<Data>(filename), defaultData);
   }
 
   async load() {

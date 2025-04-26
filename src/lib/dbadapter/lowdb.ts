@@ -4,6 +4,7 @@ import { JSONFile } from 'lowdb/node';
 import type { Settings, SettingsWithPassword } from '$lib/schemas';
 
 export type Data = { volume: number, admin: Settings };
+type DataWithPassword = Omit<Data, 'admin'> & { admin: SettingsWithPassword };
 
 const defaultData: Data = { volume: 50, admin: {
   global: { latency: 100 },
@@ -45,12 +46,12 @@ class LowdbAdapter {
     return stripPasswords(this.db.data) as Data;
   }
 
-  async getDataWithPassword(): Promise<Omit<Data, 'admin'> & {admin: SettingsWithPassword}> {
+  async getDataWithPassword(): Promise<DataWithPassword> {
     await this.load();
-    return this.db.data as Omit<Data, 'admin'> & {admin: SettingsWithPassword};
+    return this.db.data as DataWithPassword;
   }
 
-  async setData(data: Partial<Omit<Data, 'admin'> & {admin: SettingsWithPassword}>) {
+  async setData(data: Partial<DataWithPassword>) {
     await this.load();
     this.db.data = { ...this.db.data, ...data };
     await this.db.write();

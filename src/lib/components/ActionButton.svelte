@@ -1,9 +1,11 @@
 <script lang="ts">
 	  import { fade } from 'svelte/transition';
     import type { M } from '$lib/stores.svelte';
+	import type { Snippet } from 'svelte';
 
-    let { successMessage="ok!", mut, action }: 
-        { successMessage?: string, mut?: M, action?: Function} = $props();
+    let { successMessage="ok!", mut, action, children }: 
+        { successMessage?: string, mut?: M, action?: Function, children: Snippet } = $props();
+    
     let timeout: NodeJS.Timeout | null = null;
       
     let error: string | null = $state(null);
@@ -36,8 +38,10 @@
   </script>
   
   <div class="relative inline-block">
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
     <span onclick={handleClick}>
-      <slot />
+      {@render children()}
     </span>
   
     {#if mut &&mut.ok}

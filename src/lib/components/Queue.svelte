@@ -3,10 +3,9 @@
     import type { Song as TSong } from '$lib/messages';
     import { trpcQueue } from '../trpcClients'
     
-    let {data} = $props();
-    let {songs, currentSong, elapsed, total, lastLoadedPlaylist}: 
+    let {songs, currentSong, elapsed, total, lastLoadedPlaylist="default"}: 
         {songs: TSong[], currentSong: string | null, elapsed: number | undefined, 
-         total: number | undefined, lastLoadedPlaylist: string | null } = data;
+         total: number | undefined, lastLoadedPlaylist?: string | null } = $props();
 
     let newPlaylistName: string | null = $state('');
 

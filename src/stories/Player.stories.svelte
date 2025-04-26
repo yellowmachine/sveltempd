@@ -29,8 +29,10 @@
 
 <Story name="Pause" args={{ volume: 30, playStatus: 'pause'}} />
 
+<!--
 <Story name="Dark" args={{ volume: 15, playStatus: 'pause' }}>
     <DarkDecorator>
         <Player volume={10} playStatus={'play'} />
     </DarkDecorator>
 </Story>
+-->

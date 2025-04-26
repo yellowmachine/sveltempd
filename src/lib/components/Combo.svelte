@@ -41,6 +41,8 @@
         tabindex="-1"
       >
         {#each options as option}
+          <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+          <!-- svelte-ignore a11y_click_events_have_key_events -->
           <li
             class="px-4 py-3 cursor-pointer hover:bg-blue-50"
             onclick={() => selectOption(option.value)}

@@ -3,9 +3,6 @@
     import { mpdStatus } from "$lib/stores.svelte";
     import { queue, currentSong } from "$lib/stores.svelte";
     
-    //let { data } = $props();
-    //queue.update(data)
-
 </script>
 
 <Queue 

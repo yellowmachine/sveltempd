@@ -2,7 +2,6 @@
     import { settingsSchema, type Settings } from "$lib/schemas";
 	import { createMutation } from "$lib/stores.svelte";
 	import { trpcAdmin } from "$lib/trpcClients";
-	import { fromStore } from "svelte/store";
 	import ActionButton from "./ActionButton.svelte";
 
     let {data}: {data?: Settings} = $props();
@@ -15,11 +14,6 @@
                                         });
   
     let errors: Record<string, string> = $state({});
-    //let isFormValid = $state(false);
-
-    //$effect(() => {
-    //  isFormValid = validate();
-    //})
   
     function validate() {
       const result = settingsSchema.safeParse(form);
@@ -35,11 +29,14 @@
   
     async function submit(event: SubmitEvent) {
         event.preventDefault();
-        if (!validate()) return;
+        if (!validate()) //return;
+          throw new Error('Invalid form');
         form = await trpcAdmin.save(form) 
     }
   
     function addClient() {
+      if (!validate()) 
+          throw new Error('No puedes porque hay errores en el formulario');
       form = {...form, clients: [...form.clients, { ip: '', username: '', password: '' }]};
     }
     function removeClient(index: number) {
@@ -102,7 +99,9 @@
         </div>
       {/each}
       
-    <button type="button" class="bg-white text-gray-600 hover:bg-gray-300 px-4 rounded transition disabled:cursor-not-allowed" onclick={addClient}>Añadir cliente</button>
+    <ActionButton action={addClient} >
+      <button type="button" class="bg-white text-gray-600 hover:bg-gray-300 px-4 rounded transition disabled:cursor-not-allowed">Añadir cliente</button>
+    </ActionButton>  
 
     <h2 class="text-2xl font-bold mb-4">Global</h2>
     <div class="mb-4">

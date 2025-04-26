@@ -2,20 +2,35 @@
 	  import { fade } from 'svelte/transition';
     import type { M } from '$lib/stores.svelte';
 
-    let { successMessage="ok!", mut}: 
-        { successMessage?: string, mut: M} = $props();
+    let { successMessage="ok!", mut, action }: 
+        { successMessage?: string, mut?: M, action?: Function} = $props();
     let timeout: NodeJS.Timeout | null = null;
       
+    let error: string | null = $state(null);
+    const f = action || mut?.mutate || (async () => {});
+
     async function handleClick(event: Event) {
-      if(mut.loading) 
+      if(mut && mut.loading) 
         return;
-      await mut.mutate(event);
+      try {
+        await f(event);
+      } catch (e) {
+        error = e instanceof Error ? e.message : String(e);
+      }
     }
 
     $effect(() => {
-      if (mut.ok || mut.error) {
-        timeout = setTimeout(mut.clear, 2500);
+      if (mut && mut.ok || error) {
+        timeout = setTimeout(() => {
+          mut?.clear();
+          error = null;
+        }, 2500);
       }
+    })
+
+    $effect(() => {
+      if(mut?.error)
+        error = mut?.error;
     })
 
   </script>
@@ -25,7 +40,7 @@
       <slot />
     </span>
   
-    {#if mut.ok}
+    {#if mut &&mut.ok}
     <div
         class="absolute left-full top-1/2 -translate-y-1/2 ml-4 min-w-[100px] px-4 py-2 rounded shadow-lg text-sm font-medium
            bg-green-100 text-green-800 border border-green-300"
@@ -34,13 +49,13 @@
         {successMessage}
       </div>
     {/if}
-    {#if mut.error}
+    {#if error}
     <div
         class="absolute left-full top-1/2 -translate-y-1/2 ml-4 min-w-[100px] px-4 py-2 rounded shadow-lg text-sm font-medium
           bg-red-100 text-red-800 border border-red-300"
         transition:fade
       >
-      {mut.error}
+      {error}
     </div>
     {/if}
   </div>

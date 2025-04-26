@@ -172,8 +172,7 @@ class Player {
       }
     }
 
-    await this.client.api.playback.play();
-    await snapclient.restart();
+    await this.play();
   }
 
 

@@ -93,4 +93,32 @@ export const updateSnapclientOpts = async ({host, currentSnapOpts, newSnapOpts}:
     
     return result;
     }
-      
+
+async function streamJournal() {
+    const ssh = new NodeSSH();
+    
+    try {
+        await ssh.connect({
+        host: 'tuserver.com',
+        username: 'tuusuario',
+        privateKey: '/ruta/a/tu/llave_privada'
+        });
+    
+        // Ejecutar journalctl -f (seguimiento en tiempo real)
+        await ssh.exec('journalctl', ['-f', '-u', 'snapclient.service'], {
+        onStdout: (chunk) => {
+            console.log('Nueva línea:', chunk.toString('utf8'));
+        },
+        onStderr: (chunk) => {
+            console.error('Error:', chunk.toString('utf8'));
+        },
+        // Opcional: forzar el cierre después de 30 segundos (si no se usa, el comando seguirá corriendo)
+        execOptions: { 
+            timeout: 30000 
+        }
+        });
+    
+    } catch (error) {
+        console.error('Error de conexión/comando:', error);
+    }
+    }

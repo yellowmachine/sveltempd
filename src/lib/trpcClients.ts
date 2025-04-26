@@ -1,7 +1,7 @@
 import { trpc } from '$lib/trpc/client';
 import { page } from '$app/state';
-import { trpcError } from '$lib/stores.svelte';
-import { TRPCClientError } from '@trpc/client';
+//import { trpcError } from '$lib/stores.svelte';
+//import { TRPCClientError } from '@trpc/client';
 import type { Settings } from './schemas';
 
 

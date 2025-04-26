@@ -17,9 +17,10 @@ export function createMutation<T>(fn: Function) {
         ok = true;
         error = null;
       } catch (e) {
+        console.log(e)
         ok = null;
         error = e instanceof Error ? e.message : String(e);
-        trpcError.update(JSON.stringify(error))
+        trpcError.update(error)
       } finally {
         loading = false;
       }

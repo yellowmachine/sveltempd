@@ -2,6 +2,7 @@
     import { settingsSchema, type Settings } from "$lib/schemas";
 	import { createMutation } from "$lib/stores.svelte";
 	import { trpcAdmin } from "$lib/trpcClients";
+	import { fromStore } from "svelte/store";
 	import ActionButton from "./ActionButton.svelte";
 
     let {data}: {data?: Settings} = $props();
@@ -14,11 +15,11 @@
                                         });
   
     let errors: Record<string, string> = $state({});
-    let isFormValid = $state(false);
+    //let isFormValid = $state(false);
 
-    $effect(() => {
-      isFormValid = validate();
-    })
+    //$effect(() => {
+    //  isFormValid = validate();
+    //})
   
     function validate() {
       const result = settingsSchema.safeParse(form);
@@ -35,12 +36,11 @@
     async function submit(event: SubmitEvent) {
         event.preventDefault();
         if (!validate()) return;
-        
         form = await trpcAdmin.save(form) 
     }
   
     function addClient() {
-      form.clients.push({ ip: '', username: '', password: '' });
+      form = {...form, clients: [...form.clients, { ip: '', username: '', password: '' }]};
     }
     function removeClient(index: number) {
       form.clients.splice(index, 1);
@@ -70,7 +70,7 @@
   
       <h2 class="text-2xl font-bold mb-4">Clientes</h2>
       {#each form.clients as client, i (i)}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
+        <div class="clientparent grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
           <div class="p-2">
             <label for="client-ip" class="block font-medium mb-1">IP</label>
             <input id="client-ip" class="input w-full" bind:value={client.ip} />
@@ -93,16 +93,16 @@
                 <span class="text-red-500 text-xs">{errors[`clients.${i}.password`]}</span>
               {/if}
             </div>
-            {#if form.clients.length > 1}
-              <button type="button" class="btn bg-red-500 text-white h-10" onclick={() => removeClient(i)}>-</button>
-            {/if}
           </div>
+          {#if form.clients.length > 0}
+            <div class="client">
+              <button type="button" class="bg-white text-red-600 hover:bg-red-400 px-4 rounded transition" onclick={() => removeClient(i)}>Eliminar</button>
+            </div>
+            {/if}
         </div>
       {/each}
       
-    {#if isFormValid}
-        <button type="button" class="btn bg-blue-500 text-white" onclick={addClient}>Añadir cliente</button>
-    {/if}
+    <button type="button" class="bg-white text-gray-600 hover:bg-gray-300 px-4 rounded transition disabled:cursor-not-allowed" onclick={addClient}>Añadir cliente</button>
 
     <h2 class="text-2xl font-bold mb-4">Global</h2>
     <div class="mb-4">
@@ -119,4 +119,9 @@
     
   </form>
   
-  
+  <style>
+    .clientparent:has(.client:hover) {
+        background-color: #fca5a5; /* bg-red-300 en Tailwind */
+    }
+
+  </style>

@@ -7,6 +7,12 @@
       component: Admin,
       tags: ['autodocs']
     });
+
+    const data = {
+      global: { latency: 100 },
+      server: { ip: '192.168.1.44', username: 'miguel', password: 'secret' },
+      clients: []
+    }
   </script>
   
-  <Story name="Primary"  />
+  <Story name="Primary" args={{ data }}  />

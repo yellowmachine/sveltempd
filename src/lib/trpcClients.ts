@@ -35,6 +35,9 @@ function decorateTrpcObject<T extends Record<string, any>>(obj: T): T {
 export const trpcSnapclient = {
     restart: async () => {
         await trpc(page).snapclient.restart.mutate();
+    },
+    changeSnapclientOpts: async (opts: string) => {
+        await trpc(page).snapclient.changeOpts.mutate({ opts });
     }
 }
 

@@ -3,26 +3,16 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { currentSong, mpdStatus, queue } from '$lib/stores.svelte';
 	import type { MPDStatus } from '$lib/types/index';
-	import Player from '$lib/components/Player.svelte';
 	import Menu from '$lib/components/Menu.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import type { LayoutProps } from './$types';
 	import type { QueueMsg, Song } from '$lib/messages';
-	import { trpcPlayer } from '$lib/trpcClients';
-	import { getCurrentSongInfo } from '$lib/stores.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import { trpcError } from '$lib/stores.svelte';
 	import Setup from '$lib/components/Setup.svelte';
 
 	
 	let { data, children }: LayoutProps = $props();	
-
-	if(data.player)
-		mpdStatus.update(data.player);
-
-	queue.update(data.queue);
-	currentSong.update(data.queue.currentSong)
-	const currentSongInfo = getCurrentSongInfo()
 
 	let evtSource: EventSource | null = null;
 	let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -90,14 +80,6 @@
 {:else}
 <Alert message={trpcError.value} clear={trpcError.clear} />
 <Menu isPlaying={mpdStatus.value?.state === 'play'} />
-<Player 
-	currentSong={currentSongInfo}
-	total={mpdStatus.value?.time?.total} 
-	elapsed={mpdStatus.value?.time?.elapsed} 
-	volume={mpdStatus.value?.volume || 0} 
-	playStatus={ mpdStatus.value?.state }
-	{trpcPlayer}
-/>
 
 {@render children()}
 {/if}

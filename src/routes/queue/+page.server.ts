@@ -1,10 +1,9 @@
-/*import { createCaller } from "$lib/trpc/router";
-import { createContext } from "$lib/trpc/context";
-import type { QueueMsg } from "$lib/messages";
+import { playerMsg, queueMsg } from '$lib/messages';
+import type { PageServerLoad } from './$types';
 
-export async function load() {
-  const caller = createCaller(await createContext({} as any));
-  const queue = await caller.queue.info() as QueueMsg;
-  return { ...queue };
-}
-*/
+export const load: PageServerLoad = async () => {
+  const player = await playerMsg();
+  const queue = await queueMsg();
+  
+  return { player, queue };
+};

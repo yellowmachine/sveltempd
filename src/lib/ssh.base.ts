@@ -1,4 +1,5 @@
 import { NodeSSH } from 'node-ssh';
+import { db } from './db';
 
 export type Host = {ip: string, username: string, password: string}
 
@@ -20,4 +21,11 @@ export async function executeSSH(command: string, host: Host) {
   } finally {
     ssh.dispose();
   }
+}
+
+export const executeSSHServer = async (command: string) => {
+  const server = (await db.getData()).admin?.server;
+  if(!server) throw new Error('Server not found');
+   
+  return await executeSSH(command, server);
 }

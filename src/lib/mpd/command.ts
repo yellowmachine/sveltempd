@@ -6,6 +6,7 @@ import { formatSongArray, queueMsg } from '$lib/messages';
 import { exec } from 'child_process';
 import { promisify } from 'node:util';
 import { restartEachSnapclients, updateSnapclientOptsEachClient, getSnapclientOpts } from '$lib/ssh';
+import { executeSSHServer } from '$lib/ssh.base';
 
 const execAsync = promisify(exec);
 
@@ -129,10 +130,10 @@ class Library {
     this.client = client;
   }
   async getFolderContent(path: string) {
-    const { stdout } = await execAsync('mpc -f "%artist% - %title% - %id% - %file% - %time%" listall "' + path + '"');
-    const files = formatSongArray(stdout).filter(item => path !== '' && item.uri.startsWith(path));
-    const currentSong = (await execAsync('mpc current -f "%file%"')).stdout
-    
+    const mpcPlaylist = await executeSSHServer('mpc -f "%artist% - %title% - %id% - %file% - %time%" listall "' + path + '"');
+    const files = formatSongArray(mpcPlaylist).filter(item => path !== '' && item.uri.startsWith(path));
+    const currentSong = await executeSSHServer('mpc current -f "%file%"');
+        
     const result = await this.client.api.db.listall(path) as ListAllItem[];
     const directories = result.
       filter(item => typeof item.directory === 'string' && item.directory.startsWith(path)).

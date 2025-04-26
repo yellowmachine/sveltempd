@@ -1,9 +1,7 @@
-import { exec } from 'child_process';
-import { promisify } from 'node:util';
 import { getMPDClient } from './mpdClient';
 import type { MPDStatus } from './types';
+import { executeSSHServer } from './ssh.base';
 
-const execAsync = promisify(exec);
 
 function formatSong(line: string) {
     const [artist, title, id, uri, time, ...rest] = line.trim().split('-').map(c => c.trim());
@@ -33,9 +31,10 @@ export type QueueMsg = {queue: Song[], currentSong: string}
 export async function queueMsg(): Promise<QueueMsg> { 
   let msg;
   try {
-    const { stdout } = await execAsync('mpc -f "%artist% - %title% - %id% - %file% - %time%" playlist');
-    const queue = formatSongArray(stdout);
-    const currentSong = (await execAsync('mpc current -f "%file%"')).stdout.trim()
+    const mpcPlaylist = await executeSSHServer('mpc -f "%artist% - %title% - %id% - %file% - %time%" playlist');
+    const queue = formatSongArray(mpcPlaylist);
+    const currentSong = await executeSSHServer('mpc current -f "%file%"');
+    
     msg = {queue, currentSong};
   } catch {
     msg = {queue: [], currentSong: ''};

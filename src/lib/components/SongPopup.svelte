@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createMutation } from "$lib/stores.svelte";
+	import { createAsync } from "$lib/stores.svelte";
 	import ActionButton from "./ActionButton.svelte";
     export let handleAddToQueue;
     export let handleRemoveFromQueue;
@@ -7,9 +7,9 @@
     export let isInQueue;
     export let showModal = false;
 
-    const play = createMutation(handlePlay);
-    const add = createMutation(handleAddToQueue);
-    const remove = createMutation(handleRemoveFromQueue);
+    const play = createAsync(handlePlay);
+    const add = createAsync(handleAddToQueue);
+    const remove = createAsync(handleRemoveFromQueue);
 
 </script>
 {#if showModal}

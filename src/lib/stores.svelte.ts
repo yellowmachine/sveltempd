@@ -1,21 +1,22 @@
 import type { MPDStatus } from '$lib/types/index';
 import type { Song } from './messages';
 
-export type M = Pick<ReturnType<typeof createMutation>, 'ok' | 'error' | 'clear' | 'mutate' | 'loading'>
+export type M = Pick<ReturnType<typeof createAsync>, 'ok' | 'error' | 'clear' | 'call' | 'loading'>
 
-export function createMutation<T>(fn: Function) {
+export function createAsync<T>(fn: Function) {
   let error: string | null = $state(null);
   let loading: boolean = $state(false);
-  let value: T | null = $state(null);
+  let data: T | null = $state(null);
   let ok: true | null = $state(null);
 
   return {
-    async mutate(event: Event){
+    async call(...args: any) {
       try {
         loading = true;
-        value = await fn(event);
+        data = await fn(...args);
         ok = true;
         error = null;
+        //return data
       } catch (e) {
         console.log(e)
         ok = null;
@@ -25,8 +26,8 @@ export function createMutation<T>(fn: Function) {
         loading = false;
       }
     },
-    get value() {
-      return value;
+    get data() {
+      return data;
     },
     get error() {
       return error;

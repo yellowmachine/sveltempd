@@ -53,7 +53,7 @@
   {/if}
 
     <div class="queue-content">
-      <SongList {play} {trpcQueue} {songs} {currentSong} {elapsed} {total} />
+      <SongList {play} {trpcQueue} {songs} currentSong={{uri: currentSong, elapsed, total}} />
     </div>
 </div>
   

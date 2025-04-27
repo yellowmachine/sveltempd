@@ -4,7 +4,8 @@
     import PlayHere from './PlayHere.svelte';
 	  import type { Song as TSong } from '$lib/messages';
 	  import Song from './Song.svelte';
-	  import { trpcQueue } from '../trpcClients';
+	  import { trpcLibraryClient, trpcQueue } from '../trpcClients';
+	  import { createAsync } from '$lib/stores.svelte';
   
     export let initialContents: {directories: string[], files: TSong[], currentSong: string} = {directories: [], files: [], currentSong: ''};
     export let currentFolder = '';
@@ -13,16 +14,13 @@
     export let queueUriList: string[] = [];
     
     let history: string[] = [];
-    let loading = false;
     let contents: {directories: string[], files: TSong[]} = initialContents;
   
     async function loadFolder(folder: string) {
-      loading = true;
       contents = {files: [], directories: []};
       currentFolder = folder;
-      const data = await trpc(page).library.getFolderContent.query({path: folder});
+      const data = await trpcLibraryClient.load(folder);
       contents = data;
-      loading = false;
     }
   
     function enterFolder(subfolder: string) {
@@ -37,15 +35,12 @@
       }
     }
   
+    const mutPlay = createAsync(handlePlayHere);
+    const mutEnterFolder = createAsync(enterFolder);
+
     async function handlePlayHere() {
-      loading = true;
-      try {
-        if (contents.files.length > 0) {
-          await trpc(page).player.playHere.mutate({ path: history.join('/') });
-          //await trpc(page).snapclient.restart.mutate();
-        }
-      } finally {
-        loading = false;
+      if (contents.files.length > 0) {
+        await trpc(page).player.playHere.mutate({ path: history.join('/') });
       }
     }
 
@@ -76,10 +71,10 @@
                    bg-gray-50 
                    dark:bg-gray-800
                    truncate">{currentFolder || 'Biblioteca'}</span>
-      <PlayHere onClick={handlePlayHere} disabled={loading || contents.files.length === 0} />
+      <PlayHere onClick={mutPlay.call} disabled={mutPlay.loading || contents.files.length === 0} />
     </div>
   
-    {#if loading}
+    {#if mutPlay.loading}
       <div class="text-center text-gray-500 py-8">Cargando...</div>
     {:else if contents.directories.length === 0 && contents.files.length === 0}
       <div class="text-center text-gray-400 py-8">Carpeta vacía</div>
@@ -92,7 +87,7 @@
                   bg-orange-100 hover:bg-orange-200 
                   dark:bg-orange-900 dark:hover:bg-orange-800 cursor-pointer
                   transition-colors"
-          on:click={() => enterFolder(dir)}
+          on:click={() => mutEnterFolder.call(dir)}
           aria-label={`Abrir carpeta ${dir}`}
         >
           <span>{dir}</span>
@@ -107,9 +102,7 @@
           {queueUriList}
           artist={song.artist}
           uri={song.uri}
-          currentSong={initialContents.currentSong}
-          {total} 
-          {elapsed}
+          currentSong={ {uri: initialContents.currentSong, elapsed, total} }
           {trpcQueue}
         />
       </div>

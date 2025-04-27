@@ -1,37 +1,16 @@
 import { trpc } from '$lib/trpc/client';
 import { page } from '$app/state';
-//import { trpcError } from '$lib/stores.svelte';
-//import { TRPCClientError } from '@trpc/client';
 import type { Settings } from './schemas';
 import type { Host } from './ssh.base';
 
-
-/*
-function withTrpcError<T extends (...args: any[]) => Promise<any>>(fn: T): T {
-  return (async (...args: any[]) => {
-    try {
-      return await fn(...args);
-    } catch (err) {
-      if (err instanceof TRPCClientError) {
-        trpcError.update(JSON.stringify(err))
-      }
-      //throw err;
-    }
-  }) as T;
+export const trpcLibraryClient = {
+  load: async (folder: string) => {
+    return await trpc(page).library.getFolderContent.query({path: folder});
+  },
+  //saveAs: async (name: string) => {
+  //  await trpc(page).playlist.save.mutate({ name, mode: 'replace' });
+  //}
 }
-
-function decorateTrpcObject<T extends Record<string, any>>(obj: T): T {
-  const result: Record<string, any> = {};
-  for (const key in obj) {
-    if (typeof obj[key] === 'function') {
-      result[key] = withTrpcError(obj[key]);
-    } else {
-      result[key] = obj[key];
-    }
-  }
-  return result as T;
-}
-*/
 
 export const trpcSnapclient = {
     restart: async () => {

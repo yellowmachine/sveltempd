@@ -9,7 +9,7 @@
     let timeout: NodeJS.Timeout | null = null;
       
     let error: string | null = $state(null);
-    const f = action || mut?.mutate || (async () => {});
+    const f = action || mut?.call || (async () => {});
 
     async function handleClick(event: Event) {
       if(mut && mut.loading) 

@@ -1,12 +1,12 @@
 <script lang="ts">
     import { settingsSchema, type Settings } from "$lib/schemas";
-	import { createMutation } from "$lib/stores.svelte";
+	import { createAsync } from "$lib/stores.svelte";
 	import { trpcAdmin } from "$lib/trpcClients";
 	import ActionButton from "./ActionButton.svelte";
 
     let {data}: {data?: Settings} = $props();
 
-    const mut = createMutation(submit);
+    const mut = createAsync(submit);
 
     let form: Settings = $state(data || { global: { latency: 100 }, 
                                           server: { ip: '', username: '', password: '' }, 

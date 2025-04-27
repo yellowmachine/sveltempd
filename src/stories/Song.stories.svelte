@@ -25,4 +25,4 @@
   
 <Story name="Primary" args={{ ...song }} />
 
-<Story name="current song" args={{ ...song, currentSong: "spotify:track:2p8o7pOyU5qxmpxV2IwAzH" }} />
+<Story name="current song" args={{ ...song, currentSong: {uri: "spotify:track:2p8o7pOyU5qxmpxV2IwAzH",  elapsed: 30, total: 100} }} />

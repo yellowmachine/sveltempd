@@ -1,7 +1,7 @@
 <script module lang="ts">
     import { defineMeta } from '@storybook/addon-svelte-csf';
     import ActionButton from '$lib/components/ActionButton.svelte';
-	  import { createMutation } from '$lib/stores.svelte';
+	  import { createAsync } from '$lib/stores.svelte';
 
     const { Story } = defineMeta({
       title: 'Button/ActionButton',
@@ -10,8 +10,8 @@
       
     });
 
-    const mok = createMutation(() => {});
-    const merror = createMutation(() => { throw "error" });
+    const mok = createAsync(() => {});
+    const merror = createAsync(() => { throw "error" });
 </script>
   
 <Story name="ok" >

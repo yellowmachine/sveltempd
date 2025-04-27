@@ -35,7 +35,7 @@
 
     const initialContents = {
       directories: [ 'the rolling stones', 'the beatles', 'pink floyd' ],
-      currentSong: 'music/beatles/hey_jude.mp3', 
+      currentSong: {uri: 'music/beatles/hey_jude.mp3', elapsed: 0, total: 0},
       files: songs  
     };
 

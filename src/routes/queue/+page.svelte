@@ -29,7 +29,7 @@
 />
 <Queue 
     songs={ queue.value } 
-    currentSong={ currentSong.value } 
-    total={ mpdStatus.value?.time?.total } 
-    elapsed={ mpdStatus.value?.time?.elapsed }  
+    currentSong={ 
+      {uri: currentSong.value, elapsed: mpdStatus.value?.time?.elapsed, total: mpdStatus.value?.time?.total }
+    } 
 />

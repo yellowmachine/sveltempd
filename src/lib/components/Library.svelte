@@ -7,10 +7,10 @@
 	  import { trpcLibraryClient, trpcQueue } from '../trpcClients';
 	  import { createAsync } from '$lib/stores.svelte';
   
-    export let initialContents: {directories: string[], files: TSong[], currentSong: string} = {directories: [], files: [], currentSong: ''};
+    export let initialContents: {directories: string[], files: TSong[], 
+      currentSong: {uri: string | null, elapsed: number | undefined, total: number | undefined} | null} = 
+      {directories: [], files: [], currentSong: null};
     export let currentFolder = '';
-    export let elapsed: number | undefined;
-    export let total: number | undefined;
     export let queueUriList: string[] = [];
     
     let history: string[] = [];
@@ -102,7 +102,7 @@
           {queueUriList}
           artist={song.artist}
           uri={song.uri}
-          currentSong={ {uri: initialContents.currentSong, elapsed, total} }
+          currentSong={initialContents.currentSong}
           {trpcQueue}
         />
       </div>

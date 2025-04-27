@@ -4,7 +4,7 @@
 	  import type { TRPCQueue } from '../trpcClients';
 
     export let songs: TSong[] = [];
-    export let currentSong: {uri: string | null, elapsed: number | undefined, total: number | undefined};
+    export let currentSong: {uri: string | null, elapsed: number | undefined, total: number | undefined} | null;
     export let trpcQueue: TRPCQueue;
     export let play: (uri: string) => void;
   

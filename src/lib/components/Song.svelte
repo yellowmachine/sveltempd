@@ -4,7 +4,7 @@
     import type { TRPCQueue } from "../trpcClients";
     import { formatTime } from "$lib/utils";
 
-    export let currentSong: {uri: string | null, elapsed: number | undefined, total: number | undefined};
+    export let currentSong: {uri: string | null, elapsed: number | undefined, total: number | undefined} | null;
     export let queueUriList: string[] = [];
     export let uri: string;
     export let title: string;
@@ -32,13 +32,13 @@
 
 <div
     class={`mt-2 w-full cursor-pointer inline-flex flex-col sm:flex-row items-center gap-2 p-3 rounded transition-all
-      ${uri === currentSong.uri
+      ${uri === currentSong?.uri
         ? 'hover:bg-blue-100 bg-blue-50 border border-blue-300 shadow-sm'
         : 'bg-white hover:bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:hover:bg-gray-700'}
     `}
   >
     <!-- Vista destacada si es la canción actual -->
-    {#if uri === currentSong.uri}
+    {#if uri === currentSong?.uri}
     <div>
       <div class="flex items-center gap-2">
         <span class="text-blue-600 font-bold animate-pulse">●</span>
@@ -62,7 +62,7 @@
       
       <span class={`font-medium ${isInQueue ? 'text-orange-600' : ''}`}>{title}</span>
       <span class="text-xs text-gray-400 ml-2">({artist})</span>
-      <span class="ml-auto text-xs text-gray-400">{formatTime(currentSong.total)}</span>
+      <span class="ml-auto text-xs text-gray-400">{formatTime(currentSong?.total)}</span>
       <SongPopup
         {handlePlay}
         {handleAddToQueue}

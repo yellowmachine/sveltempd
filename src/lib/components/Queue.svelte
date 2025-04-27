@@ -3,9 +3,10 @@
     import type { Song as TSong } from '$lib/messages';
     import { trpcQueue } from '../trpcClients'
     
-    let {songs, currentSong, elapsed, total, lastLoadedPlaylist="default"}: 
-        {songs: TSong[], currentSong: string | null, elapsed: number | undefined, 
-         total: number | undefined, lastLoadedPlaylist?: string | null } = $props();
+    let {songs, currentSong, lastLoadedPlaylist="default"}: 
+        {songs: TSong[], currentSong: 
+          {uri: string | null, elapsed: number | undefined, total: number | undefined} | null, 
+          lastLoadedPlaylist?: string | null } = $props();
 
     let newPlaylistName: string | null = $state('');
 
@@ -53,7 +54,7 @@
   {/if}
 
     <div class="queue-content">
-      <SongList {play} {trpcQueue} {songs} currentSong={{uri: currentSong, elapsed, total}} />
+      <SongList {play} {trpcQueue} {songs} {currentSong} />
     </div>
 </div>
   

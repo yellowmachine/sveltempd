@@ -36,6 +36,6 @@
 
 </script>
   
-<Story name="default" args={ {songs: songs, currentSong: null, elapsed: 0, total: 0 } } /> 
+<Story name="default" args={ {songs: songs, currentSong: null } } /> 
 
-<Story name="playing" args={ {songs: songs, currentSong: 'music/queen/bohemian_rhapsody.mp3', elapsed: 0, total: 0 } } /> 
+<Story name="playing" args={ {songs: songs, currentSong: {uri: 'music/queen/bohemian_rhapsody.mp3', elapsed: 0, total: 0}  } } /> 

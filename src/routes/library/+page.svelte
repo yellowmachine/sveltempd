@@ -8,10 +8,6 @@
 </script>
   
 <Library 
-    initialContents={data} 
-    total={ mpdStatus.value?.time?.total } 
-    elapsed={ mpdStatus.value?.time?.elapsed }
+    initialContents={ {...data, currentSong: {uri: data.currentSong, elapsed: mpdStatus.value?.time?.elapsed, total: mpdStatus.value?.time?.total}}} 
     {queueUriList} 
 />
-
-<!-- queueUriList={queue.uriList} funiona ?? -->

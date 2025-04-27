@@ -13,16 +13,14 @@
 
     if(data.player)
 		mpdStatus.update(data.player);
-
 	  queue.update(data.queue);
-	  currentSong.update(data.queue.currentSong)
     
 </script>
 
 <Player 
 	currentSong={currentSongInfo}
 	total={mpdStatus.value?.time?.total} 
-	elapsed={mpdStatus.value?.time?.elapsed} 
+	elapsed={currentSong.value.elapsed} 
 	volume={mpdStatus.value?.volume || 0} 
 	playStatus={ mpdStatus.value?.state }
 	{trpcPlayer}
@@ -30,6 +28,6 @@
 <Queue 
     songs={ queue.value } 
     currentSong={ 
-      {uri: currentSong.value, elapsed: mpdStatus.value?.time?.elapsed, total: mpdStatus.value?.time?.total }
+      {uri: currentSong.value.uri, elapsed: currentSong.value.elapsed, total: mpdStatus.value?.time?.total }
     } 
 />

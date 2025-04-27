@@ -4,7 +4,7 @@
     import type { TRPCQueue } from "../trpcClients";
     import { formatTime } from "$lib/utils";
 
-    export let currentSong: {uri: string | null, elapsed: number | undefined, total: number | undefined} | null;
+    export let currentSong: {uri: string | null, elapsed: number | null, total: number | undefined} | null;
     export let queueUriList: string[] = [];
     export let uri: string;
     export let title: string;

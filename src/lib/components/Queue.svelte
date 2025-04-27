@@ -5,7 +5,7 @@
     
     let {songs, currentSong, lastLoadedPlaylist="default"}: 
         {songs: TSong[], currentSong: 
-          {uri: string | null, elapsed: number | undefined, total: number | undefined} | null, 
+          {uri: string | null, elapsed: number | null, total: number | undefined} | null, 
           lastLoadedPlaylist?: string | null } = $props();
 
     let newPlaylistName: string | null = $state('');

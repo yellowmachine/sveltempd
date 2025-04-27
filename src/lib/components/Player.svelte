@@ -12,7 +12,7 @@
 	let { playStatus, volume, total, elapsed, trpcPlayer, currentSong }: 
 		{ playStatus: 'stop' | 'play' | 'pause' | undefined, 
 		volume: number, 
-		elapsed?: number, 
+		elapsed: number | null, 
 		total?: number,
 		trpcPlayer: TRPCPlayer,
 		currentSong: TSong | null
@@ -93,7 +93,7 @@
 </div>
 
 {#if playStatus === 'play' || playStatus === 'pause'}
-<ProgressBar isPlaying={playStatus === 'play'} {total} {elapsed} />  
+<ProgressBar isPlaying={playStatus === 'play'} {total} elapsed={elapsed || 0} />  
 <SongInfo song={currentSong} />
 
 {#if loading}

@@ -22,6 +22,16 @@
 		connectEventSource();
 	});
 
+	$effect(() => {
+		if (mpdStatus.value?.state === 'play') {
+			currentSong.start();
+		} else if (mpdStatus.value?.state === 'pause') {
+			currentSong.pause();
+		} else {
+			currentSong.stop();
+		}
+	});
+
 	function connectEventSource() {
 		console.log("Conectando a EventSource...");
 		if (evtSource) {
@@ -34,7 +44,7 @@
 
 			mpdStatus.update(data.player);
 			queue.update(data.queue);
-			currentSong.update(data.queue.currentSong)
+			currentSong.update({uri: data.queue.currentSong})
 		});
 
 		evtSource.addEventListener("mixer", (event) => {

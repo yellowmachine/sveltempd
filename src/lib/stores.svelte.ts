@@ -130,15 +130,52 @@ function createQueueStore() {
 export const queue = createQueueStore();
 
 function createCurrentSongStore() {
-  let currentSong: string | null = $state(null);
+  let timer: ReturnType<typeof setInterval> | null = null;
 
-  return {
-    update(newValue: string | null) {
-      currentSong = newValue
+  let title: string | null = $state(null);
+  let total: number | null = $state(null);
+  let elapsed: number = $state(0);
+  let uri: string | null = $state(null);
+
+  function clearTimer() {
+    if (timer) clearInterval(timer);
+    timer = null;
+  }
+
+  // Creamos el objeto store antes del efecto para poder referenciarlo
+  const store = {
+    update(newValue: {title?: string, total?: number, elapsed?: number, uri?: string} | null) {
+      title = newValue?.title ?? null;
+      total = newValue?.total ?? null;
+      elapsed = newValue?.elapsed ?? 0;
+      uri = newValue?.uri ?? null;
     },
     get value() {
-      return currentSong;
+      return {title, total, elapsed, uri};
+    },
+    start(){
+      clearTimer();
+      timer = setInterval(() => {
+        elapsed += 1;
+      }, 1000);
+    },
+    pause(){
+      clearTimer();
+    },
+    stop(){
+      clearTimer();
+      elapsed = 0;
+    },
+    reset() {
+      clearTimer();
+      title = null;
+      total = null;
+      elapsed = 0;
+      uri = null;
     }
   };
+
+  return store;
 }
+
 export const currentSong = createCurrentSongStore();

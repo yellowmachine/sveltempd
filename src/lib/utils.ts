@@ -1,4 +1,4 @@
-export function formatTime(seconds?: number) {
+export function formatTime(seconds: number | null | undefined) {
     if (!seconds) return '';
     const min = Math.floor(seconds / 60);
     const sec = Math.floor(seconds % 60);

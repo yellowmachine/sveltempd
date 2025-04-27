@@ -8,7 +8,7 @@
 	  import { createAsync } from '$lib/stores.svelte';
   
     export let initialContents: {directories: string[], files: TSong[], 
-      currentSong: {uri: string | null, elapsed: number | undefined, total: number | undefined} | null} = 
+      currentSong: {uri: string | null, elapsed: number | null, total: number | undefined} | null} = 
       {directories: [], files: [], currentSong: null};
     export let currentFolder = '';
     export let queueUriList: string[] = [];

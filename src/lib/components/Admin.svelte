@@ -6,6 +6,8 @@
 
     let {data}: {data?: Settings} = $props();
 
+    console.log(data)
+
     const mut = createAsync(submit);
 
     let form: Settings = $state(data || { global: { latency: 100 }, 

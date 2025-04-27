@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-const passwordField = z.string()
-  .transform(val => val === "" ? null : val)
+const passwordField = z.string().optional() //.nullable()
+  .transform(val => val === "" || val === undefined ? null : val)
   .nullable()
   .refine(val => val === null || val.length > 0, "Contraseña obligatoria");
 

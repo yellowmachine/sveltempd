@@ -48,7 +48,7 @@
             transition-colors duration-200 shadow hover:shadow-lg" 
     onclick={save}>
     Guardar como {saveAsName()}
-    <input type="" bind:value={newPlaylistName} />
+    <input type="text" class="bg-white text-black" bind:value={newPlaylistName} />
   </button>
   {/if}
 

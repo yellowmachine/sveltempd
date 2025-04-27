@@ -20,6 +20,7 @@
           title={song.title}
           artist={song.artist}
           uri={song.uri}
+          total={song.time}
         />
       </li>
     {/each}

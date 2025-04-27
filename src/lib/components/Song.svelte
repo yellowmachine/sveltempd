@@ -9,6 +9,7 @@
     export let uri: string;
     export let title: string;
     export let artist: string;
+    export let total: string;
     export let trpcQueue: TRPCQueue
     export let play: (uri: string) => void;
 
@@ -62,7 +63,7 @@
       
       <span class={`font-medium ${isInQueue ? 'text-orange-600' : ''}`}>{title}</span>
       <span class="text-xs text-gray-400 ml-2">({artist})</span>
-      <span class="ml-auto text-xs text-gray-400">{formatTime(currentSong?.total)}</span>
+      <span class="ml-auto text-xs text-gray-400">{total}</span>
       <SongPopup
         {handlePlay}
         {handleAddToQueue}

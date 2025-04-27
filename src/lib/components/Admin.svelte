@@ -6,7 +6,7 @@
 
     let {data}: {data?: Settings} = $props();
 
-    console.log(data)
+    //console.log(data)
 
     const mut = createAsync(submit);
 

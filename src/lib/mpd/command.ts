@@ -5,7 +5,7 @@ import { db } from '$lib/db';
 import { formatSongArray, queueMsg } from '$lib/messages';
 import { exec } from 'child_process';
 import { promisify } from 'node:util';
-import { restartEachSnapclients, updateSnapclientOptsEachClient, getSnapclientOpts } from '$lib/ssh';
+import { restartEachSnapclients, updateSnapclientOptsEachClient } from '$lib/ssh';
 import { executeSSHServer } from '$lib/ssh.base';
 
 const execAsync = promisify(exec);
@@ -178,7 +178,7 @@ class Player {
 
 
   async play(pos?: number) {
-    await this.client.api.playback.play(''+pos);
+    await this.client.api.playback.play();
     await snapclient.restart();
   }
 

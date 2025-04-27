@@ -14,8 +14,8 @@
     if(data.player)
 		mpdStatus.update(data.player);
 
-	queue.update(data.queue);
-	currentSong.update(data.queue.currentSong)
+	  queue.update(data.queue);
+	  currentSong.update(data.queue.currentSong)
     
 </script>
 

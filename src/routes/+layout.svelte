@@ -38,8 +38,9 @@
 		});
 
 		evtSource.addEventListener("mixer", (event) => {
-			const data: MPDStatus = JSON.parse((event as MessageEvent).data);
-			mpdStatus.update(data); 
+			//const data: MPDStatus = JSON.parse((event as MessageEvent).data);
+			//console.log('---', data)
+			//mpdStatus.update(data); 
 		});
 
 		evtSource.addEventListener("playlist", (event) => {

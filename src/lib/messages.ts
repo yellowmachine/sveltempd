@@ -5,7 +5,7 @@ import { db } from './db';
 
 
 function formatSong(line: string) {
-    const [artist, title, id, uri, time, ...rest] = line.trim().split('-').map(c => c.trim());
+    const [artist, title, id, uri, time, ...rest] = line.trim().split('\\').map(c => c.trim());
     return { artist: artist || '', title: title || uri || '', id: parseInt(id), uri: uri || '', time: time || '' };
 }
 
@@ -36,7 +36,7 @@ export type QueueMsg = {queue: Song[], currentSong: string}
 export async function queueMsg(): Promise<QueueMsg> { 
   let msg;
   try {
-    const mpcPlaylist = await executeSSHServer('mpc -f "%artist% - %title% - %id% - %file% - %time%" playlist');
+    const mpcPlaylist = await executeSSHServer('mpc -f "%artist% \\ %title% \\ %id% \\ %file% \\ %time%" playlist');
     const queue = formatSongArray(mpcPlaylist);
     const currentSong = await executeSSHServer('mpc current -f "%file%"');
     

@@ -3,7 +3,6 @@ import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
 import type { Settings, SettingsWithPassword } from '$lib/schemas';
 import { encrypt } from '$lib/cryptutils';
-import { setup } from '$lib/trpc/setup';
 
 export type Data = { volume: number, setupDone: boolean, admin: Settings };
 type DataWithPassword = Omit<Data, 'admin'> & { admin: SettingsWithPassword };
@@ -16,7 +15,9 @@ const defaultData: Data = {
     server: { ip: 'localhost', username: 'miguel', password: encrypt('123') },
     clients: []
   } }; 
-const dbFile = 'db.json';
+
+const dbFile = 'data/db.json';
+
 
 function stripPasswords(data: Data) {
   if (!data.admin) return data;

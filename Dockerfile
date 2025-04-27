@@ -42,5 +42,7 @@ COPY --from=build /app/package.json ./
 # Si tienes archivos estáticos, agrégalos aquí
 # COPY --from=build /app/public ./public
 
+EXPOSE 3000
+
 # Comando de arranque
 CMD ["node", "build"]

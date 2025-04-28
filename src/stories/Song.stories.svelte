@@ -18,7 +18,7 @@
       artist: "Led Zeppelin",
       title: "Babe, I’m Gonna Leave You",
       uri: "spotify:track:2p8o7pOyU5qxmpxV2IwAzH",
-      total: 100,
+      total: '3:53',
       elapsed: 30
     }
 </script>

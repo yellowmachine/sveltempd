@@ -129,6 +129,11 @@ class Library {
   constructor(client: any) {
     this.client = client;
   }
+
+  async update(){
+    await this.client.api.db.update();
+  }
+
   async getFolderContent(path: string) {
     const mpcPlaylist = await executeSSHServer('mpc -f "%artist% - %title% - %id% - %file% - %time%" listall "' + path + '"');
     const files = formatSongArray(mpcPlaylist).filter(item => path !== '' && item.uri.startsWith(path));
@@ -178,7 +183,8 @@ class Player {
 
 
   async play(pos?: number) {
-    await this.client.api.playback.play();
+    pos = pos ?? 0;
+    await this.client.api.playback.play(''+pos);
     await snapclient.restart();
   }
 

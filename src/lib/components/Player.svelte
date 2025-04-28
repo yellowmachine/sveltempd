@@ -34,6 +34,8 @@
 	
 </script>
 
+{playStatus}
+
 <div class="flex items-center gap-4 border-2 rounded-md p-4 w-max bg-white text-orange-500 dark:bg-orange-500 dark:text-white">
 	<PlayerButton
 		onClick={() => trpcPlayer.prev()}
@@ -43,17 +45,17 @@
 	</PlayerButton>
 	{#if playStatus === 'pause'}
 	<PlayerButton
-		onClick={() => trpcPlayer.pause()}
+		onClick={() => trpcPlayer.play()}
 		ariaLabel="Pausar"
 		disabled={loading}>
-		<Icon icon="mdi:pause" {width} {height} />
+		<Icon icon="mdi:play" {width} {height} />
 	</PlayerButton>
 	{:else}
 	<PlayerButton
-		onClick={() => trpcPlayer.play()}
+		onClick={() => trpcPlayer.pause()}
 		ariaLabel="Reproducir"
 		disabled={loading}>
-		<Icon icon="mdi:play" {width} {height} />
+		<Icon icon="mdi:pause" {width} {height} />
 	</PlayerButton>
 	{/if}
 	<PlayerButton

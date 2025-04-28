@@ -7,6 +7,9 @@ export const trpcLibraryClient = {
   load: async (folder: string) => {
     return await trpc(page).library.getFolderContent.query({path: folder});
   },
+  update: async () => {
+    return await trpc(page).library.update.mutate();
+  }
   //saveAs: async (name: string) => {
   //  await trpc(page).playlist.save.mutate({ name, mode: 'replace' });
   //}

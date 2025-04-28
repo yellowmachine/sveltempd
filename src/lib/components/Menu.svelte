@@ -8,7 +8,7 @@
     function closeMenu() { open = false; }
 </script>
   
-  <nav class="w-max bg-white dark:bg-orange-900 border-b border-orange-200 dark:border-orange-800 z-20 relative">
+  <nav class="w-max bg-white dark:bg-orange-900 border border-orange-400 dark:border-orange-800 z-20 relative">
     {#if isPlaying }
       <IsPlaying />
     {/if}
@@ -24,11 +24,13 @@
           <li><a href="/library" class="hover:text-orange-600 font-medium transition-colors">Biblioteca</a></li>
           <li><a href="/admin" class="hover:text-orange-600 font-medium transition-colors">Admin</a></li>
           
+          <!--
           <button onclick={trpcSnapclient.restart}>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg">](http://www.w3.org/2000/svg">)
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
             </svg>
           </button>
+        -->
           
         </ul>
   

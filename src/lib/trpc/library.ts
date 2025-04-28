@@ -10,5 +10,9 @@ export const library = t.router({
         .query(async ({ ctx, input }) => {
             const library = await ctx.library.getFolderContent(input.path);
             return library;
-        })
+        }),
+    update: t.procedure
+        .mutation(async ({ ctx }) => {
+            await ctx.library.update();
+    })
 });

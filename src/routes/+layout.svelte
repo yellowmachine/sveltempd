@@ -89,8 +89,10 @@
 {#if !data.setupDone}
   <Setup />
 {:else}
-<Alert message={trpcError.value} clear={trpcError.clear} />
-<Menu isPlaying={mpdStatus.value?.state === 'play'} />
-
-{@render children()}
+<div class="w-full max-w-lg mx-auto px-4 min-h-screen bg-brand-100">
+	<Alert message={trpcError.value} clear={trpcError.clear} />
+	<Menu isPlaying={mpdStatus.value?.state === 'play'} />
+	
+	{@render children()}
+</div>
 {/if}

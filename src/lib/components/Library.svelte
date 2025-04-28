@@ -6,6 +6,7 @@
 	  import Song from './Song.svelte';
 	  import { trpcLibraryClient, trpcQueue } from '../trpcClients';
 	  import { createAsync } from '$lib/stores.svelte';
+	import ActionButton from './ActionButton.svelte';
   
     export let initialContents: {directories: string[], files: TSong[], 
       currentSong: {uri: string | null, elapsed: number | null, total: number | undefined} | null} = 
@@ -37,6 +38,7 @@
   
     const mutPlay = createAsync(handlePlayHere);
     const mutEnterFolder = createAsync(enterFolder);
+    const mutUpdate = createAsync(update);
 
     async function handlePlayHere() {
       if (contents.files.length > 0) {
@@ -50,6 +52,10 @@
       await trpcQueue.play();
     }
 
+    async function update() {
+      await trpcLibraryClient.update();
+    }
+
   </script>
   
   <div class="w-full mx-auto p-4">
@@ -60,7 +66,7 @@
                      bg-orange-100 hover:bg-orange-200 
                      dark:bg-orange-900 dark:hover:bg-orange-800
                      transition-colors"
-        on:click={goBack}
+        onclick={goBack}
         disabled={history.length === 0}
         aria-label="Volver"
       >
@@ -72,6 +78,9 @@
                    dark:bg-gray-800
                    truncate">{currentFolder || 'Biblioteca'}</span>
       <PlayHere onClick={mutPlay.call} disabled={mutPlay.loading || contents.files.length === 0} />
+      <ActionButton mut={mutUpdate} >
+        <button class="bg-orange-400 rounded px-4 py-2 hover:bg-orange-200 text-white">Actualizar base de datos</button>
+  </ActionButton>
     </div>
   
     {#if mutPlay.loading}
@@ -87,7 +96,7 @@
                   bg-orange-100 hover:bg-orange-200 
                   dark:bg-orange-900 dark:hover:bg-orange-800 cursor-pointer
                   transition-colors"
-          on:click={() => mutEnterFolder.call(dir)}
+          onclick={() => mutEnterFolder.call(dir)}
           aria-label={`Abrir carpeta ${dir}`}
         >
           <span>{dir}</span>
@@ -102,6 +111,7 @@
           {queueUriList}
           artist={song.artist}
           uri={song.uri}
+          total={song.time}
           currentSong={initialContents.currentSong}
           {trpcQueue}
         />

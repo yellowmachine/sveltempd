@@ -31,7 +31,7 @@
 
 </script>
 
-<div class="queue">
+<div>
   <h2 class="text-3xl font-bold text-orange-600">Cola de reproduccion</h2>
   {#if songs.length !== 0}  
   <button
@@ -41,19 +41,19 @@
             focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2
             transition-colors duration-200 shadow hover:shadow-lg"
     >
-        Borrar Cola
+        Limpiar
   </button>
   <button class="px-5 py-2.5 rounded-md font-semibold text-white bg-gradient-to-r from-orange-500 via-orange-600 to-red-600
             hover:from-red-500 hover:via-orange-600 hover:to-orange-500
             focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2
             transition-colors duration-200 shadow hover:shadow-lg" 
     onclick={save}>
-    Guardar como {saveAsName()}
-    <input type="text" class="bg-white text-black" bind:value={newPlaylistName} />
+    Guardar como:
+    <input type="text" class="bg-white text-black w-50" bind:value={newPlaylistName} />
   </button>
   {/if}
 
-    <div class="queue-content">
+    <div>
       <SongList {play} {trpcQueue} {songs} {currentSong} />
     </div>
 </div>

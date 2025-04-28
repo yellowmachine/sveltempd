@@ -1,8 +1,5 @@
 import LowdbAdapter from './dbadapter/lowdb';
 
-type Data = { volume: number };
-const defaultData: Data = { volume: 50 };
-
 export const db = new LowdbAdapter();
 
 export async function initializeDB() {

@@ -5,7 +5,6 @@
 
     let { song }: { song: {title: string; artist: string} | null } = $props();
   
-    // Estado local reactivo para release, coverUrl y error
     let release = $state<{
       id: string;
       title: string;
@@ -14,7 +13,7 @@
   
     let coverUrl = $state<string | null>(null);
     let error = $state<string | null>(null);
-  
+    let loading = $state<boolean>(false);
 
     async function fetchRelease(artist: string, title: string) {
       const query = encodeURIComponent(`artist:"${artist}" AND recording:"${title}"`);
@@ -40,6 +39,7 @@
     
     async function fetchInfo(artist: string, title: string) {
       try {
+        loading = true;
         release = await fetchRelease(artist, title);
         if (release) {
           coverUrl = await fetchCoverArt(release.id);
@@ -48,7 +48,9 @@
         }
       } catch (err) {
         error = err instanceof Error ? err.message : m.unknown_error();
-      }
+      }finally {
+        loading = false;
+      } 
     }
     
     async function fetchCoverArt(releaseId: string) {
@@ -75,16 +77,20 @@
   {:else}
     {#if release}
       <div>
-        <h3>{release.title} {#if release.date}({release.date}){/if}</h3>
+        <h3>Release: {release.title} {#if release.date}({release.date}){/if}</h3>
         <p>Artista: {song?.artist}</p>
+        <p>Título: {song?.title}</p>
         {#if coverUrl}
           <img src="{coverUrl}" alt="Carátula de {release.title}" />
         {:else}
           <p>{m.no_cover()}</p>
         {/if}
-      </div>
-    {:else}
-      <RandomSpinner />
+      </div>      
     {/if}
   {/if}
   
+  {#if loading}
+    <div class="flex justify-center items-center">
+      <RandomSpinner />
+    </div>
+  {/if}

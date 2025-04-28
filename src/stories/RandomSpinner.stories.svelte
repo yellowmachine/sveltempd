@@ -3,7 +3,7 @@
     import RandomSpinner from '$lib/components/RandomSpinner.svelte';
 
     const { Story } = defineMeta({
-      title: 'Example/RandomSpinner',
+      title: 'Utils/RandomSpinner',
       component: RandomSpinner,
       tags: ['autodocs'],
       argTypes: {

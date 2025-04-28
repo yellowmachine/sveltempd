@@ -1,29 +1,63 @@
-import fs from 'node:fs';
+import { access } from 'node:fs/promises';
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
+import type { Settings, SettingsWithPassword } from '$lib/schemas';
+import { encrypt } from '$lib/cryptutils';
 
-type Data = { volume: number };
+export type Data = { volume: number, setupDone: boolean, admin: Settings };
+type DataWithPassword = Omit<Data, 'admin'> & { admin: SettingsWithPassword };
 
-const defaultData: Data = { volume: 50 }; 
-const dbFile = 'db.json';
+const defaultData: Data = { 
+  volume: 50,
+  setupDone: false, 
+  admin: {
+    global: { latency: 100 },
+    server: { ip: 'localhost', username: 'miguel', password: encrypt('123') },
+    clients: []
+  } }; 
+
+const dbFile = 'data/db.json';
+
+
+function stripPasswords(data: Data) {
+  if (!data.admin) return data;
+  const { server, clients, ...restAdmin } = data.admin;
+
+  const { password, ...serverSinPassword } = server;
+  const clientsSinPassword = clients.map(({ password, ...clientSinPassword }) => clientSinPassword);
+
+  return {
+    ...data,
+    admin: {
+      ...restAdmin,
+      server: serverSinPassword,
+      clients: clientsSinPassword
+    }
+  };
+}
 
 class LowdbAdapter {
-  db: Low<{ volume: number }>;
+  db: Low<Data>;
   
   constructor(filename = dbFile) {
-    this.db = new Low(new JSONFile<{ volume: number }>(filename), defaultData);
+    this.db = new Low(new JSONFile<Data>(filename), defaultData);
   }
 
   async load() {
     await this.db.read();
   }
 
-  async getData() {
+  async getData(): Promise<Data> {
     await this.load();
-    return this.db.data;
+    return stripPasswords(this.db.data) as Data;
   }
 
-  async setData(data: Partial<Data>) {
+  async getDataWithPassword(): Promise<DataWithPassword> {
+    await this.load();
+    return this.db.data as DataWithPassword;
+  }
+
+  async setData(data: Partial<DataWithPassword>) {
     await this.load();
     this.db.data = { ...this.db.data, ...data };
     await this.db.write();
@@ -38,16 +72,16 @@ class LowdbAdapter {
   }
 
   async initialize() {
-    if (!fs.existsSync(dbFile)) {
+    try {
+      await access(dbFile); 
       await this.db.read();
-      if (this.db.data === null) {
-        this.db.data = defaultData;
-        await this.db.write();
-      }
-    } else {
-      await this.db.read();
+    } catch (err) {
+      this.db.data = defaultData;
+      await this.db.write();
     }
   }
+  
 }
+
 
 export default LowdbAdapter;

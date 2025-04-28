@@ -1,66 +1,102 @@
 <script lang="ts">
     import Icon from '@iconify/svelte';
 	import { Jumper } from 'svelte-loading-spinners';
+	import PlayerButton from './PlayerButton.svelte';
+	import ProgressBar from './ProgressBar.svelte';
+	import SongInfo from '$lib/components/SongInfo.svelte';
+	import type { TRPCPlayer } from '../trpcClients';
+	import type { Song as TSong } from '$lib/messages';
+	import Volume from './Volume.svelte';
 
-	let { playing, volume }: {playing: boolean, volume: number | undefined} = $props();
+
+	let { playStatus, volume, total, elapsed, trpcPlayer, currentSong }: 
+		{ playStatus: 'stop' | 'play' | 'pause' | undefined, 
+		volume: number, 
+		elapsed: number | null, 
+		total?: number,
+		trpcPlayer: TRPCPlayer,
+		currentSong: TSong | null
+	} = $props();
 	
-    let loading = $state(false);
+	const width = '32'
+	const height = '32'
+    
+	let loading = $state(false);
 	let error = $state<string | null>(null);
+	let lastVolume = volume;
 
-	async function sendCommand(command: string) {
-		loading = true;
-		error = null;
-		try {
-			//const res = 
-			await fetch('/api/command', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ command })
-			});
-			//if (!res.ok) {
-			//	const { error: msg } = await res.json();
-			//	throw new Error(msg || 'Error en el servidor');
-			//}
-		} catch (e) {
-			error = e instanceof Error ? e.message : 'Error desconocido';
-		} finally {
-			loading = false;
-		}
-	}
+	function setVolume(volume: number) { trpcPlayer.volume(volume); }
 
-	function play() { sendCommand('play'); }
-	function pause() { sendCommand('pause'); }
-	function next() { sendCommand('next'); }
-	function previous() { sendCommand('previous'); }
-	function volumeUp() { sendCommand('volume_up'); }
-	function volumeDown() { sendCommand('volume_down'); }
+	$effect(() => {
+		lastVolume = volume;
+		setVolume(volume);
+	})
+	
 </script>
 
-<div class="flex items-center gap-4 border-2 rounded-md p-4 w-max">
-	<button onclick={previous} aria-label="Anterior" disabled={loading} class="h-16 flex items-center justify-center">
-	  <Icon icon="mdi:skip-previous" width="32" height="32" />
-	</button>
-	{#if playing}
-	  <button onclick={pause} aria-label="Pausar" disabled={loading} class="h-16 flex items-center justify-center">
-		<Icon icon="mdi:pause" width="64" height="64" />
-	  </button>
+{playStatus}
+
+<div class="flex items-center gap-4 border-2 rounded-md p-4 w-max bg-white text-orange-500 dark:bg-orange-500 dark:text-white">
+	<PlayerButton
+		onClick={() => trpcPlayer.prev()}
+		ariaLabel="Anterior"
+		disabled={loading}>
+		<Icon icon="mdi:skip-previous" {width} {height} />
+	</PlayerButton>
+	{#if playStatus === 'pause'}
+	<PlayerButton
+		onClick={() => trpcPlayer.play()}
+		ariaLabel="Pausar"
+		disabled={loading}>
+		<Icon icon="mdi:play" {width} {height} />
+	</PlayerButton>
 	{:else}
-	  <button onclick={play} aria-label="Reproducir" disabled={loading} class="h-16 flex items-center justify-center">
-		<Icon icon="mdi:play" width="64" height="64" />
-	  </button>
+	<PlayerButton
+		onClick={() => trpcPlayer.pause()}
+		ariaLabel="Reproducir"
+		disabled={loading}>
+		<Icon icon="mdi:pause" {width} {height} />
+	</PlayerButton>
 	{/if}
-	<button onclick={next} aria-label="Siguiente" disabled={loading} class="h-16 flex items-center justify-center">
-	  <Icon icon="mdi:skip-next" width="32" height="32" />
-	</button>
-	<button onclick={volumeDown} aria-label="Bajar volumen" disabled={loading} class="h-16 flex items-center justify-center">
-	  <Icon icon="mdi:volume-minus" width="32" height="32" />
-	</button>
-	<span class="mx-2">{volume}</span>
-	<button onclick={volumeUp} aria-label="Subir volumen" disabled={loading} class="h-16 flex items-center justify-center">
-	  <Icon icon="mdi:volume-plus" width="32" height="32" />
-	</button>
-  </div>
-  
+	<PlayerButton
+		onClick={() => trpcPlayer.next()}
+		ariaLabel="Siguiente"
+		disabled={loading}>
+		<Icon icon="mdi:skip-next" {width} {height} />
+	</PlayerButton>
+	<PlayerButton
+		onClick={() => volume -= 10}
+		ariaLabel="Bajar volumen"
+		disabled={loading}>
+		<Icon icon="mdi:volume-minus" {width} {height} />
+	</PlayerButton>
+	<Volume bind:volume />
+	<PlayerButton
+		onClick={() => volume += 10}
+		ariaLabel="Subir volumen"
+		disabled={loading}>
+		<Icon icon="mdi:volume-plus" {width} {height} />
+	</PlayerButton>
+	{#if volume !== 0}
+	<PlayerButton
+		onClick={() => volume = 0}
+		ariaLabel="Mute"
+		disabled={loading}>
+		<Icon icon="mdi:volume-mute" {width} {height} />
+	</PlayerButton>
+	{:else}
+	<PlayerButton
+		onClick={() => volume = lastVolume}
+		ariaLabel="Deshacer mute"
+		disabled={loading}>
+		<Icon icon="mdi:volume-high" {width} {height} />
+	</PlayerButton>
+	{/if}
+</div>
+
+{#if playStatus === 'play' || playStatus === 'pause'}
+<ProgressBar isPlaying={playStatus === 'play'} {total} elapsed={elapsed || 0} />  
+<SongInfo song={currentSong} />
 
 {#if loading}
 <Jumper size="60" color="#FF3E00" unit="px" duration="1s" />
@@ -68,4 +104,5 @@
 
 {#if error}
 	<div class="error">{error}</div>
+{/if}
 {/if}

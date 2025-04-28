@@ -18,6 +18,7 @@
         await f(event);
       } catch (e) {
         error = e instanceof Error ? e.message : String(e);
+        console.log('error')
       }
     }
 

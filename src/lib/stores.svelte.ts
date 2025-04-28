@@ -50,9 +50,10 @@ function createTrpcErrorStore() {
   let timeout: ReturnType<typeof setTimeout> | null = null;
 
   return {
-    update(value: string | null) {
+    update(value: string | null, type: string | null = null) {
       error = value;
-      timeout = setTimeout(() => error = null, 5000);
+      if(type === null)
+        timeout = setTimeout(() => error = null, 5000);
     },
     get value() {
       return error;

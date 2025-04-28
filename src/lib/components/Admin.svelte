@@ -46,7 +46,6 @@
     }
   </script>
   
-  {JSON.stringify(errors, null, 2)}
   <form class="max-w-xl mx-auto p-6 bg-white shadow rounded space-y-6" onsubmit={submit}>
     <h2 class="text-2xl font-bold mb-4">Configuración del Servidor</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">

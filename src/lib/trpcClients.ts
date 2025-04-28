@@ -3,6 +3,8 @@ import { page } from '$app/state';
 import type { Settings } from './schemas';
 import type { Host } from './ssh.base';
 
+import { trpcError } from './stores.svelte';
+
 export const trpcLibraryClient = {
   load: async (folder: string) => {
     return await trpc(page).library.getFolderContent.query({path: folder});
@@ -59,7 +61,32 @@ export const trpcQueue = {
 
 export type TRPCQueue = typeof trpcQueue;
 
-export const trpcPlayer = {
+
+function wrapWithErrorHandler<T extends Record<string, any>>(
+  obj: T
+): T {
+  const wrapped: Record<string, any> = {};
+
+  for (const key in obj) {
+    const prop = obj[key];
+    if (typeof prop === "function") {
+      wrapped[key] = async (...args: any[]) => {
+        try {
+          return await prop(...args);
+        } catch (e) {
+          trpcError.update(e instanceof Error ? e.message : String(e), 'error');
+          throw e;
+        }
+      };
+    } else {
+      wrapped[key] = prop;
+    }
+  }
+
+  return wrapped as T;
+}
+
+export const trpcPlayer = wrapWithErrorHandler({
     play: async () => {
         await trpc(page).player.play.mutate();
     },
@@ -81,6 +108,6 @@ export const trpcPlayer = {
     next: async () => {
         await trpc(page).player.next.mutate();
     }
-};
+});
 
 export type TRPCPlayer = typeof trpcPlayer;

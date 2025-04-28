@@ -181,7 +181,6 @@ class Player {
     await this.play();
   }
 
-
   async play(pos?: number) {
     pos = pos ?? 0;
     await this.client.api.playback.play(''+pos);
@@ -331,4 +330,23 @@ class Snapclient {
 
 export const snapclient = new Snapclient();
 
+let mpdServiceSingleton: {queue: Queue, player: Player, playlist: Playlist, library: Library} | null = null;
 
+export async function getMpdService(){
+  if (!mpdServiceSingleton) {
+    const client = await getMPDClient();
+    queueSingleton = new Queue(client);
+    playlistSingleton = new Playlist(client);
+    playerSingleton = new Player(client);
+    librarySingleton = new Library(client);
+
+    mpdServiceSingleton = {
+      queue: queueSingleton,
+      player: playerSingleton,
+      playlist: playlistSingleton,
+      library: librarySingleton
+    }
+
+  }
+  return mpdServiceSingleton;
+}

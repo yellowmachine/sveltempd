@@ -1,17 +1,16 @@
-import type { Context } from '$lib/trpc/context';
-import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
+import { mpdProcedure, t } from './trpc';
 
-export const t = initTRPC.context<Context>().create();
+const procedure = mpdProcedure
 
 export const library = t.router({
-    getFolderContent: t.procedure
+    getFolderContent: procedure
         .input(z.object({ path: z.string() }))
         .query(async ({ ctx, input }) => {
             const library = await ctx.library.getFolderContent(input.path);
             return library;
         }),
-    update: t.procedure
+    update: procedure
         .mutation(async ({ ctx }) => {
             await ctx.library.update();
     })

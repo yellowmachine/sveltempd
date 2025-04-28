@@ -1,15 +1,14 @@
-import type { Context } from '$lib/trpc/context';
-import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
+import { mpdProcedure, t } from './trpc';
 
-export const t = initTRPC.context<Context>().create();
+const procedure = mpdProcedure
 
 export const playlist = t.router({
-    get: t.procedure
+    get: procedure
         .query(async ({ ctx }) => {
             return await ctx.playlist.get();
     }),
-    create: t.procedure
+    create: procedure
         .input(z.object({
             name: z.string(),
             files: z.array(z.string())
@@ -18,7 +17,7 @@ export const playlist = t.router({
             await ctx.playlist.create(input.name);
         }
     ),
-    list: t.procedure
+    list: procedure
         .input(z.object({
             name: z.string()
         }))
@@ -27,7 +26,7 @@ export const playlist = t.router({
             return library;
         }
     ),
-    add: t.procedure
+    add: procedure
         .input(z.object({
             uri: z.string()
         }))
@@ -35,7 +34,7 @@ export const playlist = t.router({
             await ctx.playlist.add(input.uri);
         }
     ),
-    remove: t.procedure
+    remove: procedure
         .input(z.object({
             uri: z.string(),
         }))
@@ -43,7 +42,7 @@ export const playlist = t.router({
             await ctx.playlist.remove(input.uri);
         }
     ),
-    clear: t.procedure
+    clear: procedure
         .input(z.object({
             name: z.string()
         }))
@@ -51,7 +50,7 @@ export const playlist = t.router({
             await ctx.playlist.clear(input.name);
         }
     ),
-    save: t.procedure
+    save: procedure
         .input(z.object({
             name: z.string(),
             mode: z.string()
@@ -60,7 +59,7 @@ export const playlist = t.router({
             await ctx.playlist.save(input.name, input.mode);
         }
     ),
-    load: t.procedure
+    load: procedure
         .input(z.object({
             name: z.string()
         }))

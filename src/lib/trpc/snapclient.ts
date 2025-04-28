@@ -1,14 +1,13 @@
-import type { Context } from '$lib/trpc/context';
-import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
+import { mpdProcedure, t } from './trpc';
 
-export const t = initTRPC.context<Context>().create();
+const procedure = mpdProcedure
 
 export const snapclient = t.router({
-    restart: t.procedure.mutation(async ({ ctx }) => {
+    restart: procedure.mutation(async ({ ctx }) => {
         await ctx.snapclient.restart();
     }),
-    changeOpts: t.procedure
+    changeOpts: procedure
         .input(z.object({
             opts: z.string()
         }))

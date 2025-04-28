@@ -1,17 +1,16 @@
-import type { Context } from '$lib/trpc/context';
-import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
+import { mpdProcedure, t } from './trpc';
 
-export const t = initTRPC.context<Context>().create();
+const procedure = mpdProcedure
 
 export const queue = t.router({
-    info: t.procedure
+    info: procedure
         .query(async ({ ctx }) => {
             const library = await ctx.queue.info();
             return library;
         }
     ),
-    add: t.procedure
+    add: procedure
         .input(z.object({
             uri: z.string()
         }))
@@ -20,7 +19,7 @@ export const queue = t.router({
             await ctx.queue.add(uri);
         }
     ),
-    remove: t.procedure
+    remove: procedure
         .input(z.object({
             uri: z.string(),
         }))
@@ -28,7 +27,7 @@ export const queue = t.router({
             await ctx.queue.remove(input.uri);
         }
     ),
-    clear: t.procedure
+    clear: procedure
         .mutation(async ({ input, ctx }) => {
             await ctx.queue.clear();
         }
